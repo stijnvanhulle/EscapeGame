@@ -1,149 +1,174 @@
-const webpack = require(`webpack`);
-const ExtractTextPlugin = require(`extract-text-webpack-plugin`);
+/**
+* @Author: Stijn Van Hulle <stijnvanhulle>
+* @Date:   2016-10-12T15:57:56+02:00
+* @Email:  me@stijnvanhulle.be
+* @Last modified by:   stijnvanhulle
+* @Last modified time: 2016-11-01T19:22:56+01:00
+* @License: stijnvanhulle.be
+*/
 
-const extractCSS = new ExtractTextPlugin(`css/style.css`);
+// changed some loader syntax after reading
+// https://webpack.js.org/how-to/upgrade-from-webpack-1/
 
-const publicPath = `/`;
+const path = require('path');
 
+const webpack = require('webpack');
+const {UglifyJsPlugin} = webpack.optimize;
+
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 const {entry, plugins} = require(`webpack-config-htmls`)();
 
-const paths = [
-  `./src/js/script.js`,
-  `./src/css/style.css`
-];
+const extractCSS = new ExtractTextWebpackPlugin(`css/style.css`);
+
+// change for production build on different server path
+const publicPath = '/';
+
+// hard copy assets folder for:
+// - srcset images (not loaded through html-loader )
+// - json files (through fetch)
+// - fonts via WebFontLoader
+
+const copy = new CopyWebpackPlugin([
+  {
+    from: './src/assets',
+    to: 'assets'
+  }
+], {ignore: ['.DS_Store']});
 
 const config = {
 
-  entry: paths,
+  entry: [
+    './src/sass/main.scss', './src/js/main.js'
+  ],
 
   resolve: {
-    extensions: [`.js`, `.jsx`, `.json`, `.html`, `.css`]
+    extensions: [
+      '.js',
+      '.jsx',
+      '.json',
+      '.html',
+      '.scss',
+      '.css'
+    ]
   },
 
   output: {
-    path: `./server/public/`,
-    filename: `js/[name].[hash].script.js`,
+    path: path.join(__dirname, 'server', 'public'),
+    filename: 'js/[name].[hash].js',
     publicPath
   },
 
-  devtool: `sourcemap`,
+  devtool: 'source-map', // or "inline-source-map"
 
   module: {
 
     rules: [
       {
-        test: /\.(jsx?)$/,
-        exclude: /node_modules/,
-        loader: `babel`
-      },
-      {
-        test: /\.(jsx?)$/,
-        exclude: /node_modules/,
-        enforce: `pre`,
-        loader: `eslint`
-      },
-      {
         test: /\.css$/,
-        loader: extractCSS.extract([`css`, `postcss`])
-      },
-      {
+        loader: extractCSS.extract({fallbackLoader: "style?sourceMap", loader: "css?sourceMap"})
+      }, {
+        test: /\.scss$/,
+        loader: extractCSS.extract({fallbackLoader: 'style?sourceMap', loader: 'css?sourceMap!sass?sourceMap'})
+      }, {
         test: /\.html$/,
-        loader: `html`
-      },
-      {
-        test: /\.(jpe?g|png|gif|svg|woff2?|mp3|mp4)$/i,
-        loader: `url`,
-        query: {
-          limit: 1000,
-          context: `./src`,
-          name: `[path][name].[ext]`
+        loader: 'html',
+        options: {
+          attrs: ['audio:src', 'img:src', 'video:src', 'source:srcset'] // read src from video, img & audio tag
+        }
+      }, {
+        test: /\.(jsx?)$/,
+        exclude: [
+          'node_modules', 'src/js/compatibility'
+        ],
+        use: [
+          {
+            loader: 'babel'
+          }, {
+            loader: 'eslint',
+            options: {
+              fix: true
+            }
+          }
+        ]
+      }, {
+        test: /\.(svg|png|jpe?g|gif|webp)$/,
+        loader: 'url',
+        options: {
+          limit: 1000, // inline if < 1 kb
+          context: './src',
+          name: '[path][name].[ext]'
+        }
+      }, {
+        test: /\.(mp3|mp4)$/,
+        loader: 'file',
+        options: {
+          context: './src',
+          name: '[path][name].[ext]'
         }
       }
     ]
 
-  }
+  },
+
+  plugins: [
+    copy,
+    new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"})
+  ]
+
 };
 
-if(process.env.NODE_ENV === `production`) {
+if (process.env.NODE_ENV === 'production') {
 
+  //image optimizing
+  config.module.rules.push({test: /\.(svg|png|jpe?g|gif)$/, loader: 'image-webpack', enforce: 'pre'});
 
-  config.entry = paths;
+  config.devtool = '';
+
+  config.module.rules[0] = {
+    test: /\.css$/,
+    loader: ExtractTextWebpackPlugin.extract({fallbackLoader: "style?minimize", loader: "css?minimize"})
+
+  };
+  config.module.rules[1] = {
+    test: /\.scss$/,
+    loader: ExtractTextWebpackPlugin.extract({fallbackLoader: 'style?minimize', loader: 'css?minimize!sass?minimize'})
+  };
 
   config.plugins = [
-    extractCSS,
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      comments: false
-    }),
-    new webpack.DefinePlugin({
-      'process.env': {NODE_ENV: `'production'`}
-    }),
+    ...config.plugins,
+    new ExtractTextWebpackPlugin({filename: 'css/[name].css', disable: false, allChunks: true}),
     new webpack.NoErrorsPlugin(),
-    new webpack.LoaderOptionsPlugin({
-      options: {
-        debug: false,
-        minimize: true,
-        postcss: require(`postcss-cssnext`),
-        eslint: {
-          fix: true
-        }
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: "'production'"
       }
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      sourceMap: false,
+      comments: false,
+      compress: {
+        warnings: false
+      },
+      beautify: false
     })
 
-  ];
-
-  config.module.rules = [
-    {
-      test: /\.(jsx?)$/,
-      exclude: /node_modules/,
-      loader: `babel`
-    },
-    {
-      test: /\.(jsx?)$/,
-      exclude: /node_modules/,
-      enforce: `pre`,
-      loader: `eslint`
-    },
-    {
-      test: /\.css$/,
-      loader: extractCSS.extract([`css?minimize`, `postcss`])
-    },
-    {
-      test: /\.html$/,
-      loader: `html`
-    },
-    {
-      test: /\.(jpe?g|png|gif|svg|woff2?|mp3|mp4)$/i,
-      loader: `url`,
-      query: {
-        limit: 1000,
-        name: `[path][name].[ext]`,
-        context: `src`,
-        publicPath
-      }
-    }
   ];
 
 } else {
-
   config.plugins = [
-    extractCSS,
-    new webpack.LoaderOptionsPlugin({
-      options: {
-        debug: true,
-        minimize: true,
-        postcss: require(`postcss-cssnext`),
-        eslint: {
-          fix: true
-        }
-      }
-    })
-
+    ...config.plugins,
+    extractCSS
   ];
-
 }
 
-config.plugins = [...config.plugins, ...plugins];
-config.entry = [...config.entry, ...entry];
+config.plugins = [
+  ...config.plugins,
+  ...plugins
+];
+config.entry = [
+  ...config.entry,
+  ...entry
+];
 
 module.exports = config;
