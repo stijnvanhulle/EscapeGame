@@ -3,7 +3,7 @@
 * @Date:   2016-10-12T15:57:56+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-01T19:22:56+01:00
+* @Last modified time: 2016-11-03T14:49:16+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -39,7 +39,7 @@ const copy = new CopyWebpackPlugin([
 const config = {
 
   entry: [
-    './src/sass/main.scss', './src/js/main.js'
+    './src/sass/style.scss', './src/js/index.js'
   ],
 
   resolve: {
@@ -112,6 +112,8 @@ const config = {
   },
 
   plugins: [
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
     copy,
     new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"})
   ]
@@ -156,6 +158,7 @@ if (process.env.NODE_ENV === 'production') {
   ];
 
 } else {
+  //config.devtool = 'inline-sourcemap';
   config.plugins = [
     ...config.plugins,
     extractCSS
