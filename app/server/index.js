@@ -3,7 +3,7 @@
 * @Date:   2016-10-15T13:52:52+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-02T00:25:52+01:00
+* @Last modified time: 2016-11-08T17:33:35+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -15,6 +15,11 @@ const Server = require('hapi').Server;
 //const WebpackPlugin = require('hapi-webpack-plugin');
 const port = process.env.PORT || 3000;
 
+const mongodb = {
+  bluebird: false,
+  uri: 'mongodb://localhost:27017'
+};
+
 const server = new Server({
   connections: {
     routes: {
@@ -25,13 +30,24 @@ const server = new Server({
   }
 });
 
+var people = { // our "users database"
+  1: {
+    id: 1,
+    name: 'Jen Jones'
+  }
+};
 
 server.connection({port});
 
 server.register(require(`inert`), pluginHandler);
+server.register(require('hapi-auth-jwt2'), pluginHandler);
+server.register({
+  register: require('hapi-mongoose'),
+  options: options
+}, pluginHandler);
+server.register(require(`./plugins/`), pluginHandler);
 
 server.register(require(`./routes/`), pluginHandler);
-server.register(require(`./plugins/`), pluginHandler);
 
 const startServer = () => {
   server.start(err => {
