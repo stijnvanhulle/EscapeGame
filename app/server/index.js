@@ -3,21 +3,28 @@
 * @Date:   2016-10-15T13:52:52+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-08T17:33:35+01:00
+* @Last modified time: 2016-11-11T17:06:52+01:00
 * @License: stijnvanhulle.be
 */
 
 require(`dotenv`).load();
 const pluginHandler = require(`./lib/pluginHandler`);
 const path = require(`path`);
-
+const mongoose = require("mongoose");
 const Server = require('hapi').Server;
 //const WebpackPlugin = require('hapi-webpack-plugin');
 const port = process.env.PORT || 3000;
 
 const mongodb = {
-  bluebird: false,
-  uri: 'mongodb://localhost:27017'
+  options: {
+    db: {
+      native_parser: true
+    },
+    server: {
+      poolSize: 5
+    }
+  },
+  uri: 'mongodb://localhost:3001/app'
 };
 
 const server = new Server({
@@ -30,31 +37,24 @@ const server = new Server({
   }
 });
 
-var people = { // our "users database"
-  1: {
-    id: 1,
-    name: 'Jen Jones'
-  }
-};
-
 server.connection({port});
-
 server.register(require(`inert`), pluginHandler);
 server.register(require('hapi-auth-jwt2'), pluginHandler);
-server.register({
-  register: require('hapi-mongoose'),
-  options: options
-}, pluginHandler);
 server.register(require(`./plugins/`), pluginHandler);
-
 server.register(require(`./routes/`), pluginHandler);
 
 const startServer = () => {
-  server.start(err => {
+  mongoose.connect(mongodb.uri, mongodb.options, (err) => {
     if (err)
-      console.error(err);
-    console.log(`Server running at: http://localhost:${port}`);
+      console.log(err);
+
+    server.start(err => {
+      if (err)
+        console.error(err);
+      console.log(`Server running at: http://localhost:${port}`);
+    });
   });
+
 };
 
 /*if (process.env.NODE_ENV === 'production') {

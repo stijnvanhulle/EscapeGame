@@ -3,22 +3,26 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-08T17:18:29+01:00
+* @Last modified time: 2016-11-11T18:06:37+01:00
 * @License: stijnvanhulle.be
 */
-var people = { // our "users database"
-  123: {
-    id: 1,
-    name: 'Jen Jones'
-  }
-};
+const {Members, Access} = require('../models/mongo');
+const moment = require('moment');
 
 var validate = function(decoded, request, callback) {
-  if (people[decoded.id]) {
-    return callback(null, true);
-  } else {
-    return callback(null, false);
-  }
+  Access.findOne({access_token: decoded.access_token, expires_in: decoded.expires_in}).exec(function(err, access) {
+    if (err)
+      console.log(err);
+    if (access && moment().isAfter(moment(decoded.expires_in))) {
+      return callback(null, true);
+    } else if (!moment().isAfter(moment(decoded.expires_in))) {
+      console.log('Key expired: ',decoded);
+      return callback(null, false);
+    } else {
+      return callback(null, false);
+    }
+  });
+
 };
 
 module.exports.register = (server, options, next) => {
