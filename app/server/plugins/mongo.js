@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-11T17:44:40+01:00
+* @Last modified time: 2016-11-11T18:17:47+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require( "mongoose" );
@@ -11,6 +11,10 @@ const mongoose = require( "mongoose" );
 const loadDefaults = ( {
   Members
 } ) => {
+  //remove first
+  Members.remove( {}, function( err ) {
+    if ( err ) console.log( err );
+  } );
 
   let newMember = new Members( {
     email: 'stijn.vanhulle@outlook.com',
