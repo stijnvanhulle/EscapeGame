@@ -5,8 +5,10 @@
     "development": "yarn run clean && nodemon . & NODE_ENV=development webpack --watch",
     "start": "yarn run server",
     "server": "forever .",
+    "mqtt": "bash ../mqtt/bin/run.sh",
     "mongodb": "sudo mongod --dbpath server/mongodb --port 3001",
     "clean": "rimraf ./server/public/",
+    "install": "yarn install",
     "webpack": "yarn run clean && webpack-dev-server --progress --inline --hot --port 3000",
     "production": "yarn run clean && NODE_ENV=production webpack -p"
   },
@@ -28,7 +30,9 @@
     "lodash": "^4.16.4",
     "moment": "^2.15.2",
     "mongoose": "^4.6.6",
+    "mqtt": "^2.1.1",
     "remove": "^0.1.5",
+    "save": "^2.3.0",
     "socket.io": "^1.5.1"
   },
   "devDependencies": {

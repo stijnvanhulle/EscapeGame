@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-03T15:17:29+01:00
+* @Last modified time: 2016-11-14T17:32:20+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -76,7 +76,8 @@ class App extends Component {
   }
 
   render() {
-
+    this.socket = io(`/`);
+      this.socket.emit(`joined`, 'stijn');
     return (
       <div className='container-fluid'>
         <Header />
