@@ -13,6 +13,8 @@ import grovepi
 import grove_rgb_lcd as lcd
 from concurrent.futures import ProcessPoolExecutor
 
+import faceDetection
+
 # CONNECTORS
 
 #moisure=0
@@ -104,6 +106,17 @@ def on_message(client, userdata, msg):
 		 		elif str(_port)=="I2C-1" or str(_port)=="I2C-2" or str(_port)=="I2C-3":
 		 			print('Text to display: '+ str(_value))
 					lcd.setText(str(_value))
+
+	if msg.topic=="detection":
+		parsed_json=json.loads(str(msg.payload))
+		_image1 =parsed_json['image1']
+		_image2 =parsed_json['image2']	
+		_read=parsed_json['read']
+		if _read:
+			if _image1 is not None  and _image2 is not None:
+			percent=faceDetection.get(_image1,_image2)
+			client.publish("detection", makeJsonObject_detection(percent))			
+			
 			
 
 
@@ -135,6 +148,10 @@ def init():
 
 def makeJsonObject(value=None,port=None,type=None,read=False):
 	item=json.dumps({"port":port, "type":type,"value":value,"read":read})
+	return str(item)
+
+def makeJsonObject_detection(value=None,image1=None,image2=None,read=False):
+	item=json.dumps({"value":value, "image1":image1,"image2":image2, "read":read})
 	return str(item)
 
 def exit():
