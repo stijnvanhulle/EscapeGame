@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-21T16:29:00+01:00
+* @Last modified time: 2016-11-21T16:54:47+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -43,7 +43,7 @@ module.exports.register = (server, options, next) => {
         var mes = {
           port: 4,
           type: 'OUTPUT',
-          value: "SOS",
+          value: "STIJN",
           read: false,
           realtime: false,
           timeout:0

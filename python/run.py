@@ -94,6 +94,37 @@ def sendToMessage(_port,_type="INPUT"):
 	except Exception as error:
 		print('Error:',error)
 
+def addRealtimeData(obj):
+	global realtimeData
+	exist=False
+	port=obj['port']
+	data=[]
+
+	for item in realtimeData:
+		if item["port"]==port:
+			item=obj
+			exist=True
+		data.append(item)
+	
+
+	if exist:
+		realtimeData=data
+	else:
+		realtimeData.append(obj)
+
+	return realtimeData
+
+def removeRealtimeData(port):
+	global realtimeData
+
+	data=[]
+	for item in realtimeData:
+		if item["port"]!=port:
+			data.append(item)
+	realtimeData=data
+
+	return realtimeData
+
 def on_connect(client, userdata, rc):
 	print("Connected to MQTT-broker on " + MQTT_BROKER )
 	client.subscribe("online")
@@ -101,7 +132,7 @@ def on_connect(client, userdata, rc):
 	client.subscribe("detection")
 
 def on_message(client, userdata, msg):
-	global realtimeData
+	
 
 	if msg.topic=="online":
 		parsed_json=json.loads(convertJson(msg.payload))
@@ -121,13 +152,10 @@ def on_message(client, userdata, msg):
 
 #append or remove data
 			if _realtime:
-				realtimeData.append({"port":_port, "type": str(_type),"value":None,"timeout":_timeout})
+				addRealtimeData({"port":_port, "type": str(_type),"value":None,"timeout":_timeout})
 			else:
-				data=[]
-				for item in realtimeData:
-					if item["port"]!=_port:
-						data.append(item)
-				realtimeData=data
+				removeRealtimeData(_port)
+				
 						
 		else:
 			_value=parsed_json['value']
@@ -138,7 +166,7 @@ def on_message(client, userdata, msg):
 						lcd.setText(str(_value))
 					else:
 						#append or remove data
-						realtimeData.append({"port":_port, "type": str(_type),"value":str(_value),"timeout":None})
+						addRealtimeData({"port":_port, "type": str(_type),"value":str(_value),"timeout":None})
 				elif isFloat(_port):
 					pinMode(_port,_type)
 					if _value==True:
@@ -208,7 +236,6 @@ def realtime():
 					_timeout=item['timeout']
 					_value=item['value']
 					if _port is not None and _type is not None:
-						print(_value)
 						if _value is not None:
 							led.startMorse(str(_value),_port)
 						else:

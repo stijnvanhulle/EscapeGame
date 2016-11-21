@@ -85,7 +85,7 @@ def startMorse(text="",led=4,UNIT_length=0.300):
 	#while stop is False:
 	try:
 		morseWord=encode(text)
-		print(morseWord)
+		print(text,morseWord)
 		for i in range(len(morseWord)):
 			if str(morseWord[i])=='.':
 				dot(led,UNIT_length)
