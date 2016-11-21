@@ -3,10 +3,9 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-15T17:25:02+01:00
+* @Last modified time: 2016-11-18T15:42:30+01:00
 * @License: stijnvanhulle.be
 */
-
 module.exports.register = (server, options, next) => {
 
   const io = require(`socket.io`)(server.listener);
@@ -14,13 +13,15 @@ module.exports.register = (server, options, next) => {
   let users = [];
 
   io.on(`connection`, socket => {
-    const client = server.plugins['mqtt'];
+    const {client} = server.plugins['mqtt'];
     server.expose('socket', socket);
     const {id: socketId} = socket;
 
     console.log('Socket connection', socket.id);
 
-    socket.on(`publicMsg`, data => io.emit(`publicMsg`, data));
+    socket.on('sendToPi', data => {
+      client.publish('message', JSON.stringify(data));
+    });
 
     socket.on(`joined`, username => {
 
@@ -35,13 +36,9 @@ module.exports.register = (server, options, next) => {
       if (user)
         socket.broadcast.emit(`leave`, user.username);
       users = users.filter(u => u.socketId !== socketId);
-    });
+    });});
 
-  });
-
-  next();
-
-};
+  next();};
 
 module.exports.register.attributes = {
   name: `socket`,
