@@ -1,1 +1,4 @@
-mqtt
+node_modules/
+BACKUP/
+server/public/
+server/mongodb
