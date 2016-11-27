@@ -3,12 +3,12 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-27T14:25:15+01:00
+* @Last modified time: 2016-11-27T14:25:05+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require( "mongoose" );
 let model;
-let MODEL="Member";
+let MODEL="EventType";
 
 
 module.exports.load = () => {
@@ -16,12 +16,8 @@ module.exports.load = () => {
   const Schema = mongoose.Schema;
 
   const schema = new Schema( {
-    id:mongoose.Schema.ObjectId,
-    email: String,
-    firstName: String,
-    lastName: String,
-    password: String,
-    isAdmin:Boolean
+    id: mongoose.Schema.ObjectId,
+    name: String
   } );
 
   model = db.model( MODEL, schema );
@@ -32,6 +28,6 @@ module.exports.load = () => {
 module.exports.getModel = () => model;
 
 module.exports.load.attributes = {
-  name: `mongo_members`,
+  name: `mongo_eventType`,
   version: `0.1.0`
 };

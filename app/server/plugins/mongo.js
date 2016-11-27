@@ -3,40 +3,39 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-11T18:17:47+01:00
+* @Last modified time: 2016-11-27T14:40:30+01:00
  * @License: stijnvanhulle.be
  */
-const mongoose = require( "mongoose" );
+const mongoose = require("mongoose");
+const mongoLib=require('../models/mongo');
 
-const loadDefaults = ( {
-  Members
-} ) => {
+const loadDefaults = ({Member}) => {
   //remove first
-  Members.remove( {}, function( err ) {
-    if ( err ) console.log( err );
-  } );
+  Member.remove({}, function(err) {
+    if (err)
+      console.log(err);
+    }
+  );
 
-  let newMember = new Members( {
-    email: 'stijn.vanhulle@outlook.com',
-    password: 'stijn',
-    firstName: 'Stijn',
-    lastName: 'Van Hulle'
-  } );
-  newMember.save( function( err, item ) {
-    if ( err ) console.log( err );
-    console.log( 'stijn added' );
-  } );
+  let newMember = new Member({email: 'stijn.vanhulle@outlook.com', password: 'stijn', firstName: 'Stijn', lastName: 'Van Hulle'});
+  newMember.save(function(err, item) {
+    if (err)
+      console.log(err);
+    console.log('stijn added');
+  });
 };
 
-module.exports.register = ( server, options, next ) => {
+module.exports.register = (server, options, next) => {
   var db = mongoose.connection;
-  db.on( 'error', console.error.bind( console, 'connection error:' ) );
-  db.once( 'open', function() {
-    loadDefaults( require( '../models/mongo' ) );
-    console.log( 'Mongo connected' );
-  } );
-
-  next();
+  db.on('error',(err)=>{
+    next(err);
+  });
+  db.once('open', ()=> {
+    console.log('Mongo connected');
+    mongoLib.load();
+    loadDefaults(mongoLib.getModels());
+    next();
+  });
 
 };
 
