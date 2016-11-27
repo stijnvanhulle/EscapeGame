@@ -1,6 +1,6 @@
 {
   "name": "template",
-  "version": "0.0.11",
+  "version": "0.0.1",
   "scripts": {
     "development": "yarn run clean && nodemon . & NODE_ENV=development webpack --watch",
     "build": "webpack",
@@ -13,11 +13,10 @@
     "clean": "rimraf ./server/public/",
     "webpack": "yarn run clean && webpack-dev-server --progress --inline --hot --port 3000",
     "production": "yarn run clean && NODE_ENV=production webpack -p",
-    "upgrade": "npm version patch",
-    "push": "npm version patch",
+    "upgrade": "npm version patch --sign-git-tag=true",
     "preversion": "yarn test",
-    "version": "yarn run build && cd ../  && git add --all && git commit -a -m 'Version %s' && cd ./app",
-    "postversion": "cd ../  && git push --tags && cd ./app"
+    "version": "yarn run build && git add --all",
+    "postversion": "git push && git push --tags"
   },
   "main": "server/index.js",
   "engines": {

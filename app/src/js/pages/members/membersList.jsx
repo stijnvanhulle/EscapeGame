@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-05T17:03:55+01:00
+* @Last modified time: 2016-11-27T17:13:49+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -15,6 +15,8 @@ const MembersList = ({members}) => {
       <div key={i}>{item.firstName} {item.lastName}</div>
     );
   };
+
+  
 
   const amount = members.length;
   return (
