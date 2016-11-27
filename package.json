@@ -1,6 +1,6 @@
 {
   "name": "template",
-  "version": "0.0.1",
+  "version": "0.0.13",
   "scripts": {
     "start": "yarn run server",
     "development": "yarn run clean && nodemon . & NODE_ENV=development webpack --watch",
@@ -14,11 +14,15 @@
     "mongodb": "sudo mongod --dbpath server/mongodb --port 3001",
     "clean": "rimraf ./server/public/",
     "webpack": "yarn run clean && webpack-dev-server --progress --inline --hot --port 3000",
-    "preversion": "yarn test",
-    "version": "yarn run build && git add --all",
+    "preversion": "npm test",
+    "version": "npm run build && git add --all ./",
     "postversion": "git push && git push --tags"
   },
   "main": "server/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stijnvanhulle/EscapePlan"
+  },
   "engines": {
     "node": "7.0.0"
   },
