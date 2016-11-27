@@ -2,9 +2,11 @@
   "name": "template",
   "version": "0.0.1",
   "scripts": {
-    "development": "yarn run clean && nodemon . & NODE_ENV=development webpack --watch",
-    "build": "webpack",
     "start": "yarn run server",
+    "development": "yarn run clean && nodemon . & NODE_ENV=development webpack --watch",
+    "production": "yarn run clean && NODE_ENV=production webpack -p",
+    "upgrade": "npm version patch --sign-git-tag=true",
+    "build": "webpack",
     "server": "forever .",
     "test": "yarn clean",
     "mqtt": "bash ../mqtt/bin/run.sh",
@@ -12,8 +14,6 @@
     "mongodb": "sudo mongod --dbpath server/mongodb --port 3001",
     "clean": "rimraf ./server/public/",
     "webpack": "yarn run clean && webpack-dev-server --progress --inline --hot --port 3000",
-    "production": "yarn run clean && NODE_ENV=production webpack -p",
-    "upgrade": "npm version patch --sign-git-tag=true",
     "preversion": "yarn test",
     "version": "yarn run build && git add --all",
     "postversion": "git push && git push --tags"
