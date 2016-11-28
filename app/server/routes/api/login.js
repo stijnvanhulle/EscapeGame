@@ -3,11 +3,11 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-11T18:02:49+01:00
+* @Last modified time: 2016-11-28T21:50:54+01:00
  * @License: stijnvanhulle.be
  */
 
-const url = require( './url' );
+const url = require('./lib/url');
 const moment = require( 'moment' );
 const {
   Members,

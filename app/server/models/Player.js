@@ -3,11 +3,11 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-28T16:40:41+01:00
+* @Last modified time: 2016-11-28T22:18:32+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
-const {Player: PlayerMongo} = require('./mongo');
+const {Player: Model} = require('./mongo');
 
 class Emitter extends EventEmitter {}
 class Player {
@@ -17,6 +17,7 @@ class Player {
     this.lastName = lastName;
     this.birthday = birthday;
     this.email = email;
+    this.model=Model;
 
     this.reset();
   }
@@ -28,8 +29,8 @@ class Player {
     return new Promise((resolve, reject) => {
       try {
         const item = this.json(false);
-        const player = new PlayerMongo(item);
-        console.log(player);
+        const player = new Model(item);
+
         player.save(function(err, item) {
           if (err) {
             reject(err);
@@ -50,6 +51,7 @@ class Player {
       var obj = this;
       var copy = Object.assign({}, obj);
       copy.events = null;
+      copy.model=null;
       if (stringify) {
         json = JSON.stringify(copy);
       } else {
