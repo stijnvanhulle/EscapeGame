@@ -3,24 +3,20 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-27T14:25:05+01:00
+* @Last modified time: 2016-11-28T16:54:01+01:00
  * @License: stijnvanhulle.be
  */
-const mongoose = require( "mongoose" );
+const mongoose = require("mongoose");
 let model;
-let MODEL="EventType";
-
+let MODEL = "EventType";
 
 module.exports.load = () => {
   const db = mongoose.connection;
   const Schema = mongoose.Schema;
 
-  const schema = new Schema( {
-    id: mongoose.Schema.ObjectId,
-    name: String
-  } );
+  const schema = new Schema({id: Number, name: String});
 
-  model = db.model( MODEL, schema );
+  model = db.model(MODEL, schema);
   return model;
 
 };

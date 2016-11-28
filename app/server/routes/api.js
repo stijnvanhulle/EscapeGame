@@ -3,7 +3,7 @@
  * @Date:   2016-10-15T13:55:51+02:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-08T16:40:11+01:00
+* @Last modified time: 2016-11-28T15:03:06+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -23,5 +23,6 @@ const index = {
 
 
 module.exports = [ index,
-  ...require( './api/login' )
+  ...require( './api/login' ),
+  ...require( './api/player' )
 ];

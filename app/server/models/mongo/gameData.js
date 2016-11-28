@@ -3,27 +3,20 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-28T16:54:08+01:00
+* @Last modified time: 2016-11-28T14:24:25+01:00
  * @License: stijnvanhulle.be
  */
-const mongoose = require( "mongoose" );
+const mongoose = require("mongoose");
 let model;
-let MODEL="GameEvent";
-
+let MODEL = "GameData";
 
 module.exports.load = () => {
   const db = mongoose.connection;
   const Schema = mongoose.Schema;
 
-  const schema = new Schema( {
-  id: Number,
-    date: String,
-    gameId: Number,
-    data:String,
-    type:mongoose.Schema.ObjectId
-  } );
+  const schema = new Schema({id: mongoose.Schema.ObjectId, data: String});
 
-  model = db.model( MODEL, schema );
+  model = db.model(MODEL, schema);
   return model;
 
 };
@@ -31,6 +24,6 @@ module.exports.load = () => {
 module.exports.getModel = () => model;
 
 module.exports.load.attributes = {
-  name: `mongo_gameEvent`,
+  name: `mongo_gameData`,
   version: `0.1.0`
 };
