@@ -33,7 +33,7 @@ display_status=""
 #pinMode(relay,"OUTPUT")
 
 #variables
-isCode
+isCode=None
 realtimeData=[]
 ports=[0,1,2,3,4,5,6,7,8]
 isReading=False
@@ -236,13 +236,18 @@ def init():
 
 	# INIT
 	reset()
-	client.publish("online", makeJsonObject(True))
+	client.publish("online", makeJsonOnlineObject('Box'))
 
 	sleep(0.1)
 	lcd.setRGB(100,100,100)
 	lcd.setText("LOADING ... ")
 	lcd.setText("")
 	started=True
+
+
+def makeJsonOnlineObject(device=''):
+	item=json.dumps({"device":device})
+	return str(item)
 
 def makeJsonObject(value=None,port=None,type=None,read=False,isReading=None):
 	item=json.dumps({"port":port, "type":type,"value":value,"read":read,"isReading":isReading})
