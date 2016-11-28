@@ -1,6 +1,6 @@
 {
   "name": "template",
-  "version": "1.0.1-pre",
+  "version": "0.1.0",
   "scripts": {
     "start": "yarn run server",
     "development": "yarn run clean && nodemon . & NODE_ENV=development webpack --watch",
