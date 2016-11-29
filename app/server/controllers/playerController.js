@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T14:52:40+01:00
+* @Last modified time: 2016-11-29T16:17:46+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -31,6 +31,7 @@ module.exports.add = (player) => {
 
     } catch (e) {
       console.log(e);
+      reject(e);
     }
 
   });

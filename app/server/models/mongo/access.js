@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T14:50:28+01:00
+* @Last modified time: 2016-11-29T16:28:59+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -25,7 +25,7 @@ module.exports.load = () => {
     this.date = moment().valueOf();
     next();
   });
-  model = db.model(MODEL, schema);
+  model = db.model(MODEL, schema,MODEL);
 
   return model;
 

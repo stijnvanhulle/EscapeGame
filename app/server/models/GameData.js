@@ -3,29 +3,37 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T16:45:48+01:00
+* @Last modified time: 2016-11-29T17:03:59+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
-const {Game: Model} = require('./mongo');
+const {GameData: Model} = require('./mongo');
 
 class Emitter extends EventEmitter {}
 
-class Game {
-  //obj of players
-  constructor(teamName='', players = []) {
-    this.players = players;
-    this.teamName = teamName;
+class GameData {
+  constructor(data) {
+    this.data=data;
     this.reset();
 
   }
 
   reset() {
-    this.id=null;
-    this.model = Model;
     this.date = null;
+    this.id = null;
+    this.model = Model;
     this.events = new Emitter();
   }
+
+  load({id,data}){
+    try {
+      this.data=JSON.parse(data);
+      this.id=id;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
 
   save() {
     return new Promise((resolve, reject) => {
@@ -55,7 +63,7 @@ class Game {
       var copy = Object.assign({}, obj);
       copy.events = null;
       copy.model = null;
-      copy.players = null;
+      copy.data = JSON.stringify(copy.data);
       if (stringify) {
         json = JSON.stringify(copy);
       } else {
@@ -71,4 +79,4 @@ class Game {
 
 }
 
-module.exports = Game;
+module.exports = GameData;

@@ -3,12 +3,11 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T14:53:33+01:00
+* @Last modified time: 2016-11-29T16:30:12+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
 const moment = require("moment");
-const scheduleJob = require("../../lib/scheduleJob");
 let model;
 let MODEL = "GameEvent";
 
@@ -25,14 +24,11 @@ module.exports.load = () => {
 
   schema.pre('save', function(next) {
     //schedule job
-    scheduleJob.addRule(moment().add('10','seconds'),this,()=>{
-      console.log('success');
-    });
     this.date = moment().valueOf();
     next();
   });
 
-  model = db.model(MODEL, schema);
+    model = db.model(MODEL, schema,MODEL);
 
 
 

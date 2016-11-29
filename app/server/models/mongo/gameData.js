@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T14:53:29+01:00
+* @Last modified time: 2016-11-29T16:29:05+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
@@ -25,7 +25,7 @@ module.exports.load = () => {
     this.date = moment().valueOf();
     next();
   });
-  model = db.model(MODEL, schema);
+    model = db.model(MODEL, schema,MODEL);
 
 
   return model;

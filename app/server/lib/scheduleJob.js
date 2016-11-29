@@ -3,7 +3,7 @@
 * @Date:   2016-11-29T11:59:30+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T12:17:34+01:00
+* @Last modified time: 2016-11-29T16:12:03+01:00
 * @License: stijnvanhulle.be
 */
 const {setTomoment} = require('./functions');
