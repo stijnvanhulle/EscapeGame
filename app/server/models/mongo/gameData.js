@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T14:17:04+01:00
+* @Last modified time: 2016-11-29T14:53:29+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
@@ -14,6 +14,10 @@ let MODEL = "GameData";
 module.exports.load = () => {
   const db = mongoose.connection;
   const Schema = mongoose.Schema;
+
+  if (db.models[MODEL]) {
+    return db.models[MODEL];
+  }
 
   const schema = new Schema({id: Number, data: String});
 

@@ -3,13 +3,14 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T14:19:39+01:00
+* @Last modified time: 2016-11-29T14:51:33+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
-const {Member}=require('../models/mongo');
+const {Member} = require('../models/mongo');
 
 const loadDefaults = () => {
+
   //remove first
   Member.remove({}, function(err) {
     if (err)
@@ -27,10 +28,10 @@ const loadDefaults = () => {
 
 module.exports.register = (server, options, next) => {
   var db = mongoose.connection;
-  db.on('error',(err)=>{
+  db.on('error', (err) => {
     next(err);
   });
-  db.once('open', ()=> {
+  db.once('open', () => {
     console.log('Mongo connected');
     loadDefaults();
     next();

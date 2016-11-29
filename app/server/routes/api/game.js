@@ -3,15 +3,13 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T11:53:02+01:00
+* @Last modified time: 2016-11-29T14:46:24+01:00
  * @License: stijnvanhulle.be
  */
 
 const url = require('./lib/url');
 const moment = require('moment');
 const {Game} = require('../../models');
-
-const {gameController} = require('../../controllers');
 
 module.exports = [
   {
@@ -21,6 +19,7 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
+      const {gameController} = require('../../controllers');
       try {
         let {players, teamName} = request.headers;
         players = JSON.parse(players);
