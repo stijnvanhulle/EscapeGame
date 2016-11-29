@@ -3,28 +3,35 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-28T16:54:14+01:00
+* @Last modified time: 2016-11-29T14:17:26+01:00
  * @License: stijnvanhulle.be
  */
-const mongoose = require( "mongoose" );
+const mongoose = require("mongoose");
+const moment = require("moment");
 let model;
-let MODEL="Member";
-
+let MODEL = "Member";
 
 module.exports.load = () => {
   const db = mongoose.connection;
   const Schema = mongoose.Schema;
 
-  const schema = new Schema( {
-  id: Number,
+  const schema = new Schema({
+    id: Number,
     email: String,
     firstName: String,
     lastName: String,
     password: String,
-    isAdmin:Boolean
-  } );
+    isAdmin: Boolean,
+    date: String
+  });
 
-  model = db.model( MODEL, schema );
+  schema.pre('save', function(next) {
+    this.date = moment().valueOf();
+    next();
+  });
+
+  model = db.model(MODEL, schema);
+
   return model;
 
 };

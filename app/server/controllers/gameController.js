@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-28T23:00:12+01:00
+* @Last modified time: 2016-11-29T11:52:13+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -21,8 +21,8 @@ module.exports.add = (game) => {
 
       calculateId(GameModel).then(id => {
         game.id = id;
-        game.save().then((game) => {
-          resolve(game);
+        game.save().then((doc) => {
+          resolve(doc);
         }).catch(err => {
           reject(err);
         });
@@ -50,8 +50,8 @@ const promiseFor = (promise, array) => {
     var actions = array.map(fn);
     var results = Promise.all(actions);
 
-    results.then(function(data) {
-      resolve(data);
+    results.then(function(doc) {
+      resolve(doc);
     }).catch(function(err) {
       reject(err);
     });

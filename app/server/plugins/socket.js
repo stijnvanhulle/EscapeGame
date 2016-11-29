@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-28T14:19:49+01:00
+* @Last modified time: 2016-11-29T14:01:56+01:00
 * @License: stijnvanhulle.be
 */
 module.exports.register = (server, options, next) => {
@@ -31,9 +31,7 @@ module.exports.register = (server, options, next) => {
 
     socket.on(`online`, obj => {
 
-      users.push({username, socketId});
-      socket.emit(`login`, users);
-      socket.broadcast.emit(`join`, username);
+    
 
     });
 

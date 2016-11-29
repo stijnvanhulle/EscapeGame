@@ -3,11 +3,11 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-28T22:45:02+01:00
+* @Last modified time: 2016-11-29T11:53:27+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
-const {Player: Model} = require('./mongo');
+const {Game: Model} = require('./mongo');
 
 class Emitter extends EventEmitter {}
 

@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-28T22:06:32+01:00
+* @Last modified time: 2016-11-29T11:46:54+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -20,8 +20,8 @@ module.exports.add = (player) => {
 
       calculateId(PlayerMongo).then(id=>{
         player.id=id;
-        player.save().then((player) => {
-          resolve(player);
+        player.save().then((doc) => {
+          resolve(doc);
         }).catch(err => {
           reject(err);
         });
