@@ -1,0 +1,137 @@
+[{
+  "type": "start",
+  "data": {
+    "description": "Zoek de juiste president",
+    "file": null,
+    "hints": [
+      ""
+    ],
+    "isLetter": true,
+    "answer": {
+      "name": "President x",
+      "value": {
+        "location": "kortrijk",
+        "date": "sdfs",
+        "book": 1
+      }
+    }
+  }
+
+}, {
+  "type": "start",
+  "data": {
+    "description": "Zoek de juiste president",
+    "file": null,
+    "hints": [
+      ""
+    ],
+    "isLetter": true,
+    "answer": {
+      "name": "President stijn",
+      "value": {
+        "location": "brugge",
+        "date": "sdfs",
+        "book": 2
+      }
+    }
+  }
+}, {
+  "type": "sound",
+  "description": "NUMMER speelt af",
+  "file": "/nummer.mp3",
+  "hints": [
+    "Vul het juiste jaargetal in"
+  ],
+  "isLetter": true,
+  "answer": null
+}, {
+  "type": "bom",
+  "data": {
+    "description": "",
+    "file": "/bom.mp3",
+    "hints": [
+      ""
+    ],
+    "isLetter": false,
+    "answer": null
+  }
+}, {
+  "type": "light",
+  "data": {
+    "description": "Scan het juiste schilderij",
+    "file": "/bom.mp3",
+    "hints": [
+      ""
+    ],
+    "answer": null
+  }
+
+}, {
+  "type": "anthem",
+  "data": {
+    "description": "",
+    "file": "/volkslied.mp3",
+    "hints": [
+      "Ga naar het juiste schilderij"
+    ],
+    "isLetter": false,
+    "answer": null
+  }
+
+}, {
+  "type": "scan",
+  "data": {
+    "description": "Zoek het juiste schilderij",
+    "file": "/image.jpg",
+    "hints": [
+      "Scan met de app"
+    ],
+    "isLetter": true,
+    "answer": null
+  }
+
+}, {
+  "type": "find",
+  "data": {
+    "description": "",
+    "file": null,
+    "hints": [
+      "Zoek de juiste key"
+    ],
+    "isLetter": true,
+    "answer": null
+  }
+
+}, {
+  "type": "book",
+  "data": {
+    "description": "Zoek het juiste woord",
+    "file": null,
+    "hints": [
+      "Kijk in de woordenboeken",
+      "KIjk naar de juiste pagina's",
+      "Combineer deze en vindt het jusiste woord"
+    ],
+    "isLetter": true,
+    "answer": {
+      "name": "patat",
+      "value": null
+    }
+  }
+
+}, {
+  "type": "finish",
+  "data": {
+    "description": "Wat is de naam van de alien?",
+    "file": null,
+    "hints": [
+      "Probeer de letters die je gekregen hebt de combineren",
+      "Locatie zit verboregn in de boeken",
+      "Kijk naar het juiste boek",
+      "De prsedident heeft een pagina met de locatie van de bunker"
+    ],
+    "isLetter": false,
+    "answer": null
+  }
+
+}]

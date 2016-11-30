@@ -3,37 +3,75 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T17:22:47+01:00
+* @Last modified time: 2016-11-30T16:18:18+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
-const {Member: MemberModel, GameData: GameDataModel} = require('../models/mongo');
-const {Member, GameData} = require('../models');
-const {calculateId} = require('../controllers/lib/functions');
+const {Member: MemberModel, GameData: GameDataModel, EventType: EventTypeModel} = require('../models/mongo');
+const {Member, GameData, EventType} = require('../models');
+const {calculateId, removeDataFromModel} = require('../controllers/lib/functions');
+const gameDatas = require("../../private/gameData.json");
+const eventTypes = require("../../private/eventType.json");
+
+const {promiseFor} = require('../lib/functions');
+
+const promise_gameData = (item, i) => {
+  return new Promise((resolve, reject) => {
+    if (item) {
+      let newGameData = new GameData(gameName = 'Alien', item);
+
+      calculateId(GameDataModel).then(id => {
+        newGameData.id = id + i;
+        newGameData.save().then(doc => {
+          resolve(doc);
+        }).catch(err => {
+          reject(err);
+        });
+      });
+    } else {
+      reject('No item');
+    }
+  });
+};
+
+const promise_eventType = (item, i) => {
+  return new Promise((resolve, reject) => {
+    if (item) {
+      let newEventType = new EventType(item.name);
+      calculateId(EventTypeModel).then(id => {
+        newEventType.id = id + i;
+        newEventType.save().then(doc => {
+          resolve(doc);
+        }).catch(err => {
+          reject(err);
+        });
+      });
+
+    } else {
+      reject('No item');
+    }
+  });
+};
 
 const loadDefaults = () => {
 
-  //remove first
-  MemberModel.remove({});
-  MemberModel.remove({});
+  removeDataFromModel(MemberModel, GameDataModel).then((data) => {
+    return promiseFor(promise_eventType, eventTypes);
+  }).then((item) => {
+    console.log('Gametypes added');
+    return promiseFor(promise_gameData, gameDatas);
+  }).then((item) => {
+    console.log('GameData added');
+  }).catch(err => {
+    console.log(err);
+  });
 
   let newMember = new MemberModel({email: 'stijn.vanhulle@outlook.com', password: 'stijn', firstName: 'Stijn', lastName: 'Van Hulle'});
   newMember.save(function(err, item) {
     if (err)
       console.log(err);
-  });
-
-  let newGameData=new GameData({
-    seconds:2
-  });
-
-  calculateId(GameDataModel).then(id => {
-    newGameData.id = id;
-    newGameData.save(function(err, item) {
-      if (err)
-        console.log(err);
-    });
-  });
+    }
+  );
 
 };
 

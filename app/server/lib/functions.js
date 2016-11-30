@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T21:42:39+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T14:56:00+01:00
+* @Last modified time: 2016-11-30T16:18:38+01:00
 * @License: stijnvanhulle.be
 */
 const moment = require("moment");
@@ -11,25 +11,29 @@ const moment = require("moment");
 let functions = {};
 
 functions.promiseFor = (promise, array) => {
-  console.log(promise, array);
   return new Promise((resolve, reject) => {
-    var fn = function asyncMultiplyBy2(item) { // sample async action
-      if (item) {
-        return promise(item);
-      } else {
-        return reject('no item');
-      }
+    try {
+      let ID=0;
+      var fn = function asyncMultiplyBy2(item) { // sample async action
+        if (item) {
+          return promise(item,ID++);
+        } else {
+          return reject('no item');
+        }
+      };
 
-    };
+      var actions = array.map(fn);
+      var results = Promise.all(actions);
 
-    var actions = array.map(fn);
-    var results = Promise.all(actions);
+      results.then(function(doc) {
+        resolve(doc);
+      }).catch(function(err) {
+        reject(err);
+      });
+    } catch (e) {
+      reject(e);
+    }
 
-    results.then(function(doc) {
-      resolve(doc);
-    }).catch(function(err) {
-      reject(err);
-    });
   });
 };
 

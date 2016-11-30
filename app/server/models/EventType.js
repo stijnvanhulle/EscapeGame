@@ -3,37 +3,31 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-30T15:27:05+01:00
+* @Last modified time: 2016-11-30T12:44:39+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
-const {GameData: Model} = require('./mongo');
+const {EventType: Model} = require('./mongo');
 
 class Emitter extends EventEmitter {}
 
-class GameData {
-  constructor(gameName="alien",data,typeId=1) {
-    this.data=data;
-    this.gameName=gameName;
-    this.typeId=typeId;
+class EventType {
+  constructor(name) {
+    this.name=name;
     this.reset();
 
   }
 
   reset() {
-    this.date = null;
     this.id = null;
-    this.typeId=null;
     this.model = Model;
     this.events = new Emitter();
   }
 
-  load({gameName,id,data,typeId}){
+  load({id,name}){
     try {
-      this.gameName=gameName;
-      this.data=JSON.parse(data);
+      this.name=name;
       this.id=id;
-      this.typeId=typeId;
     } catch (e) {
       console.log(e);
     }
@@ -68,7 +62,6 @@ class GameData {
       var copy = Object.assign({}, obj);
       copy.events = null;
       copy.model = null;
-      copy.data = JSON.stringify(copy.data);
       if (stringify) {
         json = JSON.stringify(copy);
       } else {
@@ -84,4 +77,4 @@ class GameData {
 
 }
 
-module.exports = GameData;
+module.exports = EventType;

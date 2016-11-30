@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T17:07:20+01:00
+* @Last modified time: 2016-11-30T15:19:05+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -20,15 +20,20 @@ class GameEvent {
 
   reset() {
     this.gameDataId=null;
-    this.typeId=null;
     this.date = null;
     this.id = null;
+    this.isActive=true;
+    this.activateDate=null;
+    this.endDate=null;
     this.model = Model;
     this.events = new Emitter();
   }
-  createGameData({gameDataId,typeId}){
+  createGameData({gameDataId,isActive,activateDate,endDate}){
     this.gameDataId=gameDataId;
-    this.typeId=typeId;
+    this.isActive=active;
+    this.endDate= endDate;
+    this.activateDate=activateDate;
+
   }
 
   save() {
