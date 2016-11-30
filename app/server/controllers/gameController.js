@@ -3,9 +3,11 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-30T16:08:23+01:00
+* @Last modified time: 2016-11-30T23:59:22+01:00
 * @License: stijnvanhulle.be
 */
+
+const {io, client} = require('../lib/global');
 
 const moment = require('moment');
 
@@ -14,8 +16,10 @@ const scheduleJob = require("../lib/scheduleJob");
 
 const {Game, GameEvent, GameData} = require('../models');
 
-const {promiseFor} = require('../lib/functions');
+const {promiseFor, setToMoment} = require('../lib/functions');
 const {Game: GameModel, GameEvent: GameEventModel, GameMember: GameMemberModel, GameData: GameDataModel} = require('../models/mongo');
+
+const socketNames = require('../lib/socketNames');
 
 module.exports.add = (game) => {
   return new Promise((resolve, reject) => {
@@ -41,6 +45,31 @@ module.exports.add = (game) => {
 
 };
 
+const updateGameEvent = (obj) => {
+  return new Promise((resolve, reject) => {
+    if (!obj && obj.id)
+      reject('No id for gameEvent');
+
+    if (!obj instanceof GameEvent) {
+      reject('No instance of gameEvent');
+    }
+    obj = obj.json(false);
+    GameEventModel.update({
+      id: obj.id
+    }, {
+      isActive: obj.isActive
+    }, {
+      multi: true
+    }, function(err, raw) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(raw);
+      }
+    });
+  });
+};
+
 const getGameDataFromId = (id) => {
   return new Promise((resolve, reject) => {
     if (!id)
@@ -54,14 +83,41 @@ const getGameDataFromId = (id) => {
     });
   });
 };
+
+const timeoutEndScheduleRule = (gameData, gameEvent) => {
+  if (!gameEvent.endDate)
+    throw new Error('No data seconds found in gameData');
+  const endDate = setToMoment(gameEvent.endDate);
+  if (!endDate)
+    reject('Cannot convert endDate to moment object');
+
+  return scheduleJob.addRule(endDate, null, () => {
+    return new Promise((resolve, reject) => {
+      resolve({runned: true});
+    });
+  });
+};
 const addEventScheduleRule = (gameData, gameEvent) => {
   if (!gameEvent.activateDate)
     throw new Error('No data seconds found in gameData');
-  return scheduleJob.addRule(moment(gameEvent.activateDate), gameEvent, (data) => {
+  const activateDate = setToMoment(gameEvent.activateDate);
+  if (!activateDate)
+    reject('Cannot convert activateDate to moment object');
+  return scheduleJob.addRule(activateDate, gameEvent, () => {
     return new Promise((resolve, reject) => {
-      console.log('success');
-      //TODO:timeout with stop
-      resolve(data);
+      io.emit(socketNames.EVENT_START, {gameData, gameEvent});
+      timeoutEndScheduleRule(gameData, gameEvent).then(({runned}) => {
+        if (runned) {
+          gameEvent.setInactive();
+          return updateGameEvent(gameEvent);
+        }
+      }).then(({ok}) => {
+        if(ok){
+          io.emit(socketNames.EVENT_END, {gameData, gameEvent});
+        }
+      });
+
+      resolve({runned: true});
     });
   });
 };
@@ -94,6 +150,30 @@ module.exports.getRandomGameData = () => {
 
 };
 
+module.exports.getGameData = (id) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (id) {
+        GameDataModel.findOne({id: id}).exec(function(err, doc) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(doc);
+          }
+        });
+      } else {
+        reject('No id found');
+      }
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
+
 module.exports.addEvent = (gameEvent) => {
   return new Promise((resolve, reject) => {
     try {
@@ -102,7 +182,9 @@ module.exports.addEvent = (gameEvent) => {
       }
       //TODO:check of gameEvent already exists
       getGameDataFromId(gameEvent.gameDataId).then(gameData => {
-        addEventScheduleRule(gameData, gameEvent);
+        let item = new GameData();
+        item.load(gameData);
+        addEventScheduleRule(item, gameEvent);
 
         //waiteing on with return ....
       }).then(value => {

@@ -1,6 +1,8 @@
 [{
   "type": "start",
+  "sendToDevice": null,
   "data": {
+    "name": "",
     "description": "Zoek de juiste president",
     "file": null,
     "hints": [
@@ -19,7 +21,9 @@
 
 }, {
   "type": "start",
+  "sendToDevice": null,
   "data": {
+    "name": "",
     "description": "Zoek de juiste president",
     "file": null,
     "hints": [
@@ -37,16 +41,22 @@
   }
 }, {
   "type": "sound",
-  "description": "NUMMER speelt af",
-  "file": "/nummer.mp3",
-  "hints": [
-    "Vul het juiste jaargetal in"
-  ],
-  "isLetter": true,
-  "answer": null
+  "sendToDevice": "app",
+  "data": {
+    "name": "",
+    "description": "NUMMER speelt af",
+    "file": "/nummer.mp3",
+    "hints": [
+      "Vul het juiste jaargetal in"
+    ],
+    "isLetter": true,
+    "answer": null
+  }
 }, {
   "type": "bom",
+  "sendToDevice": null,
   "data": {
+    "name": "",
     "description": "",
     "file": "/bom.mp3",
     "hints": [
@@ -57,7 +67,9 @@
   }
 }, {
   "type": "light",
+  "sendToDevice": "app",
   "data": {
+    "name": "",
     "description": "Scan het juiste schilderij",
     "file": "/bom.mp3",
     "hints": [
@@ -68,7 +80,9 @@
 
 }, {
   "type": "anthem",
+  "sendToDevice": "app",
   "data": {
+    "name": "",
     "description": "",
     "file": "/volkslied.mp3",
     "hints": [
@@ -80,7 +94,9 @@
 
 }, {
   "type": "scan",
+  "sendToDevice": "app",
   "data": {
+    "name": "",
     "description": "Zoek het juiste schilderij",
     "file": "/image.jpg",
     "hints": [
@@ -92,7 +108,9 @@
 
 }, {
   "type": "find",
+  "sendToDevice": null,
   "data": {
+    "name": "",
     "description": "",
     "file": null,
     "hints": [
@@ -104,7 +122,9 @@
 
 }, {
   "type": "book",
+  "sendToDevice": "app",
   "data": {
+    "name": "",
     "description": "Zoek het juiste woord",
     "file": null,
     "hints": [
@@ -122,6 +142,7 @@
 }, {
   "type": "finish",
   "data": {
+    "name": "",
     "description": "Wat is de naam van de alien?",
     "file": null,
     "hints": [

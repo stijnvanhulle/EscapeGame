@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-30T16:18:18+01:00
+* @Last modified time: 2016-11-30T21:29:01+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");

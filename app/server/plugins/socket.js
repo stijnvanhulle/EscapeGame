@@ -3,44 +3,50 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T14:01:56+01:00
+* @Last modified time: 2016-11-30T22:09:31+01:00
 * @License: stijnvanhulle.be
 */
+const global = require('../lib/global');
+const socketNames = require('../lib/socketNames');
+let users = [];
+
+const onMessageSocket = (io, socket, client) => {
+
+  socket.on(socketNames.PI, data => {
+    client.publish('message', JSON.stringify(data));
+  });
+
+  socket.on(socketNames.ONLINE, obj => {});
+
+  socket.on(socketNames.DISCONNECT, () => {
+    const {id: socketId} = socket;
+    users = users.filter(c => c.socketId !== socketId);
+    console.log('Users:', users);
+  });
+};
+
 module.exports.register = (server, options, next) => {
 
   const io = require(`socket.io`)(server.listener);
   server.expose('io', io);
+  global.io = io;
 
   let client,
     plugins;
-  let users = [];
 
-  io.on(`connection`, socket => {
+  io.on(socketNames.CONNECT, socket => {
     const {id: socketId} = socket;
 
     plugins = server.plugins;
     if (plugins['mqtt']) {
       client = plugins['mqtt'].client;
     }
-
-    console.log('Socket connection', socket.id);
-
-    socket.on('sendToPi', data => {
-      client.publish('message', JSON.stringify(data));
-    });
-
-    socket.on(`online`, obj => {
-
-    
-
-    });
-
-    socket.on(`disconnect`, () => {
-      const user = users.find(u => u.socketId === socketId);
-      if (user)
-        socket.broadcast.emit(`leave`, user.username);
-      users = users.filter(u => u.socketId !== socketId);
-    });
+    const me = {
+      socketId
+    };
+    users.push(me);
+    console.log('Users:', users);
+    onMessageSocket(io, socket, client);
   });
 
   next();

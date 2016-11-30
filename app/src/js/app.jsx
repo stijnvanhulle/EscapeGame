@@ -3,13 +3,14 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-28T14:22:51+01:00
+* @Last modified time: 2016-11-30T23:03:57+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component, PropTypes} from 'react';
+import socketNames from './lib/socketNames';
 import Header from './components/header';
-
+import moment from 'moment';
 import io from 'socket.io-client';
 
 //same as React.creataClass(){};
@@ -29,59 +30,27 @@ class App extends Component {
 
   // WS
 
-  handleWSLogin = users => {
-
-    this.addMessage(`STATUS`, `Welcome to Devine Chat`);
-
-    this.addMessage(`STATUS`, `There are ${users.length} users in Devine chat`);
-
-    this.setState({users});
-
-  }
-
-  handleWSPublicMsg = ({username, message}) => {
-    this.addMessage(`MESSAGE`, `${username}: ${message}`);
-  }
-
-  handleWSJoin = username => {
-    this.addMessage(`STATUS`, `${username} joined the chat`);
-  }
-
-  handleWSLeave = username => {
-    this.addMessage(`STATUS`, `${username} left the chat`);
-  }
   handleWSOnline = obj => {
     console.log(obj);
+  }
+  handleWSEventStart = obj => {
+    console.log('New event:',obj);
+  }
+  handleWSEventEnd = obj => {
+    console.log('End event:',obj);
   }
 
   // EVENTS
 
-  handleSubmitUsername = username => {
-
-    this.setState({username});
-
-    this.socket = io(`/`);
-
-    this.socket.on(`login`, this.handleWSLogin);
-
-    this.socket.on(`publicMsg`, this.handleWSPublicMsg);
-
-    this.socket.on(`leave`, this.handleWSLeave);
-    this.socket.on(`join`, this.handleWSJoin);
-
-    this.socket.emit(`joined`, username);
-
-  }
-
-  handleSubmitMessage = message => {
-    const {username} = this.state;
-    this.socket.emit(`publicMsg`, {username, message});
-  }
-
   render() {
     this.socket = io(`/`);
     window.socket = this.socket;
-    this.socket.on(`online`, this.handleWSOnline);
+    window.moment = moment;
+    this.socket.emit('socketNames.ONLINE',{device:'screen'});
+    this.socket.on(socketNames.ONLINE, this.handleWSOnline);
+    this.socket.on(socketNames.EVENT_START, this.handleWSEventStart);
+      this.socket.on(socketNames.EVENT_END, this.handleWSEventEnd);
+
     return (
       <div className='container-fluid'>
         <Header/> {this.props.children}

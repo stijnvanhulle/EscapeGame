@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T15:17:37+01:00
+* @Last modified time: 2016-11-30T23:56:50+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -32,7 +32,7 @@ class Player {
         const item = this.json(false);
         const obj = new Model(item);
         console.log(obj);
-        
+
         obj.save(function(err, item) {
           if (err) {
             reject(err);
@@ -59,15 +59,10 @@ class Player {
       } else {
         json = copy;
       }
+      return JSON.parse(JSON.stringify(json));
     } catch (e) {
       console.log(e);
-      if (stringify) {
-        json = JSON.stringify({});
-      } else {
-        json = {};
-      }
-    } finally {
-      return json;
+      json = JSON.stringify({});
     }
   }
 
