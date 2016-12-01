@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-30T21:29:01+01:00
+* @Last modified time: 2016-12-01T16:41:48+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
@@ -18,7 +18,7 @@ const {promiseFor} = require('../lib/functions');
 const promise_gameData = (item, i) => {
   return new Promise((resolve, reject) => {
     if (item) {
-      let newGameData = new GameData(gameName = 'Alien', item);
+      let newGameData = new GameData(gameName = 'alien', item);
 
       calculateId(GameDataModel).then(id => {
         newGameData.id = id + i;

@@ -3,12 +3,13 @@
 * @Date:   2016-10-15T13:52:52+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T14:28:15+01:00
+* @Last modified time: 2016-12-01T21:54:03+01:00
 * @License: stijnvanhulle.be
 */
 
 require(`dotenv`).load();
 const pluginHandler = require(`./lib/pluginHandler`);
+const scheduleJob = require('./lib/scheduleJob');
 const path = require(`path`);
 const mongoose = require("mongoose");
 const Server = require('hapi').Server;
@@ -46,6 +47,7 @@ server.register(require(`./plugins/`), pluginHandler);
 server.register(require(`./routes/`), pluginHandler);
 
 const startServer = () => {
+  scheduleJob.cancelAll();
   mongoose.connect(mongodb.uri, mongodb.options, (err) => {
     if (err){
       console.log(err);

@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-30T23:59:22+01:00
+* @Last modified time: 2016-12-01T21:58:26+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -53,11 +53,13 @@ const updateGameEvent = (obj) => {
     if (!obj instanceof GameEvent) {
       reject('No instance of gameEvent');
     }
-    obj = obj.json(false);
+    obj = obj.json(stringify = false);
+    //
     GameEventModel.update({
       id: obj.id
     }, {
-      isActive: obj.isActive
+      isActive: obj.isActive,
+      jobHash: obj.jobHash
     }, {
       multi: true
     }, function(err, raw) {
@@ -91,11 +93,7 @@ const timeoutEndScheduleRule = (gameData, gameEvent) => {
   if (!endDate)
     reject('Cannot convert endDate to moment object');
 
-  return scheduleJob.addRule(endDate, null, () => {
-    return new Promise((resolve, reject) => {
-      resolve({runned: true});
-    });
-  });
+  return scheduleJob.addRule(endDate, null);
 };
 const addEventScheduleRule = (gameData, gameEvent) => {
   if (!gameEvent.activateDate)
@@ -103,17 +101,27 @@ const addEventScheduleRule = (gameData, gameEvent) => {
   const activateDate = setToMoment(gameEvent.activateDate);
   if (!activateDate)
     reject('Cannot convert activateDate to moment object');
-  return scheduleJob.addRule(activateDate, gameEvent, () => {
+
+  return scheduleJob.addRule(activateDate, gameEvent, ({running, runned, hash}) => {
     return new Promise((resolve, reject) => {
-      io.emit(socketNames.EVENT_START, {gameData, gameEvent});
-      timeoutEndScheduleRule(gameData, gameEvent).then(({runned}) => {
+      gameEvent.setJobHash(hash);
+      io.emit(socketNames.EVENT_START, {
+        gameData: gameData.json(false),
+        gameEvent: gameEvent.json(false)
+      });
+      timeoutEndScheduleRule(gameData, gameEvent).then(({running, runned, hash}) => {
         if (runned) {
+          console.log('JOB-HASH', hash);
           gameEvent.setInactive();
+          gameEvent.setJobHash(null);
           return updateGameEvent(gameEvent);
         }
       }).then(({ok}) => {
-        if(ok){
-          io.emit(socketNames.EVENT_END, {gameData, gameEvent});
+        if (ok) {
+          io.emit(socketNames.EVENT_END, {
+            gameData: gameData.json(false),
+            gameEvent: gameEvent.json(false)
+          });
         }
       });
 
@@ -150,6 +158,31 @@ module.exports.getRandomGameData = () => {
 
 };
 
+const getGameDataFromGameName = (gameName) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (gameName) {
+        gameName = gameName.toLowerCase();
+        GameDataModel.find({gameName: gameName}).sort({'id': -1}).exec(function(err, docs) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(docs);
+          }
+        });
+      } else {
+        reject('No gameName found');
+      }
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
+
 module.exports.getGameData = (id) => {
   return new Promise((resolve, reject) => {
     try {
@@ -174,6 +207,47 @@ module.exports.getGameData = (id) => {
 
 };
 
+module.exports.createGameData = (gameId, gameName, startTime, level) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!gameId && !gameName && !startTime) {
+        reject('Gameid, gamename and startttime not filled in');
+      }
+
+      const promise = (item, i) => {
+        console.log(item, i);
+        return new Promise((resolve, reject) => {
+          if (item) {
+            const gameEvent = new GameEvent(gameId);
+            let gameData = new GameData();
+            gameData.load(item);
+            gameEvent.createGameData(gameDataId = gameData.id, level, startTime = setToMoment(startTime), startIn = i * 60, maxTime = gameData.data.maxTime, timeBetween = null);
+            console.log(gameEvent.json());
+            resolve(gameEvent.json(stringify = false));
+          } else {
+            reject('No item');
+          }
+        });
+      };
+
+      getGameDataFromGameName(gameName).then(docs => {
+        promiseFor(promise, docs).then((items) => {
+          resolve(items);
+        }).catch(err => {
+          reject(err);
+        });
+      }).catch(err => {
+        reject(err);
+      })
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
 module.exports.addEvent = (gameEvent) => {
   return new Promise((resolve, reject) => {
     try {
@@ -197,6 +271,34 @@ module.exports.addEvent = (gameEvent) => {
             reject(err);
           });
         });
+      }).catch(err => {
+        reject(err);
+      });
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
+
+module.exports.updateEvent = (gameEvent) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!gameEvent instanceof GameEvent) {
+        throw new Error('No instance of');
+      }
+      //TODO:check of gameEvent already exists
+      getGameDataFromId(gameEvent.gameDataId).then(gameData => {
+        let item = new GameData();
+        item.load(gameData);
+        addEventScheduleRule(item, gameEvent);
+        return updateGameEvent(gameEvent);
+        //waiteing on with return ....
+      }).then(value => {
+        resolve(value);
       }).catch(err => {
         reject(err);
       });
@@ -239,6 +341,25 @@ module.exports.addPlayers = ({players, id: gameId}) => {
       });
 
       //save players
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
+
+module.exports.cancelJobs = (hash) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (hash) {
+        scheduleJob.cancel(hash);
+      } else {
+        scheduleJob.cancelAll();
+      }
+      resolve({runned: true})
+
     } catch (e) {
       console.log(e);
       reject(e);

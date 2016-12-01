@@ -8,6 +8,7 @@
     "hints": [
       ""
     ],
+    "maxTime": 300,
     "isLetter": true,
     "answer": {
       "name": "President x",
@@ -29,6 +30,7 @@
     "hints": [
       ""
     ],
+    "maxTime": 300,
     "isLetter": true,
     "answer": {
       "name": "President stijn",
@@ -46,6 +48,7 @@
     "name": "",
     "description": "NUMMER speelt af",
     "file": "/nummer.mp3",
+    "maxTime": 300,
     "hints": [
       "Vul het juiste jaargetal in"
     ],
@@ -59,6 +62,7 @@
     "name": "",
     "description": "",
     "file": "/bom.mp3",
+    "maxTime": 300,
     "hints": [
       ""
     ],
@@ -72,6 +76,7 @@
     "name": "",
     "description": "Scan het juiste schilderij",
     "file": "/bom.mp3",
+    "maxTime": 300,
     "hints": [
       ""
     ],
@@ -85,6 +90,7 @@
     "name": "",
     "description": "",
     "file": "/volkslied.mp3",
+    "maxTime": 300,
     "hints": [
       "Ga naar het juiste schilderij"
     ],
@@ -113,6 +119,7 @@
     "name": "",
     "description": "",
     "file": null,
+    "maxTime": 300,
     "hints": [
       "Zoek de juiste key"
     ],
@@ -127,6 +134,7 @@
     "name": "",
     "description": "Zoek het juiste woord",
     "file": null,
+    "maxTime": 300,
     "hints": [
       "Kijk in de woordenboeken",
       "KIjk naar de juiste pagina's",
@@ -145,6 +153,7 @@
     "name": "",
     "description": "Wat is de naam van de alien?",
     "file": null,
+    "maxTime": 300,
     "hints": [
       "Probeer de letters die je gekregen hebt de combineren",
       "Locatie zit verboregn in de boeken",

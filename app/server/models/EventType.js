@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-30T23:56:55+01:00
+* @Last modified time: 2016-12-01T21:56:59+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -30,6 +30,7 @@ class EventType {
       this.id=id;
     } catch (e) {
       console.log(e);
+      throw e;
     }
   }
 
@@ -55,7 +56,7 @@ class EventType {
     });
   }
 
-  json(stringify = true) {
+  json(stringify = true,removeEmpty=false) {
     var json;
     try {
       var obj = this;
@@ -67,6 +68,17 @@ class EventType {
       } else {
         json = copy;
       }
+
+      if(removeEmpty){
+        const keys = Object.keys(json);
+        for (var i = 0; i < keys.length; i++) {
+          let key = keys[i];
+          if (json[key] == null) {
+            json[key] = undefined;
+          }
+        }
+      }
+
       return JSON.parse(JSON.stringify(json));
     } catch (e) {
       console.log(e);

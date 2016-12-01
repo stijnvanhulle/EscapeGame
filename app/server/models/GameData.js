@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-30T23:56:35+01:00
+* @Last modified time: 2016-12-01T21:56:50+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -36,6 +36,7 @@ class GameData {
       this.typeId = typeId;
     } catch (e) {
       console.log(e);
+      throw e;
     }
   }
 
@@ -60,7 +61,7 @@ class GameData {
     });
   }
 
-  json(stringify = true) {
+  json(stringify = true,removeEmpty=false) {
     var json;
     try {
       var obj = this;
@@ -73,6 +74,18 @@ class GameData {
       } else {
         json = copy;
       }
+
+      if(removeEmpty){
+        const keys = Object.keys(json);
+        for (var i = 0; i < keys.length; i++) {
+          let key = keys[i];
+          if (json[key] == null) {
+            json[key] = undefined;
+          }
+        }
+      }
+
+
       return JSON.parse(JSON.stringify(json));
     } catch (e) {
       console.log(e);
