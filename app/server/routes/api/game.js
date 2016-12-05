@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T17:17:16+01:00
+* @Last modified time: 2016-12-05T22:41:07+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -15,7 +15,7 @@ const {promiseFor} = require('../../lib/functions');
 module.exports = [
   {
     method: `POST`,
-    path: url.GAME,
+    path: url.GAME_CREATE,
     config: {
       auth: false
     },
@@ -73,7 +73,7 @@ module.exports = [
 
   }, {
     method: `POST`,
-    path: url.GAME_CREATE,
+    path: url.GAME_DATA,
     config: {
       auth: false
     },
@@ -147,7 +147,7 @@ module.exports = [
 
   }, {
     method: `POST`,
-    path: url.GAME_START,
+    path: url.GAME_ADD,
     config: {
       auth: false
     },
@@ -155,7 +155,7 @@ module.exports = [
       const {gameController} = require('../../controllers');
       try {
         let {data} = request.payload;
-        data = JSON.parse(data);
+        //data = JSON.parse(data);
 
         const promise = (item) => {
           return new Promise((resolve, reject) => {

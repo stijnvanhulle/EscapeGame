@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T17:17:06+01:00
+* @Last modified time: 2016-12-05T21:42:06+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -246,7 +246,7 @@ module.exports.createGameData = (gameId, gameName, startTime, level) => {
             gameData.load(item);
             gameEvent.createGameData(gameDataId = gameData.id, level, startTime = setToMoment(startTime), startIn = i * 60, maxTime = gameData.data.maxTime, timeBetween = null);
             console.log(gameEvent.json());
-            resolve(gameEvent.json(stringify = false));
+            resolve(gameEvent.json(stringify = false, removeEmpty = true));
           } else {
             reject('No item');
           }

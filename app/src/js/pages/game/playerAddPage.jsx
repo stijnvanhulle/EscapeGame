@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T15:49:20+01:00
+* @Last modified time: 2016-12-05T21:42:42+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -41,7 +41,6 @@ class PlayerAddPage extends Component {
   }
 
   render() {
-    console.log(this.props.game);
     return (
       <div>
         <PlayerForm onChange={this.onPlayerChange} onSave={this.addPlayer} player={this.state.player} errors={this.state.errors} saving={this.state.saving}/>

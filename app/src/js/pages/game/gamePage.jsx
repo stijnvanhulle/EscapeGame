@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T17:14:54+01:00
+* @Last modified time: 2016-12-05T22:02:17+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -14,6 +14,7 @@ import * as gameActions from '../../actions/gameActions';
 import PlayerAddPage from './playerAddPage';
 import GameStartPage from './gameStartPage';
 
+import game from '../../lib/game';
 import TextInput from '../../components/common/TextInput';
 
 class GamePage extends Component {
@@ -30,6 +31,7 @@ class GamePage extends Component {
         this.props.actions.getGame(gameId).then(() => {
           this.setState({isgameStarted: true});
           console.log('GAME LOADED', this.props.game);
+          game.id = gameId;
         }).catch(err => {
           console.log(err);
         });
