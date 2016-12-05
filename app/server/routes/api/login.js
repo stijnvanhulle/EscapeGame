@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-28T21:50:54+01:00
+* @Last modified time: 2016-12-02T15:00:02+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -61,7 +61,7 @@ module.exports = [ {
 
 }, {
   method: 'GET',
-  path: url.MEMBERS,
+  path: url.MEMBER,
   config: {
     auth: 'jwt'
   },
