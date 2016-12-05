@@ -3,7 +3,7 @@
 * @Date:   2016-11-05T14:35:35+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-02T17:19:00+01:00
+* @Last modified time: 2016-12-05T16:56:19+01:00
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
@@ -17,6 +17,12 @@ let url = setUrl(_url);
 export function createPlayer_SUCCESS(player) {
   return {type: actionsUrl.CREATE_PLAYER_SUCCESS, player};
 }
+export function createGame_SUCCESS(game) {
+  return {type: actionsUrl.CREATE_GAME_SUCCESS, game};
+}
+export function getGame_SUCCESS(game) {
+  return {type: actionsUrl.GET_GAME_SUCCESS, game};
+}
 export function loadPlayers_SUCCESS(players) {
   return {type: actionsUrl.LOAD_PLAYER_SUCCESS, players};
 };
@@ -27,10 +33,49 @@ export function createPlayer(player) {
     try {
       let {firstName, lastName, birthday, email} = player;
 
-      return axios.get(url.PLAYER).then((response) => {
-        dispatch(createPlayer_SUCCESS(response));
+      return axios.post(url.PLAYER, {
+        firstName,lastName, birthday,email
+      }).then((response) => {
+        var data = response.data;
+        dispatch(createPlayer_SUCCESS(data));
       }).catch((err) => {
-        dispatch(createPlayer_FAIL(e))
+        throw err;
+      })
+
+    } catch (e) {
+      throw e;
+    }
+
+  };
+}
+export function createGame(players,teamName) {
+  return dispatch => {
+    try {
+
+      return axios.post(url.GAME, {
+        players,teamName
+      }).then((response) => {
+        var data = response.data;
+        dispatch(createGame_SUCCESS(data));
+      }).catch((err) => {
+        throw err;
+      })
+
+    } catch (e) {
+      throw e;
+    }
+
+  };
+}
+
+export function getGame(gameId) {
+  return dispatch => {
+    try {
+      return axios.get(setParams(url.GAME_GET,gameId)).then((response) => {
+        var data = response.data;
+        dispatch(getGame_SUCCESS(data));
+      }).catch((err) => {
+        throw err;
       })
 
     } catch (e) {
@@ -43,9 +88,10 @@ export function loadPlayers() {
   return dispatch => {
     try {
       return axios.get('').then((response) => {
-        dispatch(loadPlayers_SUCCESS(response));
+        var data = response.data;
+        dispatch(loadPlayers_SUCCESS(data));
       }).catch((err) => {
-        dispatch(loadPlayers_FAIL(e))
+        throw err;
       });
     } catch (e) {
       throw e;

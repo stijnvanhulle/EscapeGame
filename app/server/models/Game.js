@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-01T21:57:16+01:00
+* @Last modified time: 2016-12-05T17:17:04+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -11,9 +11,10 @@ const {Game: Model} = require('./mongo');
 
 class Emitter extends EventEmitter {}
 
+
 class Game {
   //obj of players
-  constructor(teamName='', players = []) {
+  constructor(teamName = '', players = []) {
     this.players = players;
     this.teamName = teamName;
     this.reset();
@@ -21,10 +22,31 @@ class Game {
   }
 
   reset() {
-    this.id=null;
+    this.id = null;
     this.model = Model;
     this.date = null;
     this.events = new Emitter();
+  }
+
+  load({players, teamName, date, id}) {
+    try {
+      this.players = players
+        ? players
+        : this.players;
+      this.id = id
+        ? id
+        : this.id;
+      this.teamName = teamName
+        ? teamName
+        : this.teamName;
+      this.date = date
+        ? date
+        : this.date;
+
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 
   save() {
@@ -48,21 +70,20 @@ class Game {
     });
   }
 
-  json(stringify = true,removeEmpty=false) {
+  json(stringify = true, removeEmpty = false) {
     var json;
     try {
       var obj = this;
       var copy = Object.assign({}, obj);
       copy.events = null;
       copy.model = null;
-      copy.players = null;
       if (stringify) {
         json = JSON.stringify(copy);
       } else {
         json = copy;
       }
 
-      if(removeEmpty){
+      if (removeEmpty) {
         const keys = Object.keys(json);
         for (var i = 0; i < keys.length; i++) {
           let key = keys[i];

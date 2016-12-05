@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T14:46:59+01:00
+* @Last modified time: 2016-12-05T15:17:16+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -23,7 +23,7 @@ module.exports = [
     handler: function(request, reply) {
       const {playerController} = require('../../controllers');
       try {
-        let {firstname: firstName, lastname: lastName, birthday, email} = request.headers;
+        let {firstName, lastName, birthday, email} = request.payload;
         const player = new Player({firstName, lastName, birthday, email});
         playerController.add(player).then((doc) => {
           reply(doc);

@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-01T21:58:26+01:00
+* @Last modified time: 2016-12-05T17:17:06+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -36,6 +36,29 @@ module.exports.add = (game) => {
           reject(err);
         });
       });
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
+
+module.exports.get = (id) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!id)
+        reject('No id for game');
+
+      GameModel.findOne({id: id}).exec(function(err, doc) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(doc);
+        }
+      });
+
     } catch (e) {
       console.log(e);
       reject(e);
@@ -322,7 +345,6 @@ module.exports.addPlayers = ({players, id: gameId}) => {
         return new Promise((resolve, reject) => {
           if (item) {
             const gameMember = new GameMemberModel({gameId, playerId: item.id});
-            console.log(gameMember);
 
             gameMember.save().then(doc => {
               resolve(doc);

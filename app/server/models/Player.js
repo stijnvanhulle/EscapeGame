@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-01T21:57:38+01:00
+* @Last modified time: 2016-12-05T15:13:32+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -12,10 +12,17 @@ const {Player: Model} = require('./mongo');
 class Emitter extends EventEmitter {}
 class Player {
   constructor({firstName, lastName, birthday, email}) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.birthday = birthday;
-    this.email = email;
+    console.log({firstName, lastName, birthday, email});
+    if (firstName && lastName && birthday && email) {
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.birthday = parseFloat(birthday);
+      this.email = email;
+
+    } else {
+      throw new Error('Cannot make player with empty data');
+      return;
+    }
 
     this.reset();
   }
@@ -47,7 +54,7 @@ class Player {
     });
   }
 
-  json(stringify = true,removeEmpty=false) {
+  json(stringify = true, removeEmpty = false) {
     var json;
     try {
       var obj = this;
@@ -60,7 +67,7 @@ class Player {
         json = copy;
       }
 
-      if(removeEmpty){
+      if (removeEmpty) {
         const keys = Object.keys(json);
         for (var i = 0; i < keys.length; i++) {
           let key = keys[i];

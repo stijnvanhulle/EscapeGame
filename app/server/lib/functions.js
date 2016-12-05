@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T21:42:39+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-01T14:58:50+01:00
+* @Last modified time: 2016-12-05T17:02:48+01:00
 * @License: stijnvanhulle.be
 */
 const moment = require("moment");
@@ -43,6 +43,9 @@ functions.setToMoment = (obj) => {
 functions.promiseFor = (promise, array) => {
   return new Promise((resolve, reject) => {
     try {
+      if (!functions.isArray(array)) {
+        reject("No array");
+      }
       let ID = 0;
       var fn = function asyncMultiplyBy2(item) { // sample async action
         if (item) {

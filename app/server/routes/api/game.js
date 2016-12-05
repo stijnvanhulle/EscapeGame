@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-01T21:19:32+01:00
+* @Last modified time: 2016-12-05T17:17:16+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -22,13 +22,43 @@ module.exports = [
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
-        let {players, teamname: teamName} = request.headers;
-        players = JSON.parse(players);
+        let {players, teamName} = request.payload;
+        //players = JSON.parse(players);
         const game = new Game(teamName, players);
 
         gameController.add(game).then((doc) => {
+          game.id = doc.id;
+          game.date = doc.id;
+
           return gameController.addPlayers(game);
-        }).then(doc => {
+        }).then(players => {
+          game.players = players;
+          reply(game.json(stringify = false, removeEmpty = true));
+        }).catch(err => {
+          console.log(err);
+          reply(err);
+        });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
+    method: `GET`,
+    path: url.GAME_GET,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {gameController} = require('../../controllers');
+      try {
+        let gameId = request.params.id;
+        const game = new Game();
+
+        gameController.get(gameId).then((doc) => {
+          game.load(doc);
           reply(doc);
         }).catch(err => {
           console.log(err);
@@ -50,7 +80,7 @@ module.exports = [
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
-        let {gamename: gameName, level, starttime: startTime} = request.headers;
+        let {gameName, level, startTime} = request.payload;
         let gameId = request.params.id;
 
         gameController.createGameData(gameId, gameName, startTime, level).then(gameEvents => {
@@ -77,7 +107,7 @@ module.exports = [
       const {gameController} = require('../../controllers');
       try {
 
-        let {data} = request.headers;
+        let {data} = request.payload;
         data = JSON.parse(data);
 
         const promise = (item) => {
@@ -124,7 +154,7 @@ module.exports = [
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
-        let {data} = request.headers;
+        let {data} = request.payload;
         data = JSON.parse(data);
 
         const promise = (item) => {
@@ -166,7 +196,7 @@ module.exports = [
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
-        let {gamedataid: gameDataId, isactive: isActive, activatedate: activateDate, enddate: endDate} = request.headers;
+        let {gameDataId, isActive, activateDate, endDate} = request.payload;
         const gameEvent = new GameEvent(gameId = request.params.id);
         gameController.getGameData(gameDataId).then(gameData => {
           console.log(gameData);
