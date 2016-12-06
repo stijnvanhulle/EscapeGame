@@ -3,7 +3,7 @@
 * @Date:   2016-11-29T11:59:30+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-01T21:44:04+01:00
+* @Last modified time: 2016-12-06T16:32:40+01:00
 * @License: stijnvanhulle.be
 */
 const {setTomoment} = require('./functions');
@@ -22,19 +22,30 @@ const cancelAll = function() {
   }
 
 };
-
-const cancel = function(hash) {
-  for (var i = 0; i < schedule.scheduledJobs.length; i++) {
-    if (schedule.scheduledJobs[i].hash == hash) {
-      schedule.scheduledJobs[i].cancel();
-    }
-  }
+const log = () => {
   if (schedule.scheduledJobs && schedule.scheduledJobs.length > 0) {
     console.log('Jobs actief: ' + schedule.scheduledJobs.length);
   } else {
     console.log('Geen jobs actief');
   }
-
+};
+const cancel = function(jobHash) {
+  for (var i = 0; i < schedule.scheduledJobs.length; i++) {
+    if (schedule.scheduledJobs[i].hash == jobHash) {
+      let job = schedule.scheduledJobs[i];
+      let success = schedule.cancelJob(job);
+    }
+  }
+  log();
+};
+const finishJob = (jobHash) => {
+  for (var i = 0; i < schedule.scheduledJobs.length; i++) {
+    if (schedule.scheduledJobs[i].hash == jobHash) {
+      let job = schedule.scheduledJobs[i];
+      job.emit('run',true);
+    }
+  }
+  log();
 };
 const addRule = (m, data, f) => {
   return new Promise(function(resolve, reject) {
@@ -43,8 +54,6 @@ const addRule = (m, data, f) => {
         reject('Not everthing filled in');
         return;
       }
-
-      cancelAll();
       m = setTomoment(m);
 
       var date = m.toDate();
@@ -55,12 +64,15 @@ const addRule = (m, data, f) => {
         let result = {
           running: true,
           runned: false,
+          isCanceled: false,
           hash
         };
 
         if (f && f instanceof Function) {
           f(result).then(function(result) {
-            job.cancel();
+            let isCanceled = schedule.cancelJob(job);
+            result.isCanceled = isCanceled;
+
             result.running = false;
             result.runned = true;
             resolve(result);
@@ -70,12 +82,18 @@ const addRule = (m, data, f) => {
             reject(err);
           });
         } else {
-          job.cancel();
+          let isCanceled = schedule.cancelJob(job);
+          result.isCanceled = isCanceled;
+
           result.running = false;
           result.runned = true;
           resolve(result);
         }
 
+      });
+
+      job.on('run', () => {
+        console.log('New job is done on ' + date + ', hash: ' + hash);
       });
     } catch (e) {
       console.log(e);
@@ -84,5 +102,6 @@ const addRule = (m, data, f) => {
   });
 };
 module.exports.addRule = addRule;
+module.exports.finishJob=finishJob;
 module.exports.cancelAll = cancelAll;
 module.exports.cancel = cancel;

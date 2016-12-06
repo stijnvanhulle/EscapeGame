@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T21:44:04+01:00
+* @Last modified time: 2016-12-06T16:37:51+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -12,7 +12,6 @@ const {Player: Model} = require('./mongo');
 class Emitter extends EventEmitter {}
 class Player {
   constructor({firstName, lastName, birthday, email}) {
-    console.log({firstName, lastName, birthday, email});
     if (firstName && lastName && birthday && email) {
       this.firstName = firstName;
       this.lastName = lastName;
@@ -38,7 +37,7 @@ class Player {
       try {
         const item = this.json(false);
         const obj = new Model(item);
-        console.log(obj);
+        console.log('Will save: ', obj);
 
         obj.save(function(err, item) {
           if (err) {

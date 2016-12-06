@@ -3,7 +3,7 @@
 * @Date:   2016-11-05T14:35:35+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T22:42:39+01:00
+* @Last modified time: 2016-12-06T15:22:19+01:00
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
@@ -20,11 +20,14 @@ export function createPlayer_SUCCESS(player) {
 export function createGame_SUCCESS(game) {
   return {type: actionsUrl.CREATE_GAME_SUCCESS, game};
 }
-export function createGameData_SUCCESS(gameData) {
-  return {type: actionsUrl.CREATE_GAMEDATA_SUCCESS, gameData};
+export function createGameEvents_SUCCESS(gameEvents) {
+  return {type: actionsUrl.CREATE_GAMEEVENTS_SUCCESS, gameEvents};
 }
-export function addGameData_SUCCESS(gameData) {
-  return {type: actionsUrl.ADD_GAMEDATA_SUCCESS, gameData};
+export function addGameEvent_SUCCESS(gameEvents) {
+  return {type: actionsUrl.ADD_GAMEEVENT_SUCCESS, gameEvents};
+}
+export function updateGameEvent_SUCCESS(gameEvent) {
+  return {type: actionsUrl.UPDATE_GAMEEVENT_SUCCESS, gameEvent};
 }
 export function getGame_SUCCESS(game) {
   return {type: actionsUrl.GET_GAME_SUCCESS, game};
@@ -56,7 +59,7 @@ export function createGame(players, teamName) {
   return dispatch => {
     try {
       if (!(players && teamName)) {
-        throw new Error('Not all data filled in from createGame');
+        return Promise.reject('Not all data filled in from createGame');
       }
       return axios.post(url.GAME_CREATE, {players, teamName}).then((response) => {
         var data = response.data;
@@ -72,19 +75,19 @@ export function createGame(players, teamName) {
   };
 }
 
-export function createGameData({game, level, startTime}) {
+export function createGameEvents({game, startTime}) {
   return dispatch => {
     try {
       if (!(game && game.id && game.name && game.level && startTime)) {
-        throw new Error('Not all data filled in from createGamData');
+        return Promise.reject('Not all data filled in from createGamData');
       }
       return axios.post(setParams(url.GAME_DATA, game.id), {
         gameName: game.name,
-        level,
+        level:game.level,
         startTime
       }).then((response) => {
         var data = response.data;
-        dispatch(createGameData_SUCCESS(data));
+        dispatch(createGameEvents_SUCCESS(data));
       }).catch((err) => {
         throw err;
       })
@@ -96,18 +99,46 @@ export function createGameData({game, level, startTime}) {
   };
 }
 
-export function addGameData({game, data}) {
+export function addGameEvent({game, data}) {
   return dispatch => {
     try {
       if (!(data && game)) {
-        throw new Error('Not all data filled in from addGameData');
+        return Promise.reject('Not all data filled in from addGameData');
       }
       return axios.post(setParams(url.GAME_ADD, game.id), {data}).then((response) => {
         var data = response.data;
-        dispatch(addGameData_SUCCESS(data));
+        dispatch(addGameEvent_SUCCESS(data));
       }).catch((err) => {
         throw err;
       })
+
+    } catch (e) {
+      throw e;
+    }
+
+  };
+}
+export function updateGameEvent(gameEvent, serverSide = false) {
+  return dispatch => {
+    try {
+      if (!(gameEvent)) {
+        return Promise.reject('Not all data filled in from addGameData');
+      }
+      if (serverSide) {
+        return axios.post(setParams(url.GAME_UPDATE, game.id), {data}).then((response) => {
+          var data = response.data;
+          dispatch(updateGameEvent_SUCCESS(data));
+        }).catch((err) => {
+          throw err;
+        });
+      } else {
+        return new Promise((resolve, reject) => {
+          let data = gameEvent;
+          dispatch(updateGameEvent_SUCCESS(data));
+          resolve(data);
+        });
+
+      }
 
     } catch (e) {
       throw e;

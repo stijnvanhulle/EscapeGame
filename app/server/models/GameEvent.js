@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T21:43:57+01:00
+* @Last modified time: 2016-12-06T16:37:38+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -28,9 +28,52 @@ class GameEvent {
     this.activateDate = null;
     this.endDate = null;
     this.model = Model;
-    this.jobHash=null;
+    this.jobHash = null;
     this.events = new Emitter();
   }
+
+  load({
+    gameId,
+    gameDataId,
+    date,
+    id,
+    isActive,
+    activateDate,
+    endDate,
+    jobHash
+  }) {
+    try {
+      this.gameId = gameId
+        ? gameId
+        : this.gameId;
+      this.id = id
+        ? id
+        : this.id;
+      this.gameDataId = gameDataId
+        ? gameDataId
+        : this.gameDataId;
+      this.date = date
+        ? date
+        : this.date;
+      this.isActive = isActive
+        ? isActive
+        : this.isActive;
+      this.activateDate = activateDate
+        ? parseFloat(activateDate)
+        : this.activateDate;
+      this.endDate = endDate
+        ? parseFloat(endDate)
+        : this.endDate;
+      this.jobHash = jobHash
+        ? jobHash
+        : this.jobHash;
+
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
   createGameData(gameDataId = null, level = 1, startTime = null, startIn = 20, maxTime = null, timeBetween = null) {
     try {
       if (parseInt(level) > 3) {
@@ -52,7 +95,7 @@ class GameEvent {
         var seconds = 0;
         var minutes = 0;
         if (level == 1) {
-          minutes = 10;
+          minutes = 2; //TODO: set to 10
           seconds = 0;
           timeBetween = seconds + (minutes * 60);
         } else if (level == 2) {
@@ -75,15 +118,14 @@ class GameEvent {
 
       let endDate = activateDate_temp.add('seconds', parseInt(timeBetween));
 
-      console.log('DATE:', activateDate.format(), endDate.format());
 
       if (!setToMoment(endDate).isAfter(setToMoment(activateDate))) {
         throw new Error('endDate not after activatedate');
         return;
       }
 
-      this.activateDate = activateDate.valueOf();
-      this.endDate = endDate.valueOf();
+      this.activateDate = parseFloat(activateDate.valueOf());
+      this.endDate = parseFloat(endDate.valueOf());
       this.isActive = true;
       this.gameDataId = gameDataId;
 
@@ -115,8 +157,8 @@ class GameEvent {
       this.date = date;
       this.gameDataId = gameDataId;
       this.isActive = Boolean(isActive);
-      this.endDate = endDate;
-      this.activateDate = activateDate;
+      this.endDate = parseFloat(endDate);
+      this.activateDate = parseFloat(activateDate);
 
     } catch (e) {
       console.log(e);
@@ -124,8 +166,8 @@ class GameEvent {
     }
 
   }
-  setJobHash(jobHash){
-    this.jobHash=jobHash;
+  setJobHash(jobHash) {
+    this.jobHash = jobHash;
   }
 
   save() {
@@ -133,7 +175,7 @@ class GameEvent {
       try {
         const item = this.json(false);
         const obj = new Model(item);
-        console.log(obj);
+        console.log('Will save: ', obj);
 
         obj.save(function(err, item) {
           if (err) {
@@ -160,14 +202,12 @@ class GameEvent {
       copy.events = null;
       copy.model = null;
 
-
-
       if (stringify) {
         json = JSON.stringify(copy);
       } else {
         json = copy;
       }
-      if(removeEmpty){
+      if (removeEmpty) {
         const keys = Object.keys(json);
         for (var i = 0; i < keys.length; i++) {
           let key = keys[i];
@@ -175,8 +215,8 @@ class GameEvent {
             json[key] = undefined;
           }
         }
-        json['_id']= undefined;
-        json['__v']= undefined;
+        json['_id'] = undefined;
+        json['__v'] = undefined;
       }
 
       return JSON.parse(JSON.stringify(json));

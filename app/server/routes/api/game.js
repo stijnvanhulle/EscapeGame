@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T22:41:07+01:00
+* @Last modified time: 2016-12-06T16:38:55+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -84,7 +84,6 @@ module.exports = [
         let gameId = request.params.id;
 
         gameController.createGameData(gameId, gameName, startTime, level).then(gameEvents => {
-          console.log(gameEvents);
           reply(gameEvents);
         }).catch(err => {
           reply(err);
@@ -108,13 +107,12 @@ module.exports = [
       try {
 
         let {data} = request.payload;
-        data = JSON.parse(data);
+        //data = JSON.parse(data);
 
         const promise = (item) => {
           return new Promise((resolve, reject) => {
             if (item) {
               const gameEvent = new GameEvent(gameId = request.params.id);
-              console.log(gameEvent);
               gameController.getGameData(item.gameDataId).then(gameData => {
                 gameEvent.setGameData({gameDataId: gameData.id, isActive: item.isActive, activateDate: item.activateDate, endDate: item.endDate});
                 return gameController.updateEvent(gameEvent);
@@ -129,7 +127,6 @@ module.exports = [
         };
 
         gameController.cancelJobs().then(({runned}) => {
-          console.log(runned);
           return promiseFor(promise, data);
 
         }).then((item) => {
@@ -163,10 +160,10 @@ module.exports = [
               const gameEvent = new GameEvent(gameId = request.params.id);
               gameController.getGameData(item.gameDataId).then(gameData => {
                 gameEvent.setGameData({gameDataId: gameData.id, isActive: item.isActive, activateDate: item.activateDate, endDate: item.endDate});
-                console.log(gameEvent);
                 return gameController.addEvent(gameEvent);
               }).then(doc => {
-                resolve(doc);
+                gameEvent.load(doc);
+                resolve(gameEvent.json(stringify = false, removeEmpty = true));
               }).catch(err => {
                 reject(err);
               });
@@ -199,7 +196,6 @@ module.exports = [
         let {gameDataId, isActive, activateDate, endDate} = request.payload;
         const gameEvent = new GameEvent(gameId = request.params.id);
         gameController.getGameData(gameDataId).then(gameData => {
-          console.log(gameData);
           gameEvent.setGameData({gameDataId: gameData.id, isActive, activateDate, endDate});
           return gameController.addEvent(gameEvent);
         }).then(doc => {

@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T22:02:17+01:00
+* @Last modified time: 2016-12-06T16:00:46+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -20,26 +20,10 @@ import TextInput from '../../components/common/TextInput';
 class GamePage extends Component {
   state = {
     teamName: '',
-    error: '',
-    isgameStarted: false
+    error: ''
   }
   constructor(props, context) {
     super(props, context);
-    try {
-      const gameId = JSON.parse(localStorage.getItem('gameId'));
-      if (gameId) {
-        this.props.actions.getGame(gameId).then(() => {
-          this.setState({isgameStarted: true});
-          console.log('GAME LOADED', this.props.game);
-          game.id = gameId;
-        }).catch(err => {
-          console.log(err);
-        });
-      }
-    } catch (e) {
-      console.log(e);
-    }
-
   }
 
   startGame = (e) => {
@@ -50,7 +34,7 @@ class GamePage extends Component {
         if (gameId)
           localStorage.setItem('gameId', gameId)
 
-        this.setState({isgameStarted: true});
+        this.setState({isGameStarted: true});
       }).catch(err => {
         console.log(err);
       });
@@ -79,7 +63,7 @@ class GamePage extends Component {
       <h1>Game</h1>
       <GameStartPage/>
     </div>;
-    if (this.state.isgameStarted) {
+    if (this.props.game && this.props.game.id) {
       return (gameStart)
     } else {
       return (playerAdd);

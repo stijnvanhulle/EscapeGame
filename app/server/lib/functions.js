@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T21:42:39+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T17:02:48+01:00
+* @Last modified time: 2016-12-06T16:38:56+01:00
 * @License: stijnvanhulle.be
 */
 const moment = require("moment");
@@ -36,7 +36,6 @@ functions.setToMoment = (obj) => {
   } catch (e) {
     result = null;
   }
-  console.log(result.valueOf());
   return result;
 };
 

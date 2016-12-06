@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T21:42:06+01:00
+* @Last modified time: 2016-12-06T16:38:54+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -126,29 +126,33 @@ const addEventScheduleRule = (gameData, gameEvent) => {
     reject('Cannot convert activateDate to moment object');
 
   return scheduleJob.addRule(activateDate, gameEvent, ({running, runned, hash}) => {
+    console.log('RUNNING', running, ' hash: ', hash);
     return new Promise((resolve, reject) => {
       gameEvent.setJobHash(hash);
       io.emit(socketNames.EVENT_START, {
-        gameData: gameData.json(false),
-        gameEvent: gameEvent.json(false)
+        gameData: gameData.json(false, true),
+        gameEvent: gameEvent.json(false, true)
       });
       timeoutEndScheduleRule(gameData, gameEvent).then(({running, runned, hash}) => {
+        console.log('RUNNING', running, ' hash: ', hash);
         if (runned) {
-          console.log('JOB-HASH', hash);
           gameEvent.setInactive();
           gameEvent.setJobHash(null);
           return updateGameEvent(gameEvent);
         }
-      }).then(({ok}) => {
-        if (ok) {
+      }).then((doc) => {
+        console.log('doc', doc);
+        if (doc) {
           io.emit(socketNames.EVENT_END, {
-            gameData: gameData.json(false),
-            gameEvent: gameEvent.json(false)
+            gameData: gameData.json(false, true),
+            gameEvent: gameEvent.json(false, true)
           });
+          resolve({runned: true});
         }
+      }).catch((err) => {
+        reject(err);
       });
 
-      resolve({runned: true});
     });
   });
 };
@@ -236,16 +240,20 @@ module.exports.createGameData = (gameId, gameName, startTime, level) => {
       if (!gameId && !gameName && !startTime) {
         reject('Gameid, gamename and startttime not filled in');
       }
+      let previousGameEvent = null;
 
       const promise = (item, i) => {
-        console.log(item, i);
         return new Promise((resolve, reject) => {
           if (item) {
             const gameEvent = new GameEvent(gameId);
             let gameData = new GameData();
             gameData.load(item);
-            gameEvent.createGameData(gameDataId = gameData.id, level, startTime = setToMoment(startTime), startIn = i * 60, maxTime = gameData.data.maxTime, timeBetween = null);
-            console.log(gameEvent.json());
+            if (previousGameEvent) {
+              startTime = previousGameEvent.endDate;
+            }
+
+            gameEvent.createGameData(gameDataId = gameData.id, level, startTime = setToMoment(startTime), startIn = 10, maxTime = gameData.data.maxTime, timeBetween = null);
+            previousGameEvent = gameEvent;
             resolve(gameEvent.json(stringify = false, removeEmpty = true));
           } else {
             reject('No item');

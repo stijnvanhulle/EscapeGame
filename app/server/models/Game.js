@@ -3,14 +3,13 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T21:43:48+01:00
+* @Last modified time: 2016-12-06T16:37:20+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
 const {Game: Model} = require('./mongo');
 
 class Emitter extends EventEmitter {}
-
 
 class Game {
   //obj of players
@@ -54,7 +53,7 @@ class Game {
       try {
         const item = this.json(false);
         const obj = new Model(item);
-        console.log(obj);
+        console.log('Will save: ', obj);
 
         obj.save(function(err, item) {
           if (err) {
@@ -91,8 +90,8 @@ class Game {
             json[key] = undefined;
           }
         }
-        json['_id']= undefined;
-        json['__v']= undefined;
+        json['_id'] = undefined;
+        json['__v'] = undefined;
       }
     } catch (e) {
       console.log(e);
