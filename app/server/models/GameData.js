@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T21:43:52+01:00
+* @Last modified time: 2016-12-06T16:58:44+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -34,6 +34,7 @@ class GameData {
       this.id = id;
       this.date = date;
       this.typeId = typeId;
+
     } catch (e) {
       console.log(e);
       throw e;
@@ -45,7 +46,7 @@ class GameData {
       try {
         const item = this.json(false);
         const obj = new Model(item);
-        console.log(obj);
+        console.log('Will save: ', obj);
 
         obj.save(function(err, item) {
           if (err) {
@@ -61,21 +62,24 @@ class GameData {
     });
   }
 
-  json(stringify = true,removeEmpty=false) {
+  json(stringify = true, removeEmpty = false, subDataJson = true) {
     var json;
     try {
       var obj = this;
       var copy = Object.assign({}, obj);
       copy.events = null;
       copy.model = null;
-      copy.data = JSON.stringify(copy.data);
+      if (subDataJson) {
+        copy.data = JSON.stringify(copy.data);
+      }
+
       if (stringify) {
         json = JSON.stringify(copy);
       } else {
         json = copy;
       }
 
-      if(removeEmpty){
+      if (removeEmpty) {
         const keys = Object.keys(json);
         for (var i = 0; i < keys.length; i++) {
           let key = keys[i];
@@ -83,10 +87,9 @@ class GameData {
             json[key] = undefined;
           }
         }
-        json['_id']= undefined;
-        json['__v']= undefined;
+        json['_id'] = undefined;
+        json['__v'] = undefined;
       }
-
 
       return JSON.parse(JSON.stringify(json));
     } catch (e) {

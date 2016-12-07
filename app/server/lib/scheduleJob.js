@@ -3,7 +3,7 @@
 * @Date:   2016-11-29T11:59:30+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T16:32:40+01:00
+* @Last modified time: 2016-12-07T18:18:08+01:00
 * @License: stijnvanhulle.be
 */
 const {setTomoment} = require('./functions');
@@ -12,40 +12,87 @@ const Chance = require('chance');
 const c = new Chance();
 
 const cancelAll = function() {
-  for (var i = 0; i < schedule.scheduledJobs.length; i++) {
-    schedule.scheduledJobs[i].cancel();
-  }
-  if (schedule.scheduledJobs && schedule.scheduledJobs.length > 0) {
-    console.log('Jobs actief: ' + schedule.scheduledJobs.length);
-  } else {
-    console.log('Geen jobs actief');
+  const jobs = schedule.scheduledJobs;
+  let hashes = Object.keys(jobs);
+  for (var i = 0; i < hashes.length; i++) {
+    let hash = hashes[i];
+    let job = jobs[hash];
+    job.cancel();
   }
 
+  log();
 };
 const log = () => {
-  if (schedule.scheduledJobs && schedule.scheduledJobs.length > 0) {
-    console.log('Jobs actief: ' + schedule.scheduledJobs.length);
+  const jobs = schedule.scheduledJobs;
+  let hashes = Object.keys(jobs);
+
+  if (hashes && hashes.length > 0) {
+    console.log('Jobs actief: ' + hashes.length);
   } else {
     console.log('Geen jobs actief');
   }
 };
 const cancel = function(jobHash) {
+  let success;
   for (var i = 0; i < schedule.scheduledJobs.length; i++) {
-    if (schedule.scheduledJobs[i].hash == jobHash) {
-      let job = schedule.scheduledJobs[i];
-      let success = schedule.cancelJob(job);
+    let job = schedule.scheduledJobs[i];
+    if (hash == jobHash) {
+      success = schedule.cancelJob(job.hash);
     }
   }
+
   log();
+  return success;
+};
+const endJob = function(jobHash) {
+  let success;
+  const jobs = schedule.scheduledJobs;
+  let hashes = Object.keys(jobs);
+
+  for (var i = 0; i < hashes.length; i++) {
+    let hash = hashes[i];
+    let job = jobs[hash];
+
+    if (hash == jobHash) {
+      job.emit('run', true);
+      success = true;
+    }
+  }
+
+  log();
+  return success;
 };
 const finishJob = (jobHash) => {
-  for (var i = 0; i < schedule.scheduledJobs.length; i++) {
-    if (schedule.scheduledJobs[i].hash == jobHash) {
-      let job = schedule.scheduledJobs[i];
-      job.emit('run',true);
+  let success;
+  const jobs = schedule.scheduledJobs;
+  let hashes = Object.keys(jobs);
+
+  for (var i = 0; i < hashes.length; i++) {
+    let hash = hashes[i];
+    let job = jobs[hash];
+    if (job.hash == jobHash) {
+      job.emit('end', true);
+      success = true;
+      break;
     }
   }
   log();
+  return success;
+};
+const finishNextJob = (jobHash) => {
+  var nextJobHash;
+  const jobs = schedule.scheduledJobs;
+  let hashes = Object.keys(jobs);
+
+  for (var i = 0; i < hashes.length; i++) {
+    let hash = hashes[i];
+    let job = jobs[hash];
+    if (job.hash == jobHash) {
+      nextJobHash = hashes[i + 1];
+      break;
+    }
+  }
+  return finishJob(nextJobHash);
 };
 const addRule = (m, data, f) => {
   return new Promise(function(resolve, reject) {
@@ -70,8 +117,7 @@ const addRule = (m, data, f) => {
 
         if (f && f instanceof Function) {
           f(result).then(function(result) {
-            let isCanceled = schedule.cancelJob(job);
-            result.isCanceled = isCanceled;
+            result.isCanceled = schedule.cancelJob(job);
 
             result.running = false;
             result.runned = true;
@@ -82,8 +128,7 @@ const addRule = (m, data, f) => {
             reject(err);
           });
         } else {
-          let isCanceled = schedule.cancelJob(job);
-          result.isCanceled = isCanceled;
+          result.isCanceled = schedule.cancelJob(job);
 
           result.running = false;
           result.runned = true;
@@ -95,6 +140,21 @@ const addRule = (m, data, f) => {
       job.on('run', () => {
         console.log('New job is done on ' + date + ', hash: ' + hash);
       });
+      job.on('end', () => {
+        console.log(true);
+        job.emit('run', true);
+        const {gameData, gameEvent} = data;
+        const gameController = require('../controllers/gameController');
+
+        gameController.endGameEvent(gameData, gameEvent).then(({runned}) => {
+          console.log('RUNNED', runned, ' hash: ', hash);
+        }).catch(err => {
+          console.log(err);
+        });
+        console.log('New job is ended on ' + date + ', hash: ' + hash);
+      });
+
+      log();
     } catch (e) {
       console.log(e);
     }
@@ -102,6 +162,8 @@ const addRule = (m, data, f) => {
   });
 };
 module.exports.addRule = addRule;
-module.exports.finishJob=finishJob;
+module.exports.finishJob = finishJob;
+module.exports.endJob = endJob;
 module.exports.cancelAll = cancelAll;
 module.exports.cancel = cancel;
+module.exports.finishNextJob = finishNextJob;

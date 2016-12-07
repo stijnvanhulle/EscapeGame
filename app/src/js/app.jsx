@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T16:03:44+01:00
+* @Last modified time: 2016-12-06T17:04:30+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -51,7 +51,7 @@ class App extends Component {
 
   loadSocket = () => {
     this.socket = io(`/`);
-    this.socket.emit('socketNames.ONLINE', {device: 'screen'});
+    this.socket.emit(socketNames.ONLINE, {device: 'screen'});
     this.socket.on(socketNames.ONLINE, this.handleWSOnline);
     this.socket.on(socketNames.EVENT_START, this.handleWSEventStart);
     this.socket.on(socketNames.EVENT_END, this.handleWSEventEnd);
@@ -73,14 +73,25 @@ class App extends Component {
   }
   handleWSEventStart = obj => {
     console.log('New event:', obj);
-    this.props.actions.updateGameEvent(obj.gameEvent).then(() => {
+
+    let {gameEvent,gameData}=obj;
+    game.currentGameData=gameData;
+    game.currentGameEvent=gameEvent;
+    this.props.actions.updateGameEvent(gameEvent).then(() => {
       console.log('UPDATED gameEvent');
     }).catch((e) => {
       console.log(e);
-    })
+    });
   }
   handleWSEventEnd = obj => {
     console.log('End event:', obj);
+
+    let {gameEvent,gameData}=obj;
+    this.props.actions.updateGameEvent(gameEvent).then(() => {
+      console.log('UPDATED gameEvent');
+    }).catch((e) => {
+      console.log(e);
+    });
   }
 
   // EVENTS

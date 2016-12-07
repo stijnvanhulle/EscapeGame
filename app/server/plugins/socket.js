@@ -3,11 +3,12 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T14:29:54+01:00
+* @Last modified time: 2016-12-07T18:18:20+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
 const socketNames = require('../lib/socketNames');
+const scheduleJob = require('../lib/scheduleJob');
 let users = [];
 
 const onMessageSocket = (io, socket, client) => {
@@ -23,12 +24,21 @@ const onMessageSocket = (io, socket, client) => {
     users = users.filter(c => c.socketId !== socketId);
     console.log('Users:', users);
   });
+  socket.on(socketNames.INPUT, (obj) => {
+    const {input, jobHash} = obj;
+    console.log(jobHash);
+    let success = scheduleJob.finishNextJob(jobHash);
+  });
 };
 
 module.exports.register = (server, options, next) => {
   users = [];
   const io = require(`socket.io`)(server.listener);
   server.expose('io', io);
+  if(!io){
+    next('No io made');
+    return;
+  }
   global.io = io;
 
   let client,

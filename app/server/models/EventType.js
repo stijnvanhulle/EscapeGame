@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T21:43:42+01:00
+* @Last modified time: 2016-12-06T16:54:20+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -40,7 +40,7 @@ class EventType {
       try {
         const item = this.json(false);
         const obj = new Model(item);
-        console.log(obj);
+          console.log('Will save: ', obj);
 
         obj.save(function(err, item) {
           if (err) {

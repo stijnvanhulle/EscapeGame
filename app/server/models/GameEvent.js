@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T16:37:38+01:00
+* @Last modified time: 2016-12-06T17:22:19+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -53,7 +53,7 @@ class GameEvent {
         ? gameDataId
         : this.gameDataId;
       this.date = date
-        ? date
+        ? parseFloat(date)
         : this.date;
       this.isActive = isActive
         ? isActive
@@ -154,7 +154,7 @@ class GameEvent {
         return;
       }
       this.gameId = gameId;
-      this.date = date;
+      this.date = parseFloat(date);
       this.gameDataId = gameDataId;
       this.isActive = Boolean(isActive);
       this.endDate = parseFloat(endDate);

@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T16:00:46+01:00
+* @Last modified time: 2016-12-07T14:31:50+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -15,7 +15,7 @@ import PlayerAddPage from './playerAddPage';
 import GameStartPage from './gameStartPage';
 
 import game from '../../lib/game';
-import TextInput from '../../components/common/TextInput';
+import TextInput from '../../components/common/textInput';
 
 class GamePage extends Component {
   state = {

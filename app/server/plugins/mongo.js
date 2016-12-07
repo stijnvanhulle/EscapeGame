@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-01T16:41:48+01:00
+* @Last modified time: 2016-12-06T17:21:50+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
@@ -15,19 +15,50 @@ const eventTypes = require("../../private/eventType.json");
 
 const {promiseFor} = require('../lib/functions');
 
+const getEventType = (name) => {
+  return new Promise((resolve, reject) => {
+    if (name) {
+      name = name.toLowerCase();
+      EventTypeModel.findOne({name: name}).exec(function(err, eventType) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(eventType);
+        }
+      });
+
+    } else {
+      reject('No item');
+    }
+  });
+};
+
 const promise_gameData = (item, i) => {
   return new Promise((resolve, reject) => {
     if (item) {
-      let newGameData = new GameData(gameName = 'alien', item);
+      let type = item.type;
+      if (!type)
+        reject('No type of gameData');
 
-      calculateId(GameDataModel).then(id => {
-        newGameData.id = id + i;
-        newGameData.save().then(doc => {
-          resolve(doc);
-        }).catch(err => {
-          reject(err);
-        });
+      getEventType(type).then((eventType) => {
+        if (eventType) {
+          let newGameData = new GameData(gameName = 'alien', item, eventType.id);
+          calculateId(GameDataModel).then(id => {
+            newGameData.id = id + i;
+            newGameData.save().then(doc => {
+              resolve(doc);
+            }).catch(err => {
+              reject(err);
+            });
+          });
+        } else {
+          reject('No eventType');
+        }
+
+      }).catch(err => {
+        reject(err);
       });
+
     } else {
       reject('No item');
     }
@@ -55,7 +86,7 @@ const promise_eventType = (item, i) => {
 
 const loadDefaults = () => {
 
-  removeDataFromModel(MemberModel, GameDataModel).then((data) => {
+  removeDataFromModel(MemberModel, GameDataModel, EventTypeModel).then((data) => {
     return promiseFor(promise_eventType, eventTypes);
   }).then((item) => {
     console.log('Gametypes added');
