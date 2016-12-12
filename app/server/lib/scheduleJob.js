@@ -3,7 +3,7 @@
 * @Date:   2016-11-29T11:59:30+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T12:22:10+01:00
+* @Last modified time: 2016-12-12T13:47:46+01:00
 * @License: stijnvanhulle.be
 */
 const {setTomoment, promiseFor} = require('./functions');
@@ -168,8 +168,7 @@ const addRule = (m, dataRule, f) => {
       job.on('end', (data) => {
         //job.emit('run', true);
         const gameController = require('../controllers/gameController');
-        console.log(data);
-        gameController.finishGameEventFromHash(data.jobHash, data.finishDate).then(({runned}) => {
+        gameController.finishGameEventFromHash(data).then(({runned}) => {
           console.log('RUNNED', runned, ' hash: ', hash);
         }).catch(err => {
           console.log(err);

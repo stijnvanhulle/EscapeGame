@@ -24,11 +24,11 @@
 }, {
   "type": "sound",
   "hide": false,
-  "sendToDevice": "app",
+  "sendToDevice": "",
   "data": {
     "name": "",
     "description": "NUMMER speelt af",
-    "file": "/nummer.mp3",
+    "file": "nummer.mp3",
     "maxTime": 300,
     "hints": [
       "Vul het juiste jaargetal in"
@@ -43,7 +43,7 @@
   "data": {
     "name": "",
     "description": "",
-    "file": "/bom.mp3",
+    "file": "nummer.mp3",
     "maxTime": 300,
     "hints": [
       ""
@@ -58,7 +58,7 @@
   "data": {
     "name": "",
     "description": "Scan het juiste schilderij",
-    "file": "/bom.mp3",
+    "file": "nummer.mp3",
     "maxTime": 300,
     "hints": [
       ""
@@ -73,7 +73,7 @@
   "data": {
     "name": "",
     "description": "",
-    "file": "/volkslied.mp3",
+    "file": "volkslied.mp3",
     "maxTime": 300,
     "hints": [
       "Ga naar het juiste schilderij"

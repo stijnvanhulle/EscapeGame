@@ -3,12 +3,11 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-02T17:42:00+01:00
+* @Last modified time: 2016-12-12T16:07:38+01:00
 * @License: stijnvanhulle.be
 */
 
 import React from 'react';
-import game from '../lib/game';
 
 const Home = () => (
   <div className='jumbotron'>

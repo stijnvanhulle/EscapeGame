@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T12:26:15+01:00
+* @Last modified time: 2016-12-12T14:14:07+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -31,7 +31,8 @@ class GameEvent {
     this.finishDate = null;
     this.model = Model;
     this.jobHash = null;
-    this.isCorrect=false;
+    this.isCorrect = false;
+    this.letter = '';
     this.events = new Emitter();
   }
 
@@ -47,6 +48,7 @@ class GameEvent {
     jobHash,
     level,
     isCorrect,
+    letter
   }) {
     try {
       this.gameId = gameId
@@ -64,9 +66,9 @@ class GameEvent {
       this.isActive = isActive
         ? Boolean(isActive)
         : this.isActive;
-        this.isCorrect = isCorrect
-          ? Boolean(isCorrect)
-          : this.isCorrect;
+      this.isCorrect = isCorrect
+        ? Boolean(isCorrect)
+        : this.isCorrect;
       this.activateDate = activateDate
         ? parseFloat(activateDate)
         : this.activateDate;
@@ -76,6 +78,9 @@ class GameEvent {
       this.jobHash = jobHash
         ? jobHash
         : this.jobHash;
+      this.letter = letter
+        ? letter
+        : this.letter;
       this.level = level
         ? parseFloat(level)
         : this.level;
@@ -165,7 +170,8 @@ class GameEvent {
     endDate,
     finishDate,
     date,
-    level
+    level,
+    letter
   }) {
     try {
       if (!setToMoment(endDate).isAfter(moment()) || !setToMoment(activateDate).isAfter(moment())) {
@@ -185,6 +191,7 @@ class GameEvent {
         finishDate: null,
         gameDataId,
         level,
+        letter,
         gameId,
         date
       });

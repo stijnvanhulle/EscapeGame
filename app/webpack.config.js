@@ -3,7 +3,7 @@
 * @Date:   2016-10-12T15:57:56+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-03T14:49:16+01:00
+* @Last modified time: 2016-12-12T15:37:22+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -33,6 +33,13 @@ const copy = new CopyWebpackPlugin([
   {
     from: './src/assets',
     to: 'assets'
+  }
+], {ignore: ['.DS_Store']});
+
+const copyAudio = new CopyWebpackPlugin([
+  {
+    from: './src/audio',
+    to: 'audio'
   }
 ], {ignore: ['.DS_Store']});
 
@@ -115,6 +122,7 @@ const config = {
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     copy,
+    copyAudio,
     new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"})
   ]
 

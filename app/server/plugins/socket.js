@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-08T17:13:19+01:00
+* @Last modified time: 2016-12-12T15:25:04+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
@@ -17,7 +17,9 @@ const onMessageSocket = (io, socket, client) => {
     client.publish('message', JSON.stringify(data));
   });
 
-  socket.on(socketNames.ONLINE, obj => {});
+  socket.on(socketNames.ONLINE, obj => {
+    console.log(obj);
+  });
 
   socket.on(socketNames.DISCONNECT, () => {
     const {id: socketId} = socket;
@@ -26,7 +28,11 @@ const onMessageSocket = (io, socket, client) => {
   });
   socket.on(socketNames.INPUT, (obj) => {
     const {input, jobHash, finishDate} = obj;
-    let success = scheduleJob.finishNextJob(jobHash, {finishDate});
+    let success = scheduleJob.finishNextJob(jobHash, {finishDate, input});
+  });
+  socket.on(socketNames.BEACON, (obj) => {
+    const {beaconId, range} = obj;
+    console.log(beaconId,range);
   });
 };
 

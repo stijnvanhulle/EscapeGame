@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T10:36:13+01:00
+* @Last modified time: 2016-12-12T16:56:43+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -15,13 +15,10 @@ import * as gameActions from '../../actions/gameActions';
 import game from '../../lib/game';
 import socketNames from '../../lib/socketNames';
 import TextInput from '../../components/common/textInput';
+import Audio from '../../components/common/audio';
+
 class GameStartPage extends Component {
-  state = {
-    countdown: 2,
-    startTime: null,
-    input: '',
-    error: ''
-  }
+  state = {}
   constructor(props, context) {
     super(props, context);
     this.socket = window.socket;
@@ -32,8 +29,9 @@ class GameStartPage extends Component {
       countdown: countdown,
       startTime: moment().add('seconds', countdown).valueOf(),
       input: '',
-      error: ''
-    }
+      error: '',
+      audioSrc: ''
+    };
 
     let timer = setInterval(function() {
       if (countdown == 0) {
@@ -45,6 +43,13 @@ class GameStartPage extends Component {
     }, 1000);
 
     self.startGame();
+
+    game.events.on('audio', (src) => {
+      if (src) {
+        this.setState({audioSrc: src});
+      }
+
+    });
   }
   startGame = () => {
     console.log(this.state.startTime);
@@ -90,6 +95,7 @@ class GameStartPage extends Component {
         {game.currentGameData.data.data.description}
         <TextInput name="input" label="teamName" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
         <button onClick={this.sendInput}>Send Input</button>
+        <Audio src={this.state.audioSrc}/>
       </div>;
     } else {
       div = <div></div>;

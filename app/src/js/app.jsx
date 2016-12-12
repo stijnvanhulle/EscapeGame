@@ -3,12 +3,13 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T17:04:30+01:00
+* @Last modified time: 2016-12-12T17:17:58+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component, PropTypes} from 'react';
 import socketNames from './lib/socketNames';
+import {runAudio} from './lib/functions';
 import Header from './components/header';
 import moment from 'moment';
 import {bindActionCreators} from 'redux';
@@ -55,6 +56,7 @@ class App extends Component {
     this.socket.on(socketNames.ONLINE, this.handleWSOnline);
     this.socket.on(socketNames.EVENT_START, this.handleWSEventStart);
     this.socket.on(socketNames.EVENT_END, this.handleWSEventEnd);
+    this.socket.on(socketNames.EVENT_DATA, this.handelWSEventData);
 
     window.socket = this.socket;
     window.moment = moment;
@@ -71,13 +73,25 @@ class App extends Component {
   handleWSOnline = obj => {
     console.log(obj);
   }
+
+  handelWSEventData = obj => {
+    console.log('Event data:', obj);
+  }
+
   handleWSEventStart = obj => {
     console.log('New event:', obj);
 
-    let {gameEvent,gameData}=obj;
-    game.currentGameData=gameData;
-    game.currentGameEvent=gameEvent;
+    let {gameEvent, gameData} = obj;
+    game.currentGameData = gameData;
+    game.currentGameEvent = gameEvent;
     this.props.actions.updateGameEvent(gameEvent).then(() => {
+      const currentData = gameData.data.data;
+      if (gameData.data.type.toLowerCase() == 'sound') {
+        game.events.emit('audio', currentData.file);
+      } else {
+        game.events.emit('audio', null);
+      }
+
       console.log('UPDATED gameEvent');
     }).catch((e) => {
       console.log(e);
@@ -85,8 +99,9 @@ class App extends Component {
   }
   handleWSEventEnd = obj => {
     console.log('End event:', obj);
-
-    let {gameEvent,gameData}=obj;
+    let {gameEvent, gameData} = obj;
+    game.currentGameData = null;
+    game.currentGameEvent = gameEvent;
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       console.log('UPDATED gameEvent');
     }).catch((e) => {

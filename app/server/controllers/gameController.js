@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T12:19:56+01:00
+* @Last modified time: 2016-12-12T17:35:49+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -388,24 +388,85 @@ const addEventScheduleRule = (gameData, gameEvent) => {
   });
 };
 
-const finishGameEventFromHash = (jobHash, finishDate) => {
+const randomLetterFrom = (sentence) => {
+  return new Promise((resolve, reject) => {
+    resolve('l');
+  });
+};
+
+const isAnswerCorrect = (inputData, gameData, gameEvent) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const data = gameData.data.data;
+      const isLetter = data.isLetter;
+      const answer = data.answer;
+
+      const sentData = (data, correct = false) => {
+        console.log(data);
+        io.emit(socketNames.EVENT_DATA, {data, inputData, correct});
+      };
+
+      if (answer) {
+        const {value, name} = answer;
+        inputData = inputData.input.toString().toLowerCase();
+        name = name.toString().toLowerCase()
+        if (inputData == input || inputData.indexOf('name')!=-1) {
+          if (isLetter) {
+            getGameById(gameEvent.gameId).then(game => {
+              const sentence = game.sentence;
+              return randomLetterFrom(sentence);
+            }).then(letter => {
+              sentData({
+                letter
+              }, correct = true);
+              resolve(true);
+            }).catch(err => {
+              reject(err);
+            });
+          } else {
+            sentData({}, correct = false);
+            resolve(true);
+          }
+
+        } else {
+          sentData({});
+          resolve(false);
+        }
+
+      } else {
+        resolve(false);
+      }
+    } catch (e) {
+      reject(e);
+    }
+
+  });
+};
+
+const finishGameEventFromHash = (data) => {
   return new Promise((resolve, reject) => {
     try {
       let gameEvent = new GameEvent({gameId: null});
       let gameData = new GameData();
 
-      getGameEventByHash(jobHash).then(item => {
+      getGameEventByHash(data.jobHash).then(item => {
         gameEvent.load(item);
-        gameEvent.setFinish(finishDate);
+        gameEvent.setFinish(data.finishDate);
         return getGameDataById(gameEvent.gameDataId);
       }).then(item => {
         gameData.load(item);
         if (gameData && gameEvent) {
-          return finishGameEvent(gameData, gameEvent, recalculate = true);
+          return isAnswerCorrect(data, gameData, gameEvent);
         } else {
           reject('gamedata or gamevent not filled in', gameEvent, gameData);
         }
 
+      }).then(isOk => {
+        console.log('answer correct: ', isOk);
+        if (isOk) {
+          gameEvent.isCorrect = true;
+        }
+        return finishGameEvent(gameData, gameEvent, recalculate = true);
       }).then(data => {
         resolve(data);
       }).catch(err => {
@@ -507,7 +568,7 @@ const createGameData = ({gameId, gameName, startTime, level}) => {
         });
       };
 
-      getGameDataFromGameName(gameName, 'finish').then(docs => {
+      getGameDataFromGameName(gameName, 'finish', 'light', 'anthem', 'scan', 'find', 'book', 'sound').then(docs => {
         promiseFor(promise, docs).then((items) => {
           resolve(items);
         }).catch(err => {

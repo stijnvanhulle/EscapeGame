@@ -3,7 +3,7 @@
 * @Date:   2016-10-15T13:55:51+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-08T16:12:38+01:00
+* @Last modified time: 2016-12-12T15:33:18+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -57,6 +57,18 @@ module.exports = [
     handler: {
       directory: {
         path: `./assets`
+      }
+    }
+  },
+  {
+    method: `GET`,
+    path: `/audio/{param*}`,
+    config: {
+      auth: false
+    },
+    handler: {
+      directory: {
+        path: `./audio`
       }
     }
   }

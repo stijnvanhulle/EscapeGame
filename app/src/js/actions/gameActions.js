@@ -3,7 +3,7 @@
 * @Date:   2016-11-05T14:35:35+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T15:22:19+01:00
+* @Last modified time: 2016-12-12T15:46:47+01:00
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
@@ -35,6 +35,11 @@ export function getGame_SUCCESS(game) {
 export function loadPlayers_SUCCESS(players) {
   return {type: actionsUrl.LOAD_PLAYER_SUCCESS, players};
 };
+
+//no api needed, local game
+export function updateGame(game) {
+  return {type: actionsUrl.UPDATE_GAME, game};
+}
 
 //thunk:
 export function createPlayer(player) {

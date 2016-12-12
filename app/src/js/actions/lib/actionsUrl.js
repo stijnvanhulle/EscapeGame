@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:24:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T14:13:23+01:00
+* @Last modified time: 2016-12-12T15:45:40+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -17,7 +17,8 @@ let items = {
   ADD_GAMEEVENT: 'add_gameEvent',
   UPDATE_GAMEEVENT: 'update_gameEvent',
   GET_GAME: 'get_game',
-  LOAD_PLAYERS: 'load_players'
+  LOAD_PLAYERS: 'load_players',
+  UPDATE_GAME:'update_game'
 };
 
 export default setSuccessAndFail(items);
