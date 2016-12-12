@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-07T18:01:17+01:00
+* @Last modified time: 2016-12-12T12:19:56+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -21,7 +21,7 @@ const {Game: GameModel, GameEvent: GameEventModel, GameMember: GameMemberModel, 
 
 const socketNames = require('../lib/socketNames');
 
-module.exports.add = (game) => {
+const addGame = (game) => {
   return new Promise((resolve, reject) => {
     try {
       if (!game instanceof Game) {
@@ -45,7 +45,7 @@ module.exports.add = (game) => {
 
 };
 
-module.exports.get = (id) => {
+const getGameById = (id) => {
   return new Promise((resolve, reject) => {
     try {
       if (!id)
@@ -68,18 +68,28 @@ module.exports.get = (id) => {
 
 };
 
-const getGameDataFromId = (id) => {
+const getGameDataById = (id) => {
   return new Promise((resolve, reject) => {
-    if (!id)
-      reject('No id for gameData');
-    GameDataModel.findOne({id: id}).exec(function(err, gameData) {
-      if (err) {
-        reject(err);
+    try {
+      if (id) {
+        GameDataModel.findOne({id: id}).exec(function(err, gameData) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(gameData);
+          }
+        });
       } else {
-        resolve(gameData);
+        reject('No id found');
       }
-    });
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
   });
+
 };
 
 const getEventType = (name) => {
@@ -99,132 +109,76 @@ const getEventType = (name) => {
     }
   });
 };
-
-const updateGameEvent = (obj) => {
+const getGameEventById = (id) => {
   return new Promise((resolve, reject) => {
-    if (!obj && obj.id)
-      reject('No id for gameEvent');
+    if (id) {
+      GameEventModel.findOne({id: id}).sort({'id': 1}).exec(function(err, gameEvent) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(gameEvent);
+        }
+      });
 
-    if (!obj instanceof GameEvent) {
-      reject('No instance of gameEvent');
+    } else {
+      reject('No item');
     }
-    obj = obj.json(stringify = false);
-    //
-    GameEventModel.update({
-      id: obj.id
-    }, {
-      isActive: obj.isActive,
-      jobHash: obj.jobHash
-    }, {
-      multi: true
-    }, function(err, raw) {
+  });
+};
+const getGameEventByHash = (jobHash) => {
+  return new Promise((resolve, reject) => {
+    if (jobHash) {
+      GameEventModel.findOne({jobHash: jobHash}).sort({'id': 1}).exec(function(err, gameEvent) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(gameEvent);
+        }
+      });
+
+    } else {
+      reject('No gameEvent hash item');
+    }
+  });
+};
+const getGameEventFromGame = (gameId, startId = null) => {
+  return new Promise((resolve, reject) => {
+    if (gameId) {
+      GameEventModel.find({gameId: gameId, isActive: true, finishDate: null}).sort({'id': 1}).exec(function(err, gameEvents) {
+        if (err) {
+          reject(err);
+        } else {
+          if (startId) {
+            gameEvents.filter((item) => {
+              if (item.id != startId) {
+                return item;
+              }
+            });
+          }
+
+          resolve(gameEvents);
+        }
+      });
+
+    } else {
+      reject('No item');
+    }
+  });
+};
+
+const getGameDataFromId = (id) => {
+  return new Promise((resolve, reject) => {
+    if (!id)
+      reject('No id for gameData');
+    GameDataModel.findOne({id: id}).exec(function(err, gameData) {
       if (err) {
         reject(err);
       } else {
-        resolve(raw);
+        resolve(gameData);
       }
     });
   });
 };
-
-const timeoutEndScheduleRule = (gameData, gameEvent) => {
-  if (!gameEvent.endDate)
-    throw new Error('No data seconds found in gameData');
-  const endDate = setToMoment(gameEvent.endDate);
-  if (!endDate)
-    reject('Cannot convert endDate to moment object');
-
-  return scheduleJob.addRule(endDate, {gameData, gameEvent});
-};
-const addEventScheduleRule = (gameData, gameEvent) => {
-  if (!gameEvent.activateDate)
-    throw new Error('No data seconds found in gameData');
-  const activateDate = setToMoment(gameEvent.activateDate);
-  if (!activateDate)
-    reject('Cannot convert activateDate to moment object');
-
-  return scheduleJob.addRule(activateDate, {
-    gameData,
-    gameEvent
-  }, ({running, runned, hash}) => {
-    console.log('RUNNING', running, ' hash: ', hash);
-    return new Promise((resolve, reject) => {
-      gameEvent.setJobHash(hash);
-      io.emit(socketNames.EVENT_START, {
-        gameData: gameData.json(false, true, false),
-        gameEvent: gameEvent.json(false, true, false)
-      });
-      timeoutEndScheduleRule(gameData, gameEvent).then(({running, runned, hash}) => {
-        console.log('RUNNED', runned, ' hash: ', hash);
-        if (runned) {
-          return endGameEvent(gameData, gameEvent);
-        }
-      }).then(({runned}) => {
-        resolve(runned);
-      }).catch((err) => {
-        reject(err);
-      });
-
-    });
-  });
-};
-
-const endGameEvent = (gameData, gameEvent) => {
-  return new Promise((resolve, reject) => {
-    try {
-      gameEvent.setInactive();
-      gameEvent.setJobHash(null);
-      updateGameEvent(gameEvent).then((doc) => {
-        console.log('doc', doc);
-        if (doc) {
-          io.emit(socketNames.EVENT_END, {
-            gameData: gameData.json(false, true, false),
-            gameEvent: gameEvent.json(false, true, false)
-          });
-          resolve({runned: true});
-        }
-      }).catch((err) => {
-        reject(err);
-      });
-
-    } catch (e) {
-      console.log(e);
-      reject(e);
-    }
-
-  });
-
-};
-module.exports.endGameEvent = endGameEvent;
-
-module.exports.getRandomGameData = () => {
-  return new Promise((resolve, reject) => {
-    try {
-      random(GameDataModel).then(random => {
-        if (random) {
-          GameDataModel.findOne({id: random}).exec(function(err, doc) {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(doc);
-            }
-          });
-        } else {
-          reject('No random found');
-        }
-      }).catch(err => {
-        reject(err);
-      });
-
-    } catch (e) {
-      console.log(e);
-      reject(e);
-    }
-
-  });
-
-};
-
 const getGameDataFromGameName = (gameName, ...notTypes) => {
   return new Promise((resolve, reject) => {
     try {
@@ -232,12 +186,15 @@ const getGameDataFromGameName = (gameName, ...notTypes) => {
         gameName = gameName.toLowerCase();
         if (notTypes) {
           promiseFor(getEventType, notTypes).then((typeIds) => {
-            GameDataModel.find({
-              gameName: gameName,
-              typeId: {
+            let typeIdNotObject = {};
+
+            if (typeIds && typeIds.length > 0) {
+              console.log(typeIds);
+              typeIdNotObject = {
                 '$ne': typeIds[0].id
-              }
-            }).sort({'typeId': 1, 'id': 1}).exec(function(err, docs) {
+              };
+            }
+            GameDataModel.find({gameName: gameName, typeId: typeIdNotObject}).sort({'typeId': 1, 'id': 1}).exec(function(err, docs) {
               if (err) {
                 reject(err);
               } else {
@@ -270,20 +227,221 @@ const getGameDataFromGameName = (gameName, ...notTypes) => {
 
 };
 
-module.exports.getGameData = (id) => {
+//updates
+
+const updateGameEvent = (obj, isActive) => {
+  return new Promise((resolve, reject) => {
+    if (!obj && obj.id)
+      reject('No id for gameEvent');
+
+    if (!obj instanceof GameEvent) {
+      reject('No instance of gameEvent');
+    }
+    obj = obj.json(stringify = false);
+    //
+    if (isActive == null) {
+      GameEventModel.update({
+        id: obj.id
+      }, {
+        isActive: obj.isActive,
+        jobHash: obj.jobHash,
+        finishDate: obj.finishDate,
+        activateDate: obj.activateDate,
+        endDate: obj.endDate,
+        gameDataId: obj.gameDataId,
+        level: obj.level
+      }, {
+        multi: true
+      }, function(err, raw) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(raw);
+        }
+      });
+    } else {
+      GameEventModel.update({
+        id: obj.id,
+        isActive: isActive
+      }, {
+        isActive: obj.isActive,
+        jobHash: obj.jobHash,
+        finishDate: obj.finishDate,
+        activateDate: obj.activateDate,
+        endDate: obj.endDate,
+        gameDataId: obj.gameDataId,
+        level: obj.level
+      }, {
+        multi: true
+      }, function(err, raw) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(raw);
+        }
+      });
+    }
+
+  });
+};
+
+const updateGameEventsFrom = (previousGameEvent) => {
+  return new Promise((resolve, reject) => {
+    let isFirstTime = true;
+    let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 10);
+    let {gameId, finishDate} = previousGameEvent;
+    let _previousGameEvent = previousGameEvent;
+
+    const promise = (item) => {
+      return new Promise((resolve, reject) => {
+        if (item) {
+          let gameEvent = new GameEvent({gameId});
+          gameEvent.load(item);
+
+          if (_previousGameEvent) {
+            if (!isFirstTime) {
+              startTime = _previousGameEvent.endDate;
+            }
+
+          }
+          gameEvent.createGameData(gameDataId = gameEvent.gameDataId, gameEvent.level, startTime = startTime, startIn = 10, maxTime = null, timeBetween = null);
+          _previousGameEvent = gameEvent;
+          isFirstTime = false;
+
+          getGameDataById(gameEvent.gameDataId).then(data => {
+            let gameData = new GameData();
+            gameData.load(data);
+            addEventScheduleRule(gameData, gameEvent);
+
+            return updateGameEvent(gameEvent);
+          }).then(doc => {
+            resolve(doc);
+          }).catch(err => {
+            reject(err);
+          });
+
+        }
+      });
+    };
+
+    cancelJobs().then(ok => {
+      return getGameEventFromGame(gameId, startId = previousGameEvent.id + 1);
+    }).then(gameEvents => {
+      return promiseFor(promise, gameEvents);
+    }).then(data => {
+      resolve(data);
+    }).catch(err => {
+      reject(err);
+    })
+  });
+};
+
+//functions
+
+const timeoutEndScheduleRule = (gameData, gameEvent) => {
+  if (!gameEvent.endDate)
+    throw new Error('No data seconds found in gameData');
+  const endDate = setToMoment(gameEvent.endDate);
+  if (!endDate)
+    reject('Cannot convert endDate to moment object');
+
+  return scheduleJob.addRule(endDate, {gameData, gameEvent});
+};
+const addEventScheduleRule = (gameData, gameEvent) => {
+  if (!gameEvent.activateDate)
+    throw new Error('No data seconds found in gameData');
+  const activateDate = setToMoment(gameEvent.activateDate);
+  if (!activateDate)
+    reject('Cannot convert activateDate to moment object');
+
+  if (!gameEvent.isActive) {
+    resolve(true);
+    return;
+  }
+  return scheduleJob.addRule(activateDate, {
+    gameData,
+    gameEvent
+  }, ({running, runned, hash}) => {
+    console.log('RUNNING', running, ' hash: ', hash);
+    return new Promise((resolve, reject) => {
+      gameEvent.setJobHash(hash);
+      //updategameEvent
+      //
+      updateGameEvent(gameEvent).then(doc => {
+        io.emit(socketNames.EVENT_START, {
+          gameData: gameData.json(false, true, false),
+          gameEvent: gameEvent.json(false, true, false)
+        });
+        return timeoutEndScheduleRule(gameData, gameEvent);
+      }).then(({running, runned, hash}) => {
+        console.log('RUNNED', runned, ' hash: ', hash);
+        if (runned) {
+          return finishGameEvent(gameData, gameEvent);
+        }
+      }).then(({runned}) => {
+        resolve(runned);
+      }).catch((err) => {
+        reject(err);
+      });
+
+    });
+  });
+};
+
+const finishGameEventFromHash = (jobHash, finishDate) => {
   return new Promise((resolve, reject) => {
     try {
-      if (id) {
-        GameDataModel.findOne({id: id}).exec(function(err, doc) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(doc);
-          }
+      let gameEvent = new GameEvent({gameId: null});
+      let gameData = new GameData();
+
+      getGameEventByHash(jobHash).then(item => {
+        gameEvent.load(item);
+        gameEvent.setFinish(finishDate);
+        return getGameDataById(gameEvent.gameDataId);
+      }).then(item => {
+        gameData.load(item);
+        if (gameData && gameEvent) {
+          return finishGameEvent(gameData, gameEvent, recalculate = true);
+        } else {
+          reject('gamedata or gamevent not filled in', gameEvent, gameData);
+        }
+
+      }).then(data => {
+        resolve(data);
+      }).catch(err => {
+        reject(err);
+      });
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+};
+
+const finishGameEvent = (gameData, gameEvent, recalculate = false) => {
+  return new Promise((resolve, reject) => {
+    try {
+      gameEvent.setInactive();
+      gameEvent.setJobHash(null);
+
+      updateGameEvent(gameEvent).then(obj => {
+        io.emit(socketNames.EVENT_END, {
+          gameData: gameData.json(false, true, false),
+          gameEvent: gameEvent.json(false, true, false)
         });
-      } else {
-        reject('No id found');
-      }
+        if (recalculate) {
+          return updateGameEventsFrom(gameEvent);
+        } else {
+          resolve({runned: true});
+        }
+
+      }).then(obj => {
+        resolve({runned: true});
+      }).catch((err) => {
+        reject(err);
+      });
 
     } catch (e) {
       console.log(e);
@@ -294,26 +452,54 @@ module.exports.getGameData = (id) => {
 
 };
 
-module.exports.createGameData = (gameId, gameName, startTime, level) => {
+const getRandomGameData = () => {
   return new Promise((resolve, reject) => {
     try {
+      random(GameDataModel).then(random => {
+        if (random) {
+          GameDataModel.findOne({id: random}).exec(function(err, doc) {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(doc);
+            }
+          });
+        } else {
+          reject('No random found');
+        }
+      }).catch(err => {
+        reject(err);
+      });
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
+
+const createGameData = ({gameId, gameName, startTime, level}) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let promise;
       if (!gameId && !gameName && !startTime) {
         reject('Gameid, gamename and startttime not filled in');
       }
-      let previousGameEvent = null;
-
-      const promise = (item, i) => {
+      let _previousGameEvent;
+      promise = (item, i) => {
         return new Promise((resolve, reject) => {
           if (item) {
-            const gameEvent = new GameEvent(gameId);
+            const gameEvent = new GameEvent({gameId});
             let gameData = new GameData();
             gameData.load(item);
-            if (previousGameEvent) {
-              startTime = previousGameEvent.endDate;
+            if (_previousGameEvent) {
+              startTime = _previousGameEvent.endDate;
             }
 
             gameEvent.createGameData(gameDataId = gameData.id, level, startTime = setToMoment(startTime), startIn = 10, maxTime = gameData.data.maxTime, timeBetween = null);
-            previousGameEvent = gameEvent;
+            _previousGameEvent = gameEvent;
             resolve(gameEvent.json(stringify = false, removeEmpty = true));
           } else {
             reject('No item');
@@ -337,25 +523,27 @@ module.exports.createGameData = (gameId, gameName, startTime, level) => {
     }
 
   });
-
 };
-module.exports.addEvent = (gameEvent) => {
+
+//add
+
+const addEvent = (gameEvent, i) => {
   return new Promise((resolve, reject) => {
     try {
       if (!gameEvent instanceof GameEvent) {
         throw new Error('No instance of');
       }
       //TODO:check of gameEvent already exists
-      getGameDataFromId(gameEvent.gameDataId).then(gameData => {
-        let item = new GameData();
-        item.load(gameData);
-        addEventScheduleRule(item, gameEvent);
+      getGameDataFromId(gameEvent.gameDataId).then(data => {
+        let gameData = new GameData();
+        gameData.load(data);
+        addEventScheduleRule(gameData, gameEvent);
 
         //waiteing on with return ....
       }).then(value => {
 
         calculateId(GameEventModel).then(id => {
-          gameEvent.id = id;
+          gameEvent.id = id + i;
           gameEvent.save().then((doc) => {
             resolve(doc);
           }).catch(err => {
@@ -375,35 +563,7 @@ module.exports.addEvent = (gameEvent) => {
 
 };
 
-module.exports.updateEvent = (gameEvent) => {
-  return new Promise((resolve, reject) => {
-    try {
-      if (!gameEvent instanceof GameEvent) {
-        throw new Error('No instance of');
-      }
-      //TODO:check of gameEvent already exists
-      getGameDataFromId(gameEvent.gameDataId).then(gameData => {
-        let item = new GameData();
-        item.load(gameData);
-        addEventScheduleRule(item, gameEvent);
-        return updateGameEvent(gameEvent);
-        //waiteing on with return ....
-      }).then(value => {
-        resolve(value);
-      }).catch(err => {
-        reject(err);
-      });
-
-    } catch (e) {
-      console.log(e);
-      reject(e);
-    }
-
-  });
-
-};
-
-module.exports.addPlayers = ({players, id: gameId}) => {
+const addPlayers = ({players, id: gameId}) => {
   return new Promise((resolve, reject) => {
     try {
       if (!players instanceof Array) {
@@ -440,21 +600,22 @@ module.exports.addPlayers = ({players, id: gameId}) => {
 
 };
 
-module.exports.cancelJobs = (hash) => {
-  return new Promise((resolve, reject) => {
-    try {
-      if (hash) {
-        scheduleJob.cancel(hash);
-      } else {
-        scheduleJob.cancelAll();
-      }
-      resolve({runned: true})
-
-    } catch (e) {
-      console.log(e);
-      reject(e);
-    }
-
-  });
-
+const cancelJobs = (hash) => {
+  if (hash) {
+    return scheduleJob.cancel(hash);
+  } else {
+    return scheduleJob.cancelAll();
+  }
 };
+
+module.exports.addGame = addGame;
+module.exports.getGameById = getGameById;
+module.exports.updateGameEvent = updateGameEvent;
+module.exports.finishGameEvent = finishGameEvent;
+module.exports.getGameDataById = getGameDataById;
+module.exports.updateGameEventsFrom = updateGameEventsFrom;
+module.exports.createGameData = createGameData;
+module.exports.addEvent = addEvent;
+module.exports.addPlayers = addPlayers;
+module.exports.cancelJobs = cancelJobs;
+module.exports.finishGameEventFromHash = finishGameEventFromHash;

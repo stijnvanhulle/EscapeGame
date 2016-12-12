@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T17:22:19+01:00
+* @Last modified time: 2016-12-12T12:26:15+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -15,7 +15,7 @@ class Emitter extends EventEmitter {}
 
 class GameEvent {
   constructor({gameId}) {
-    this.gameId = gameId;
+    this.gameId = parseFloat(gameId);
     this.reset();
 
   }
@@ -24,11 +24,14 @@ class GameEvent {
     this.gameDataId = null;
     this.date = null;
     this.id = null;
+    this.level = null;
     this.isActive = true;
     this.activateDate = null;
     this.endDate = null;
+    this.finishDate = null;
     this.model = Model;
     this.jobHash = null;
+    this.isCorrect=false;
     this.events = new Emitter();
   }
 
@@ -40,24 +43,30 @@ class GameEvent {
     isActive,
     activateDate,
     endDate,
-    jobHash
+    finishDate,
+    jobHash,
+    level,
+    isCorrect,
   }) {
     try {
       this.gameId = gameId
-        ? gameId
+        ? parseFloat(gameId)
         : this.gameId;
       this.id = id
         ? id
         : this.id;
       this.gameDataId = gameDataId
-        ? gameDataId
+        ? parseFloat(gameDataId)
         : this.gameDataId;
       this.date = date
         ? parseFloat(date)
         : this.date;
       this.isActive = isActive
-        ? isActive
+        ? Boolean(isActive)
         : this.isActive;
+        this.isCorrect = isCorrect
+          ? Boolean(isCorrect)
+          : this.isCorrect;
       this.activateDate = activateDate
         ? parseFloat(activateDate)
         : this.activateDate;
@@ -67,11 +76,15 @@ class GameEvent {
       this.jobHash = jobHash
         ? jobHash
         : this.jobHash;
-
+      this.level = level
+        ? parseFloat(level)
+        : this.level;
     } catch (e) {
       console.log(e);
       throw e;
     }
+
+    return this;
   }
 
   createGameData(gameDataId = null, level = 1, startTime = null, startIn = 20, maxTime = null, timeBetween = null) {
@@ -89,7 +102,11 @@ class GameEvent {
         throw new Error('Time to start not a utc timestamp');
 
       if (!startTime.isAfter(moment()))
-        throw new Error('Time is not in the future');
+        throw new Error('Time is not in the future ' + startTime.format().toString() + ' now: ' + moment().format().toString());
+
+      if (!level) {
+        level = 1;
+      }
 
       if (!timeBetween) {
         var seconds = 0;
@@ -118,16 +135,19 @@ class GameEvent {
 
       let endDate = activateDate_temp.add('seconds', parseInt(timeBetween));
 
-
       if (!setToMoment(endDate).isAfter(setToMoment(activateDate))) {
         throw new Error('endDate not after activatedate');
         return;
       }
 
-      this.activateDate = parseFloat(activateDate.valueOf());
-      this.endDate = parseFloat(endDate.valueOf());
-      this.isActive = true;
-      this.gameDataId = gameDataId;
+      this.load({
+        activateDate: parseFloat(activateDate.valueOf()),
+        endDate: parseFloat(endDate.valueOf()),
+        isActive: true,
+        finishDate: null,
+        gameDataId,
+        level
+      });
 
     } catch (e) {
       console.log(e);
@@ -140,9 +160,12 @@ class GameEvent {
     gameId,
     gameDataId,
     isActive,
+    isCorrect,
     activateDate,
     endDate,
-    date
+    finishDate,
+    date,
+    level
   }) {
     try {
       if (!setToMoment(endDate).isAfter(moment()) || !setToMoment(activateDate).isAfter(moment())) {
@@ -153,12 +176,18 @@ class GameEvent {
         throw new Error('endDate not after activatedate');
         return;
       }
-      this.gameId = gameId;
-      this.date = parseFloat(date);
-      this.gameDataId = gameDataId;
-      this.isActive = Boolean(isActive);
-      this.endDate = parseFloat(endDate);
-      this.activateDate = parseFloat(activateDate);
+
+      this.load({
+        activateDate,
+        endDate,
+        isActive,
+        isCorrect,
+        finishDate: null,
+        gameDataId,
+        level,
+        gameId,
+        date
+      });
 
     } catch (e) {
       console.log(e);
@@ -168,6 +197,13 @@ class GameEvent {
   }
   setJobHash(jobHash) {
     this.jobHash = jobHash;
+  }
+  setFinish(finish) {
+    finish = setToMoment(finish);
+    if (finish) {
+      this.finishDate = parseFloat(finish.valueOf());
+    }
+
   }
 
   save() {

@@ -22,28 +22,6 @@
   }
 
 }, {
-  "type": "start",
-  "hide": true,
-  "sendToDevice": null,
-  "data": {
-    "name": "",
-    "description": "Zoek de juiste president",
-    "file": null,
-    "hints": [
-      ""
-    ],
-    "maxTime": 300,
-    "isLetter": true,
-    "answer": {
-      "name": "President stijn",
-      "value": {
-        "location": "brugge",
-        "date": "sdfs",
-        "book": 2
-      }
-    }
-  }
-}, {
   "type": "sound",
   "hide": false,
   "sendToDevice": "app",

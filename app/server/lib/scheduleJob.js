@@ -3,48 +3,71 @@
 * @Date:   2016-11-29T11:59:30+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-07T18:18:08+01:00
+* @Last modified time: 2016-12-12T12:22:10+01:00
 * @License: stijnvanhulle.be
 */
-const {setTomoment} = require('./functions');
+const {setTomoment, promiseFor} = require('./functions');
+const fs = require('fs');
 const schedule = require('node-schedule');
+const {Game, GameEvent, GameData} = require('../models');
 const Chance = require('chance');
 const c = new Chance();
 
 const cancelAll = function() {
-  const jobs = schedule.scheduledJobs;
-  let hashes = Object.keys(jobs);
-  for (var i = 0; i < hashes.length; i++) {
-    let hash = hashes[i];
-    let job = jobs[hash];
-    job.cancel();
-  }
+  return new Promise((resolve, reject) => {
+    const jobs = schedule.scheduledJobs;
+    let hashes = Object.keys(jobs);
 
-  log();
+    promiseFor(cancel, hashes).then((items) => {
+      console.log(items);
+      log('CANCEL_ALL');
+      resolve(items);
+    }).catch(err => {
+      log('CANCEL_ALL');
+      reject(err);
+    });
+
+  });
 };
-const log = () => {
+const log = (text = '-') => {
   const jobs = schedule.scheduledJobs;
-  let hashes = Object.keys(jobs);
+  const hashes = Object.keys(jobs);
 
   if (hashes && hashes.length > 0) {
-    console.log('Jobs actief: ' + hashes.length);
+    console.log(text + ' ', 'Jobs actief: ' + hashes.length);
   } else {
-    console.log('Geen jobs actief');
-  }
-};
-const cancel = function(jobHash) {
-  let success;
-  for (var i = 0; i < schedule.scheduledJobs.length; i++) {
-    let job = schedule.scheduledJobs[i];
-    if (hash == jobHash) {
-      success = schedule.cancelJob(job.hash);
-    }
+    console.log(text + ' ', 'Geen jobs actief');
   }
 
-  log();
-  return success;
 };
-const endJob = function(jobHash) {
+const cancel = function(jobHash) {
+  return new Promise((resolve, reject) => {
+    try {
+      const jobs = schedule.scheduledJobs;
+      const hashes = Object.keys(jobs);
+
+      for (var i = 0; i < hashes.length; i++) {
+        let hash = hashes[i];
+        let job = jobs[hash];
+        if (hash == jobHash) {
+          let success = job.cancel();
+
+          if (success) {
+            resolve({canceled: true, jobHash, error: null});
+          } else {
+            resolve({canceled: false, jobHash, error: null});
+          }
+          break;
+          //job.cancel();
+        }
+      }
+    } catch (e) {
+      console.log(e);
+      reject({canceled: false, jobHash, error: e});
+    }
+  });
+};
+const endJob = function(jobHash, data = null) {
   let success;
   const jobs = schedule.scheduledJobs;
   let hashes = Object.keys(jobs);
@@ -54,7 +77,7 @@ const endJob = function(jobHash) {
     let job = jobs[hash];
 
     if (hash == jobHash) {
-      job.emit('run', true);
+      job.emit('run', data);
       success = true;
     }
   }
@@ -62,7 +85,7 @@ const endJob = function(jobHash) {
   log();
   return success;
 };
-const finishJob = (jobHash) => {
+const finishJob = (jobHash, data = {}) => {
   let success;
   const jobs = schedule.scheduledJobs;
   let hashes = Object.keys(jobs);
@@ -71,15 +94,14 @@ const finishJob = (jobHash) => {
     let hash = hashes[i];
     let job = jobs[hash];
     if (job.hash == jobHash) {
-      job.emit('end', true);
+      job.emit('end', data);
       success = true;
       break;
     }
   }
-  log();
   return success;
 };
-const finishNextJob = (jobHash) => {
+const finishNextJob = (jobHash, data = {}) => {
   var nextJobHash;
   const jobs = schedule.scheduledJobs;
   let hashes = Object.keys(jobs);
@@ -92,9 +114,10 @@ const finishNextJob = (jobHash) => {
       break;
     }
   }
-  return finishJob(nextJobHash);
+  data.jobHash = jobHash;
+  return finishJob(nextJobHash, data);
 };
-const addRule = (m, data, f) => {
+const addRule = (m, dataRule, f) => {
   return new Promise(function(resolve, reject) {
     try {
       if (m == null) {
@@ -138,20 +161,22 @@ const addRule = (m, data, f) => {
       });
 
       job.on('run', () => {
+        job.cancel();
         console.log('New job is done on ' + date + ', hash: ' + hash);
+        log();
       });
-      job.on('end', () => {
-        console.log(true);
-        job.emit('run', true);
-        const {gameData, gameEvent} = data;
+      job.on('end', (data) => {
+        //job.emit('run', true);
         const gameController = require('../controllers/gameController');
-
-        gameController.endGameEvent(gameData, gameEvent).then(({runned}) => {
+        console.log(data);
+        gameController.finishGameEventFromHash(data.jobHash, data.finishDate).then(({runned}) => {
           console.log('RUNNED', runned, ' hash: ', hash);
         }).catch(err => {
           console.log(err);
         });
         console.log('New job is ended on ' + date + ', hash: ' + hash);
+        job.cancel();
+        log();
       });
 
       log();

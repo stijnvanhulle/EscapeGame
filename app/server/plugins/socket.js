@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-07T18:18:20+01:00
+* @Last modified time: 2016-12-08T17:13:19+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
@@ -25,9 +25,8 @@ const onMessageSocket = (io, socket, client) => {
     console.log('Users:', users);
   });
   socket.on(socketNames.INPUT, (obj) => {
-    const {input, jobHash} = obj;
-    console.log(jobHash);
-    let success = scheduleJob.finishNextJob(jobHash);
+    const {input, jobHash, finishDate} = obj;
+    let success = scheduleJob.finishNextJob(jobHash, {finishDate});
   });
 };
 
@@ -35,7 +34,7 @@ module.exports.register = (server, options, next) => {
   users = [];
   const io = require(`socket.io`)(server.listener);
   server.expose('io', io);
-  if(!io){
+  if (!io) {
     next('No io made');
     return;
   }

@@ -3,11 +3,10 @@
 * @Date:   2016-11-30T21:03:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-07T14:24:06+01:00
+* @Last modified time: 2016-12-09T14:51:22+01:00
 * @License: stijnvanhulle.be
 */
 
-const API = '/api'
 module.exports = {
   DISCONNECT: 'disconnect',
   CONNECT: 'connection',

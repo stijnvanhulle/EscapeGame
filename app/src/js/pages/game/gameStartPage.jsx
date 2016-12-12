@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-07T14:50:30+01:00
+* @Last modified time: 2016-12-12T10:36:13+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -18,15 +18,23 @@ import TextInput from '../../components/common/textInput';
 class GameStartPage extends Component {
   state = {
     countdown: 2,
+    startTime: null,
     input: '',
     error: ''
   }
   constructor(props, context) {
     super(props, context);
     this.socket = window.socket;
-
     let self = this;
-    let countdown = this.state.countdown
+    let countdown = 2;
+
+    this.state = {
+      countdown: countdown,
+      startTime: moment().add('seconds', countdown).valueOf(),
+      input: '',
+      error: ''
+    }
+
     let timer = setInterval(function() {
       if (countdown == 0) {
         clearInterval(timer);
@@ -39,10 +47,8 @@ class GameStartPage extends Component {
     self.startGame();
   }
   startGame = () => {
-    this.props.actions.createGameEvents({
-      game,
-      startTime: moment().add('seconds', this.state.countdown).valueOf()
-    }).then(() => {
+    console.log(this.state.startTime);
+    this.props.actions.createGameEvents({game, startTime: this.state.startTime}).then(() => {
       const gameEvents = this.props.gameEvents;
       console.log('GameEvents v1', gameEvents);
       return this.props.actions.addGameEvent({data: gameEvents, game});
@@ -60,8 +66,12 @@ class GameStartPage extends Component {
   sendInput = () => {
     const input = this.state.input;
     if (input) {
-      if(game.currentGameEvent.isActive){
-        this.socket.emit(socketNames.INPUT, {input,jobHash:game.currentGameEvent.jobHash});
+      if (game.currentGameEvent.isActive) {
+        this.socket.emit(socketNames.INPUT, {
+          input,
+          jobHash: game.currentGameEvent.jobHash,
+          finishDate: moment().valueOf()
+        });
       }
 
     }
