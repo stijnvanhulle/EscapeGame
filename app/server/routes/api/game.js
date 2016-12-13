@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T11:41:13+01:00
+* @Last modified time: 2016-12-13T16:49:55+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -27,9 +27,6 @@ module.exports = [
         const game = new Game(teamName, players);
 
         gameController.addGame(game).then((doc) => {
-          game.id = doc.id;
-          game.date = doc.id;
-
           return gameController.addPlayers(game);
         }).then(players => {
           game.players = players;
@@ -78,10 +75,10 @@ module.exports = [
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
-        let {gameName, level, startTime} = request.payload;
+        let {gameName, level, startTime, startIn} = request.payload;
         let gameId = request.params.id;
 
-        gameController.createGameData({gameId, gameName, startTime, level}).then(gameEvents => {
+        gameController.createGameData({gameId, gameName, startTime, startIn, level}).then(gameEvents => {
           reply(gameEvents);
         }).catch(err => {
           throw new Error(err);
@@ -134,7 +131,7 @@ module.exports = [
           return new Promise((resolve, reject) => {
             if (item) {
               const gameEvent = new GameEvent({gameId: request.params.id});
-              gameController.getGameDataById(item.gameDataId,i).then(gameData => {
+              gameController.getGameDataById(item.gameDataId, i).then(gameData => {
                 gameEvent.setGameData({gameDataId: gameData.id, isActive: item.isActive, activateDate: item.activateDate, endDate: item.endDate});
                 return gameController.addEvent(gameEvent, i);
               }).then(doc => {

@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T16:56:43+01:00
+* @Last modified time: 2016-12-13T16:51:19+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -16,6 +16,7 @@ import game from '../../lib/game';
 import socketNames from '../../lib/socketNames';
 import TextInput from '../../components/common/textInput';
 import Audio from '../../components/common/audio';
+import Image from '../../components/common/image';
 
 class GameStartPage extends Component {
   state = {}
@@ -30,7 +31,9 @@ class GameStartPage extends Component {
       startTime: moment().add('seconds', countdown).valueOf(),
       input: '',
       error: '',
-      audioSrc: ''
+      audioSrc: '',
+      imageSrc: '',
+      audioRepeat: true
     };
 
     let timer = setInterval(function() {
@@ -47,13 +50,33 @@ class GameStartPage extends Component {
     game.events.on('audio', (src) => {
       if (src) {
         this.setState({audioSrc: src});
+
+        if (game.currentGameData.data.type.toLowerCase() == 'bom') {
+          this.setState({audioRepeat: false});
+        } else {
+          this.setState({audioRepeat: true});
+        }
+      } else {
+        this.setState({imageSrc: ''});
+      }
+
+    });
+    game.events.on('audio', (src) => {
+      if (src) {
+        this.setState({imageSrc: src});
+      } else {
+        this.setState({imageSrc: ''});
       }
 
     });
   }
   startGame = () => {
-    console.log(this.state.startTime);
-    this.props.actions.createGameEvents({game, startTime: this.state.startTime}).then(() => {
+    //set starttime of null for starttime on server
+    //let startTime=this.state.startTime;
+    let startTime;
+    let startIn=this.state.countdown;
+    
+    this.props.actions.createGameEvents({game, startTime, startIn}).then(() => {
       const gameEvents = this.props.gameEvents;
       console.log('GameEvents v1', gameEvents);
       return this.props.actions.addGameEvent({data: gameEvents, game});
@@ -95,7 +118,8 @@ class GameStartPage extends Component {
         {game.currentGameData.data.data.description}
         <TextInput name="input" label="teamName" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
         <button onClick={this.sendInput}>Send Input</button>
-        <Audio src={this.state.audioSrc}/>
+        <Audio src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
+        <Image src={this.state.imageSrc}/>
       </div>;
     } else {
       div = <div></div>;

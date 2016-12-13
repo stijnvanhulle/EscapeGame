@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T17:17:58+01:00
+* @Last modified time: 2016-12-13T17:34:26+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -56,10 +56,12 @@ class App extends Component {
     this.socket.on(socketNames.ONLINE, this.handleWSOnline);
     this.socket.on(socketNames.EVENT_START, this.handleWSEventStart);
     this.socket.on(socketNames.EVENT_END, this.handleWSEventEnd);
+    this.socket.on(socketNames.EVENT_FINISH, this.handleWSEventFinish);
     this.socket.on(socketNames.EVENT_DATA, this.handelWSEventData);
 
     window.socket = this.socket;
     window.moment = moment;
+    window.game = game;
   }
 
   addMessage = (type, message) => {
@@ -77,6 +79,9 @@ class App extends Component {
   handelWSEventData = obj => {
     console.log('Event data:', obj);
   }
+  handleWSEventFinish = obj => {
+    console.log('Event finish:', obj);
+  }
 
   handleWSEventStart = obj => {
     console.log('New event:', obj);
@@ -86,10 +91,14 @@ class App extends Component {
     game.currentGameEvent = gameEvent;
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       const currentData = gameData.data.data;
-      if (gameData.data.type.toLowerCase() == 'sound') {
+      const type = gameData.data.type.toLowerCase();
+      if (type == 'sound' || type == 'bom' || type == 'anthem') {
         game.events.emit('audio', currentData.file);
+      } else if (type == "scan") {
+        game.events.emit('image', currentData.file);
       } else {
         game.events.emit('audio', null);
+        game.events.emit('image', null);
       }
 
       console.log('UPDATED gameEvent');
@@ -99,11 +108,15 @@ class App extends Component {
   }
   handleWSEventEnd = obj => {
     console.log('End event:', obj);
-    let {gameEvent, gameData} = obj;
+    let {gameEvent, gameData,activeEvents} = obj;
     game.currentGameData = null;
     game.currentGameEvent = gameEvent;
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       console.log('UPDATED gameEvent');
+
+      if (activeEvents == 0) {
+        this.socket.emit(socketNames.EVENT_FINISH, {finish: true});
+      }
     }).catch((e) => {
       console.log(e);
     });

@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T14:14:07+01:00
+* @Last modified time: 2016-12-13T17:01:16+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -15,7 +15,12 @@ class Emitter extends EventEmitter {}
 
 class GameEvent {
   constructor({gameId}) {
-    this.gameId = parseFloat(gameId);
+    try {
+      this.gameId = parseFloat(gameId) || null;
+    } catch (e) {
+      console.log(e);
+    }
+
     this.reset();
 
   }
@@ -55,7 +60,7 @@ class GameEvent {
         ? parseFloat(gameId)
         : this.gameId;
       this.id = id
-        ? id
+        ? parseFloat(id)
         : this.id;
       this.gameDataId = gameDataId
         ? parseFloat(gameDataId)
@@ -92,8 +97,9 @@ class GameEvent {
     return this;
   }
 
-  createGameData(gameDataId = null, level = 1, startTime = null, startIn = 20, maxTime = null, timeBetween = null) {
+  createGameData(gameDataId = null, level = 1, startTime = moment().valueOf(), startIn = 10, maxTime = null, timeBetween = null) {
     try {
+      let now = moment();
       if (parseInt(level) > 3) {
         throw new Error('Level is to big');
       }
@@ -106,8 +112,11 @@ class GameEvent {
       if (!startTime)
         throw new Error('Time to start not a utc timestamp');
 
-      if (!startTime.isAfter(moment()))
-        throw new Error('Time is not in the future ' + startTime.format().toString() + ' now: ' + moment().format().toString());
+      //delay of 5 seconds for push data
+      if (!startTime.isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', 5).isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', startIn).isSameOrAfter(now, 'second')) {
+        console.log(startTime.valueOf(), now.valueOf());
+        throw new Error('Time is not in the future ' + startTime.format().toString() + ' now: ' + now.format().toString());
+      }
 
       if (!level) {
         level = 1;

@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T15:25:04+01:00
+* @Last modified time: 2016-12-13T17:37:08+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
@@ -32,7 +32,12 @@ const onMessageSocket = (io, socket, client) => {
   });
   socket.on(socketNames.BEACON, (obj) => {
     const {beaconId, range} = obj;
-    console.log(beaconId,range);
+    console.log(beaconId, range);
+  });
+
+  socket.on(socketNames.EVENT_FINISH, (obj) => {
+    console.log(obj);
+    io.emit(socketNames.EVENT_FINISH,obj);
   });
 };
 

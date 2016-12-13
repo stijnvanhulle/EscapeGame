@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T17:35:49+01:00
+* @Last modified time: 2016-12-13T17:19:57+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -14,7 +14,7 @@ const moment = require('moment');
 const {calculateId, random} = require('./lib/functions');
 const scheduleJob = require("../lib/scheduleJob");
 
-const {Game, GameEvent, GameData} = require('../models');
+const {Game, GameEvent, GameData, EventType} = require('../models');
 
 const {promiseFor, setToMoment} = require('../lib/functions');
 const {Game: GameModel, GameEvent: GameEventModel, GameMember: GameMemberModel, GameData: GameDataModel, EventType: EventTypeModel} = require('../models/mongo');
@@ -27,11 +27,14 @@ const addGame = (game) => {
       if (!game instanceof Game) {
         throw new Error('No instance of');
       }
-
       calculateId(GameModel).then(id => {
         game.id = id;
+        game.generateAlienName();
+
         game.save().then((doc) => {
-          resolve(doc);
+          let game = new Game();
+          game.load(doc);
+          resolve(game);
         }).catch(err => {
           reject(err);
         });
@@ -55,7 +58,9 @@ const getGameById = (id) => {
         if (err) {
           reject(err);
         } else {
-          resolve(doc);
+          let game = new Game();
+          game.load(doc);
+          resolve(game);
         }
       });
 
@@ -72,10 +77,12 @@ const getGameDataById = (id) => {
   return new Promise((resolve, reject) => {
     try {
       if (id) {
-        GameDataModel.findOne({id: id}).exec(function(err, gameData) {
+        GameDataModel.findOne({id: id}).exec(function(err, doc) {
           if (err) {
             reject(err);
           } else {
+            let gameData = new GameData();
+            gameData.load(doc);
             resolve(gameData);
           }
         });
@@ -96,10 +103,12 @@ const getEventType = (name) => {
   return new Promise((resolve, reject) => {
     if (name) {
       name = name.toLowerCase();
-      EventTypeModel.findOne({name: name}).exec(function(err, eventType) {
+      EventTypeModel.findOne({name: name}).exec(function(err, doc) {
         if (err) {
           reject(err);
         } else {
+          let eventType = new EventType();
+          eventType.load(doc);
           resolve(eventType);
         }
       });
@@ -112,10 +121,12 @@ const getEventType = (name) => {
 const getGameEventById = (id) => {
   return new Promise((resolve, reject) => {
     if (id) {
-      GameEventModel.findOne({id: id}).sort({'id': 1}).exec(function(err, gameEvent) {
+      GameEventModel.findOne({id: id}).sort({'id': 1}).exec(function(err, doc) {
         if (err) {
           reject(err);
         } else {
+          let gameEvent = new GameEvent({gameId: null});
+          gameEvent.load(doc);
           resolve(gameEvent);
         }
       });
@@ -128,10 +139,12 @@ const getGameEventById = (id) => {
 const getGameEventByHash = (jobHash) => {
   return new Promise((resolve, reject) => {
     if (jobHash) {
-      GameEventModel.findOne({jobHash: jobHash}).sort({'id': 1}).exec(function(err, gameEvent) {
+      GameEventModel.findOne({jobHash: jobHash}).sort({'id': 1}).exec(function(err, doc) {
         if (err) {
           reject(err);
         } else {
+          let gameEvent = new GameEvent({gameId: null});
+          gameEvent.load(doc);
           resolve(gameEvent);
         }
       });
@@ -141,21 +154,46 @@ const getGameEventByHash = (jobHash) => {
     }
   });
 };
+const getGameEventByIsActive = (isActive) => {
+  return new Promise((resolve, reject) => {
+    if (isActive != null) {
+      GameEventModel.find({isActive: isActive}).sort({'id': 1}).exec(function(err, docs) {
+        if (err) {
+          reject(err);
+        } else {
+          let gameEvents = docs.map((item) => {
+            let gameEvent = new GameEvent({gameId: null});
+            gameEvent.load(item);
+            return gameEvent;
+          });
+          resolve(gameEvents);
+        }
+      });
+
+    } else {
+      reject('No gameEvent isActive item');
+    }
+  });
+};
 const getGameEventFromGame = (gameId, startId = null) => {
   return new Promise((resolve, reject) => {
     if (gameId) {
-      GameEventModel.find({gameId: gameId, isActive: true, finishDate: null}).sort({'id': 1}).exec(function(err, gameEvents) {
+      GameEventModel.find({gameId: gameId, isActive: true, finishDate: null}).sort({'id': 1}).exec(function(err, docs) {
         if (err) {
           reject(err);
         } else {
           if (startId) {
-            gameEvents.filter((item) => {
+            docs.filter((item) => {
               if (item.id != startId) {
                 return item;
               }
             });
           }
-
+          let gameEvents = docs.map((item) => {
+            let gameEvent = new GameEvent({gameId: null});
+            gameEvent.load(item);
+            return gameEvent;
+          });
           resolve(gameEvents);
         }
       });
@@ -170,10 +208,12 @@ const getGameDataFromId = (id) => {
   return new Promise((resolve, reject) => {
     if (!id)
       reject('No id for gameData');
-    GameDataModel.findOne({id: id}).exec(function(err, gameData) {
+    GameDataModel.findOne({id: id}).exec(function(err, doc) {
       if (err) {
         reject(err);
       } else {
+        let gameData = new GameData();
+        gameData.load(doc);
         resolve(gameData);
       }
     });
@@ -190,15 +230,23 @@ const getGameDataFromGameName = (gameName, ...notTypes) => {
 
             if (typeIds && typeIds.length > 0) {
               console.log(typeIds);
+              let noIn = typeIds.map((item) => {
+                return item.id;
+              });
               typeIdNotObject = {
-                '$ne': typeIds[0].id
+                "$nin": noIn
               };
             }
             GameDataModel.find({gameName: gameName, typeId: typeIdNotObject}).sort({'typeId': 1, 'id': 1}).exec(function(err, docs) {
               if (err) {
                 reject(err);
               } else {
-                resolve(docs);
+                let gameDatas = docs.map((item) => {
+                  let gameData = new GameData();
+                  gameData.load(item);
+                  return gameData;
+                });
+                resolve(gameDatas);
               }
             });
           }).catch((err) => {
@@ -209,7 +257,12 @@ const getGameDataFromGameName = (gameName, ...notTypes) => {
             if (err) {
               reject(err);
             } else {
-              resolve(docs);
+              let gameDatas = docs.map((item) => {
+                let gameData = new GameData();
+                gameData.load(item);
+                return gameData;
+              });
+              resolve(gameDatas);
             }
           });
 
@@ -288,7 +341,7 @@ const updateGameEvent = (obj, isActive) => {
 const updateGameEventsFrom = (previousGameEvent) => {
   return new Promise((resolve, reject) => {
     let isFirstTime = true;
-    let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 10);
+    let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 1);
     let {gameId, finishDate} = previousGameEvent;
     let _previousGameEvent = previousGameEvent;
 
@@ -304,13 +357,11 @@ const updateGameEventsFrom = (previousGameEvent) => {
             }
 
           }
-          gameEvent.createGameData(gameDataId = gameEvent.gameDataId, gameEvent.level, startTime = startTime, startIn = 10, maxTime = null, timeBetween = null);
+          gameEvent.createGameData(gameDataId = gameEvent.gameDataId, gameEvent.level, startTime = startTime, startIn = 0, maxTime = null, timeBetween = null);
           _previousGameEvent = gameEvent;
           isFirstTime = false;
 
-          getGameDataById(gameEvent.gameDataId).then(data => {
-            let gameData = new GameData();
-            gameData.load(data);
+          getGameDataById(gameEvent.gameDataId).then(gameData => {
             addEventScheduleRule(gameData, gameEvent);
 
             return updateGameEvent(gameEvent);
@@ -368,9 +419,14 @@ const addEventScheduleRule = (gameData, gameEvent) => {
       //updategameEvent
       //
       updateGameEvent(gameEvent).then(doc => {
+        return getGameEventByIsActive(true);
+      }).then(data => {
+        const amount = data.length;
+        console.log(data);
         io.emit(socketNames.EVENT_START, {
           gameData: gameData.json(false, true, false),
-          gameEvent: gameEvent.json(false, true, false)
+          gameEvent: gameEvent.json(false, true, false),
+          activeEvents: amount
         });
         return timeoutEndScheduleRule(gameData, gameEvent);
       }).then(({running, runned, hash}) => {
@@ -407,10 +463,10 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
       };
 
       if (answer) {
-        const {value, name} = answer;
+        let {value, name} = answer;
         inputData = inputData.input.toString().toLowerCase();
         name = name.toString().toLowerCase()
-        if (inputData == input || inputData.indexOf('name')!=-1) {
+        if (inputData == name || inputData.indexOf('name') != -1) {
           if (isLetter) {
             getGameById(gameEvent.gameId).then(game => {
               const sentence = game.sentence;
@@ -446,15 +502,15 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
 const finishGameEventFromHash = (data) => {
   return new Promise((resolve, reject) => {
     try {
-      let gameEvent = new GameEvent({gameId: null});
-      let gameData = new GameData();
+      let gameEvent;
+      let gameData;
 
       getGameEventByHash(data.jobHash).then(item => {
-        gameEvent.load(item);
+        gameEvent = item;
         gameEvent.setFinish(data.finishDate);
         return getGameDataById(gameEvent.gameDataId);
       }).then(item => {
-        gameData.load(item);
+        gameData = item;
         if (gameData && gameEvent) {
           return isAnswerCorrect(data, gameData, gameEvent);
         } else {
@@ -488,9 +544,13 @@ const finishGameEvent = (gameData, gameEvent, recalculate = false) => {
       gameEvent.setJobHash(null);
 
       updateGameEvent(gameEvent).then(obj => {
+        return getGameEventByIsActive(true);
+      }).then(data => {
+        const amount = data.length;
         io.emit(socketNames.EVENT_END, {
           gameData: gameData.json(false, true, false),
-          gameEvent: gameEvent.json(false, true, false)
+          gameEvent: gameEvent.json(false, true, false),
+          activeEvents: amount
         });
         if (recalculate) {
           return updateGameEventsFrom(gameEvent);
@@ -522,7 +582,9 @@ const getRandomGameData = () => {
             if (err) {
               reject(err);
             } else {
-              resolve(doc);
+              let gameData = new GameData();
+              gameData.load(doc);
+              resolve(gameData);
             }
           });
         } else {
@@ -541,25 +603,24 @@ const getRandomGameData = () => {
 
 };
 
-const createGameData = ({gameId, gameName, startTime, level}) => {
+const createGameData = ({gameId, gameName, startTime, startIn, level}) => {
   return new Promise((resolve, reject) => {
     try {
       let promise;
-      if (!gameId && !gameName && !startTime) {
-        reject('Gameid, gamename and startttime not filled in');
+      if (!gameId && !gameName) {
+        reject('Gameid, gamename not filled in');
       }
+      console.log(moment().format());
       let _previousGameEvent;
-      promise = (item, i) => {
+      promise = (gameData, i) => {
         return new Promise((resolve, reject) => {
-          if (item) {
+          if (gameData) {
             const gameEvent = new GameEvent({gameId});
-            let gameData = new GameData();
-            gameData.load(item);
             if (_previousGameEvent) {
               startTime = _previousGameEvent.endDate;
             }
 
-            gameEvent.createGameData(gameDataId = gameData.id, level, startTime = setToMoment(startTime), startIn = 10, maxTime = gameData.data.maxTime, timeBetween = null);
+            gameEvent.createGameData(gameDataId = gameData.id, level, startTime, startIn = startIn, maxTime = gameData.data.maxTime, timeBetween = null);
             _previousGameEvent = gameEvent;
             resolve(gameEvent.json(stringify = false, removeEmpty = true));
           } else {
@@ -568,12 +629,10 @@ const createGameData = ({gameId, gameName, startTime, level}) => {
         });
       };
 
-      getGameDataFromGameName(gameName, 'finish', 'light', 'anthem', 'scan', 'find', 'book', 'sound').then(docs => {
-        promiseFor(promise, docs).then((items) => {
-          resolve(items);
-        }).catch(err => {
-          reject(err);
-        });
+      getGameDataFromGameName(gameName, 'finish', 'light', 'anthem', 'find', 'book', 'sound').then(gameDatas => {
+        return promiseFor(promise, gameDatas);
+      }).then((items) => {
+        resolve(items);
       }).catch(err => {
         reject(err);
       })
@@ -595,9 +654,7 @@ const addEvent = (gameEvent, i) => {
         throw new Error('No instance of');
       }
       //TODO:check of gameEvent already exists
-      getGameDataFromId(gameEvent.gameDataId).then(data => {
-        let gameData = new GameData();
-        gameData.load(data);
+      getGameDataFromId(gameEvent.gameDataId).then(gameData => {
         addEventScheduleRule(gameData, gameEvent);
 
         //waiteing on with return ....

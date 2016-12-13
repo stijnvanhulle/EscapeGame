@@ -3,11 +3,13 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T16:37:20+01:00
+* @Last modified time: 2016-12-13T15:06:55+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
 const {Game: Model} = require('./mongo');
+const Chance = require('chance');
+const c = new Chance();
 
 class Emitter extends EventEmitter {}
 
@@ -24,11 +26,18 @@ class Game {
     this.id = null;
     this.model = Model;
     this.date = null;
+    this.alienName = null;
     this.events = new Emitter();
   }
+  generateAlienName() {
+    this.alienName = c.name({nationality: "it"});
+  }
 
-  load({players, teamName, date, id}) {
+  load({players, teamName, date, id, alienName}) {
     try {
+      this.alienName = alienName
+        ? alienName
+        : this.alienName;
       this.players = players
         ? players
         : this.players;

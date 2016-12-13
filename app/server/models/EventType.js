@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T16:54:20+01:00
+* @Last modified time: 2016-12-13T15:14:58+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -12,8 +12,8 @@ const {EventType: Model} = require('./mongo');
 class Emitter extends EventEmitter {}
 
 class EventType {
-  constructor(name) {
-    this.name=name;
+  constructor(name = null) {
+    this.name = name;
     this.reset();
 
   }
@@ -24,23 +24,26 @@ class EventType {
     this.events = new Emitter();
   }
 
-  load({id,name}){
+  load({id, name}) {
     try {
-      this.name=name;
-      this.id=id;
+      this.id = id
+        ? id
+        : this.id;
+      this.name = name
+        ? name
+        : this.name;
     } catch (e) {
       console.log(e);
       throw e;
     }
   }
 
-
   save() {
     return new Promise((resolve, reject) => {
       try {
         const item = this.json(false);
         const obj = new Model(item);
-          console.log('Will save: ', obj);
+        console.log('Will save: ', obj);
 
         obj.save(function(err, item) {
           if (err) {
@@ -56,7 +59,7 @@ class EventType {
     });
   }
 
-  json(stringify = true,removeEmpty=false) {
+  json(stringify = true, removeEmpty = false) {
     var json;
     try {
       var obj = this;
@@ -69,7 +72,7 @@ class EventType {
         json = copy;
       }
 
-      if(removeEmpty){
+      if (removeEmpty) {
         const keys = Object.keys(json);
         for (var i = 0; i < keys.length; i++) {
           let key = keys[i];
@@ -77,8 +80,8 @@ class EventType {
             json[key] = undefined;
           }
         }
-        json['_id']= undefined;
-        json['__v']= undefined;
+        json['_id'] = undefined;
+        json['__v'] = undefined;
       }
 
       return JSON.parse(JSON.stringify(json));

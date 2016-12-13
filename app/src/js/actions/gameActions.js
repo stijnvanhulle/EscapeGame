@@ -3,7 +3,7 @@
 * @Date:   2016-11-05T14:35:35+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T15:46:47+01:00
+* @Last modified time: 2016-12-13T16:50:40+01:00
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
@@ -80,16 +80,17 @@ export function createGame(players, teamName) {
   };
 }
 
-export function createGameEvents({game, startTime}) {
+export function createGameEvents({game, startTime, startIn}) {
   return dispatch => {
     try {
-      if (!(game && game.id && game.name && game.level && startTime)) {
+      if (!(game && game.id && game.name && game.level && (startIn || startTime))) {
         return Promise.reject('Not all data filled in from createGamData');
       }
       return axios.post(setParams(url.GAME_DATA, game.id), {
         gameName: game.name,
-        level:game.level,
-        startTime
+        level: game.level,
+        startTime,
+        startIn
       }).then((response) => {
         var data = response.data;
         dispatch(createGameEvents_SUCCESS(data));
