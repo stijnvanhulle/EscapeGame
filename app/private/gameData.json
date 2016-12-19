@@ -24,7 +24,7 @@
 }, {
   "type": "sound",
   "hide": false,
-  "sendToDevice": "",
+  "sendToDevice": null,
   "data": {
     "name": "",
     "description": "NUMMER speelt af",
@@ -54,7 +54,7 @@
 }, {
   "type": "light",
   "hide": false,
-  "sendToDevice": "app",
+  "sendToDevice": "pi",
   "data": {
     "name": "",
     "description": "Scan het juiste schilderij",
@@ -63,13 +63,16 @@
     "hints": [
       ""
     ],
-    "answer": null
+    "answer": {
+      "name": "President x",
+      "value": null
+    }
   }
 
 }, {
   "type": "anthem",
   "hide": false,
-  "sendToDevice": "app",
+  "sendToDevice": null,
   "data": {
     "name": "",
     "description": "",
@@ -85,7 +88,7 @@
 }, {
   "type": "scan",
   "hide": false,
-  "sendToDevice": "app",
+  "sendToDevice": true,
   "data": {
     "name": "",
     "description": "Zoek het juiste schilderij",
@@ -116,7 +119,7 @@
 }, {
   "type": "book",
   "hide": false,
-  "sendToDevice": "app",
+  "sendToDevice": null,
   "data": {
     "name": "",
     "description": "Zoek het juiste woord",
@@ -137,6 +140,7 @@
 }, {
   "type": "finish",
   "hide": false,
+  "sendToDevice": null,
   "data": {
     "name": "",
     "description": "Wat is de naam van de alien?",

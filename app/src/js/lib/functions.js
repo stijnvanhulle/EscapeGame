@@ -3,20 +3,21 @@
 * @Date:   2016-12-02T14:40:07+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T15:58:20+01:00
+* @Last modified time: 2016-12-15T11:26:44+01:00
 * @License: stijnvanhulle.be
 */
 let game;
 
-export const setUrl = (url, hostname = "http://localhost:3000") => {
-  let keys = Object.keys(url);
+export const setUrl = (url, hostname = `http://localhost:3000`) => {
+  const keys = Object.keys(url);
+  const newUrl = {};
 
-  for (var i = 0; i < keys.length; i++) {
-    let key = keys[i];
-    url[key] = hostname + url[key];
+  for (let i = 0;i < keys.length;i ++) {
+    const key = keys[i];
+    newUrl[key] = hostname + url[key];
   }
 
-  return url;
+  return newUrl;
 };
 export const getGame = () => game;
 export const setGame = (_game) => {

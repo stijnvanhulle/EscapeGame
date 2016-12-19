@@ -3,7 +3,7 @@
 * @Date:   2016-11-05T14:35:35+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-13T16:50:40+01:00
+* @Last modified time: 2016-12-19T14:42:37+01:00
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
@@ -31,6 +31,9 @@ export function updateGameEvent_SUCCESS(gameEvent) {
 }
 export function getGame_SUCCESS(game) {
   return {type: actionsUrl.GET_GAME_SUCCESS, game};
+}
+export function stopGame(game) {
+  return {type: actionsUrl.STOP_GAME, game};
 }
 export function loadPlayers_SUCCESS(players) {
   return {type: actionsUrl.LOAD_PLAYER_SUCCESS, players};

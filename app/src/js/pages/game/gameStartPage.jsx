@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-13T16:51:19+01:00
+* @Last modified time: 2016-12-19T15:28:19+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -28,6 +28,7 @@ class GameStartPage extends Component {
 
     this.state = {
       countdown: countdown,
+      canStart: false,
       startTime: moment().add('seconds', countdown).valueOf(),
       input: '',
       error: '',
@@ -35,17 +36,6 @@ class GameStartPage extends Component {
       imageSrc: '',
       audioRepeat: true
     };
-
-    let timer = setInterval(function() {
-      if (countdown == 0) {
-        clearInterval(timer);
-      } else {
-        countdown--;
-        self.setState({'countdown': countdown});
-      }
-    }, 1000);
-
-    self.startGame();
 
     game.events.on('audio', (src) => {
       if (src) {
@@ -74,8 +64,8 @@ class GameStartPage extends Component {
     //set starttime of null for starttime on server
     //let startTime=this.state.startTime;
     let startTime;
-    let startIn=this.state.countdown;
-    
+    let startIn = this.state.countdown;
+
     this.props.actions.createGameEvents({game, startTime, startIn}).then(() => {
       const gameEvents = this.props.gameEvents;
       console.log('GameEvents v1', gameEvents);
@@ -104,25 +94,46 @@ class GameStartPage extends Component {
 
     }
   }
+  start = () => {
+    const self = this;
+    let {countdown} = this.state;
+    this.setState({canStart: true});
+    let timer = setInterval(function() {
+      if (countdown == 0) {
+        clearInterval(timer);
+      } else {
+        countdown--;
+        self.setState({countdown, canStart: true});
+      }
+    }, 1000);
+
+    self.startGame();
+  }
 
   render() {
     let starting;
     let div;
-    if (this.state.countdown != 0) {
-      div = <div>
-        starting in {this.state.countdown}
-      </div>;
+    if (this.state.canStart) {
+      if (game.currentGameData) {
+        div = <div>
+          {game.currentGameData.data.data.description}
+          <TextInput name="input" label="teamName" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
+          <button onClick={this.sendInput}>Send Input</button>
+          <Audio src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
+          <Image src={this.state.imageSrc}/>
+        </div>;
+      } else if (this.state.countdown == 0) {
+        div = <div></div>;
+      } else {
+        div = <div>
+          starting in {this.state.countdown}
+        </div>;
+      }
 
-    } else if (game.currentGameData) {
-      div = <div>
-        {game.currentGameData.data.data.description}
-        <TextInput name="input" label="teamName" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
-        <button onClick={this.sendInput}>Send Input</button>
-        <Audio src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
-        <Image src={this.state.imageSrc}/>
-      </div>;
     } else {
-      div = <div></div>;
+      div = <div>
+        <button onClick={this.start}>Start game</button>
+      </div>;
     }
     return (div);
 

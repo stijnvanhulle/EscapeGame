@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T09:45:19+01:00
+* @Last modified time: 2016-12-19T14:44:04+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -25,6 +25,7 @@ class GamePage extends Component {
   }
   constructor(props, context) {
     super(props, context);
+    const self = this;
     if (game.id) {
       this.state = {
         teamName: '',
@@ -32,6 +33,12 @@ class GamePage extends Component {
         isGameStarted: true
       };
     }
+
+    game.events.on('end', () => {
+      self.setState({isGameStarted: true});
+      self.props.actions.stopGame();
+      game.reset();
+    });
   }
 
   startGame = (e) => {

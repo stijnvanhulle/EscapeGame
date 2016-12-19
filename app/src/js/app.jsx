@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-13T17:34:26+01:00
+* @Last modified time: 2016-12-19T15:45:24+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -16,6 +16,7 @@ import {bindActionCreators} from 'redux';
 import io from 'socket.io-client';
 import {connect} from 'react-redux';
 import game from './lib/game';
+import piController from './lib/piController';
 
 import * as gameActions from './actions/gameActions';
 
@@ -59,6 +60,8 @@ class App extends Component {
     this.socket.on(socketNames.EVENT_FINISH, this.handleWSEventFinish);
     this.socket.on(socketNames.EVENT_DATA, this.handelWSEventData);
 
+    piController.loadSocket(this.socket);
+
     window.socket = this.socket;
     window.moment = moment;
     window.game = game;
@@ -78,15 +81,25 @@ class App extends Component {
 
   handelWSEventData = obj => {
     console.log('Event data:', obj);
+    let {gameEvent, gameData, activeEvents} = obj;
+    const findGameEventId = (item) => {
+      if (item.id == gameEvent.id) {
+        return item;
+      }
+    };
+    let item = this.props.gameEvents.find(findGameEventId);
+    console.log(item);
+
   }
   handleWSEventFinish = obj => {
     console.log('Event finish:', obj);
+
   }
 
   handleWSEventStart = obj => {
     console.log('New event:', obj);
 
-    let {gameEvent, gameData} = obj;
+    let {gameEvent, gameData, activeEvents} = obj;
     game.currentGameData = gameData;
     game.currentGameEvent = gameEvent;
     this.props.actions.updateGameEvent(gameEvent).then(() => {
@@ -105,21 +118,27 @@ class App extends Component {
     }).catch((e) => {
       console.log(e);
     });
+
+
+
+    piController.start(gameEvent,gameData);
   }
   handleWSEventEnd = obj => {
     console.log('End event:', obj);
-    let {gameEvent, gameData,activeEvents} = obj;
-    game.currentGameData = null;
+    let {gameEvent, gameData, activeEvents} = obj;
+    game.currentGameData = gameData;
     game.currentGameEvent = gameEvent;
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       console.log('UPDATED gameEvent');
 
       if (activeEvents == 0) {
         this.socket.emit(socketNames.EVENT_FINISH, {finish: true});
+        game.events.emit('end');
       }
     }).catch((e) => {
       console.log(e);
     });
+      piController.end(gameEvent,gameData);
   }
 
   // EVENTS

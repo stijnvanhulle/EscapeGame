@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-13T17:19:57+01:00
+* @Last modified time: 2016-12-19T17:08:09+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -114,8 +114,26 @@ const getEventType = (name) => {
       });
 
     } else {
-      reject('No item');
+      reject('no data');
     }
+  });
+};
+
+const getEventTypes = () => {
+  return new Promise((resolve, reject) => {
+    EventTypeModel.find().sort({'id': 1}).exec(function(err, docs) {
+      if (err) {
+        reject(err);
+      } else {
+        let eventTypes = docs.map((item) => {
+          let eventType = new EventType();
+          eventType.load(item);
+          return eventType;
+        });
+        resolve(eventTypes);
+      }
+    });
+
   });
 };
 const getGameEventById = (id) => {
@@ -219,23 +237,40 @@ const getGameDataFromId = (id) => {
     });
   });
 };
-const getGameDataFromGameName = (gameName, ...notTypes) => {
+const getGameDataFromGameName = (gameName, types) => {
   return new Promise((resolve, reject) => {
     try {
       if (gameName) {
         gameName = gameName.toLowerCase();
-        if (notTypes) {
-          promiseFor(getEventType, notTypes).then((typeIds) => {
+        if (types) {
+          const notTypes = Object.keys(types).filter(item => {
+            if (types[item].amount == 0) {
+              return item;
+            }
+          });
+          const goodTypes = Object.keys(types).filter(item => {
+            if (types[item].amount != 0) {
+              return item;
+            }
+          });
+          getEventTypes().then((typeIds) => {
             let typeIdNotObject = {};
 
             if (typeIds && typeIds.length > 0) {
-              console.log(typeIds);
-              let noIn = typeIds.map((item) => {
+              let noIn = typeIds.filter((item) => {
+                for (var i = 0; i < notTypes.length; i++) {
+                  if (item.name == notTypes[i]) {
+                    return item;
+                  }
+                }
+
+              }).map(item => {
                 return item.id;
               });
               typeIdNotObject = {
                 "$nin": noIn
               };
+              console.log(typeIdNotObject);
             }
             GameDataModel.find({gameName: gameName, typeId: typeIdNotObject}).sort({'typeId': 1, 'id': 1}).exec(function(err, docs) {
               if (err) {
@@ -244,8 +279,27 @@ const getGameDataFromGameName = (gameName, ...notTypes) => {
                 let gameDatas = docs.map((item) => {
                   let gameData = new GameData();
                   gameData.load(item);
+
                   return gameData;
                 });
+
+                typeIds.filter((item) => {
+                  for (var i = 0; i < goodTypes.length; i++) {
+                    if (item.name == goodTypes[i]) {
+                      let newItem = gameDatas.find(a => {
+                        if (item.id == a.typeId) {
+                          return a;
+                        }
+                      });
+                      let amount = types[item.name].amount;
+                      gameDatas = addOnRandomArray(gameDatas, newItem, amount);
+
+                      return item;
+                    }
+                  }
+
+                });
+                console.log(gameDatas);
                 resolve(gameDatas);
               }
             });
@@ -277,7 +331,31 @@ const getGameDataFromGameName = (gameName, ...notTypes) => {
     }
 
   });
+};
 
+const addOnRandomArray = (array, item, amount) => {
+  let newArray = [...array];
+  let random;
+  const newRandom = () => {
+    random = Math.floor((Math.random() * array.length) + 1);
+  };
+  for (var i = 0; i < amount; i++) {
+    let oldRandom = random;
+    newRandom();
+    if (random == oldRandom) {
+      newRandom();
+    }
+    if (random > 1 && newArray[random - 1] && newArray[random - 1].typeId == item.typeId) {
+      newRandom();
+    }
+    if (random > 1 && newArray[random + 1] && newArray[random + 1].typeId == item.typeId) {
+      newRandom();
+    }
+    newArray.splice(random, 0, item);
+
+  }
+
+  return newArray;
 };
 
 //updates
@@ -459,7 +537,7 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
 
       const sentData = (data, correct = false) => {
         console.log(data);
-        io.emit(socketNames.EVENT_DATA, {data, inputData, correct});
+        io.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct});
       };
 
       if (answer) {
@@ -603,7 +681,14 @@ const getRandomGameData = () => {
 
 };
 
-const createGameData = ({gameId, gameName, startTime, startIn, level}) => {
+const createGameData = ({
+  gameId,
+  gameName,
+  startTime,
+  startIn,
+  level,
+  types = {}
+}) => {
   return new Promise((resolve, reject) => {
     try {
       let promise;
@@ -628,8 +713,27 @@ const createGameData = ({gameId, gameName, startTime, startIn, level}) => {
           }
         });
       };
-
-      getGameDataFromGameName(gameName, 'finish', 'light', 'anthem', 'find', 'book', 'sound').then(gameDatas => {
+      types = {
+        'finish': {
+          amount: 0
+        },
+        'anthem': {
+          amount: 0
+        },
+        'find': {
+          amount: 0
+        },
+        'book': {
+          amount: 0
+        },
+        'bom': {
+          amount: 2
+        },
+        'sound': {
+          amount: 0
+        }
+      };
+      getGameDataFromGameName(gameName, types).then(gameDatas => {
         return promiseFor(promise, gameDatas);
       }).then((items) => {
         resolve(items);

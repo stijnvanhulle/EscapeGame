@@ -3,10 +3,11 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-22T20:11:55+01:00
+* @Last modified time: 2016-12-19T17:15:54+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
+const connectorTypes= require('../lib/connectorTypes');
 
 //read: { "port": 5, "type": "INPUT", "read":true,"realtime":false,timeout: null }
 //write { "port": 4, "type": "OUTPUT", "read":false, value:true,"realtime":false,timeout: null }
@@ -28,10 +29,11 @@ const recheckData = (self) => {
   }
   return self;
 };
+
 class Emitter extends EventEmitter {}
 
 class Message {
-  constructor(client, port,connectorType="DIGITAL", read = false) {
+  constructor(client, port,connectorType=connectorTypes.DIGITAL, read = false) {
     if (!client) {
       throw new Error('No client');
       return;
@@ -68,7 +70,7 @@ class Message {
     this.push();
   }
   writeDisplay(value, port = "I2C-1") {
-    this.connectorType="I2C";
+    this.connectorType=connectorTypes.I2C;
     this.value = value;
     this.port = port;
 
