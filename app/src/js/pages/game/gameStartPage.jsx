@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T15:28:19+01:00
+* @Last modified time: 2016-12-20T14:09:02+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -51,11 +51,12 @@ class GameStartPage extends Component {
       }
 
     });
-    game.events.on('audio', (src) => {
+    game.events.on('image', (src) => {
       if (src) {
         this.setState({imageSrc: src});
       } else {
         this.setState({imageSrc: ''});
+        this.setState({audioSrc: ''});
       }
 
     });

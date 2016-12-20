@@ -50,7 +50,9 @@
       "Vul het juiste jaargetal in"
     ],
     "isLetter": true,
-    "answer": null
+    "answer": {
+      "name": "2012"
+    }
   }
 }, {
   "type": "bom",
@@ -74,7 +76,7 @@
   "data": {
     "name": "",
     "description": "Scan het juiste schilderij",
-    "file": "nummer.mp3",
+    "file": "schilderij1.jpg",
     "maxTime": 300,
     "hints": [
       ""

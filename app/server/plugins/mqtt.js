@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-30T22:52:14+01:00
+* @Last modified time: 2016-12-20T12:50:08+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -11,6 +11,7 @@ const mqtt = require('mqtt');
 const Message = require('../models/Message');
 const global = require('../lib/global');
 const mqttNames = require('../lib/mqttNames');
+const socketNames = require('../lib/socketNames');
 const {filter} = require('../lib/functions');
 
 const subscribe = client => {
@@ -54,6 +55,9 @@ const onMessage = (client, events, io) => {
 
       case mqttNames.MESSAGE:
         soundSensor.checkData(obj);
+        break;
+      case mqttNames.DETECTION_FOUND:
+        io.emit(socketNames.DETECTION_FOUND, obj);
         break;
       default:
 

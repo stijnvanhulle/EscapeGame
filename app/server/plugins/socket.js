@@ -3,11 +3,12 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T17:41:47+01:00
+* @Last modified time: 2016-12-20T13:02:20+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
 const socketNames = require('../lib/socketNames');
+const mqttNames = require('../lib/mqttNames');
 const scheduleJob = require('../lib/scheduleJob');
 let users = [];
 
@@ -17,7 +18,7 @@ const onMessageSocket = (io, socket, client) => {
     client.publish('message', JSON.stringify(data));
   });
   socket.on(socketNames.PI_RESET, data => {
-    client.publish('reset', true);
+    client.publish('reset', JSON.stringify(true));
   });
 
   socket.on(socketNames.ONLINE, obj => {
@@ -38,9 +39,13 @@ const onMessageSocket = (io, socket, client) => {
     console.log(beaconId, range);
   });
 
+  socket.on(socketNames.DETECTION_FIND, (obj) => {
+    client.public(mqttNames.DETECTION_FIND, JSON.stringify(obj));
+  });
+
   socket.on(socketNames.EVENT_FINISH, (obj) => {
     console.log(obj);
-    io.emit(socketNames.EVENT_FINISH,obj);
+    io.emit(socketNames.EVENT_FINISH, obj);
   });
 };
 
