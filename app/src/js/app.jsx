@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T12:16:52+01:00
+* @Last modified time: 2016-12-20T16:43:27+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -17,6 +17,7 @@ import io from 'socket.io-client';
 import {connect} from 'react-redux';
 import game from './lib/game';
 import piController from './lib/piController';
+import timer from './lib/timer';
 
 import * as gameActions from './actions/gameActions';
 
@@ -25,6 +26,7 @@ class App extends Component {
 
   constructor(props, context) {
     super(props, context);
+
     this.loadSocket();
     this.loadOldGame();
   }
@@ -62,6 +64,7 @@ class App extends Component {
     this.socket.on(socketNames.EVENT_DATA, this.handelWSEventData);
 
     piController.loadSocket(this.socket);
+
 
     window.socket = this.socket;
     window.moment = moment;
@@ -114,6 +117,10 @@ class App extends Component {
         game.events.emit('audio', null);
         game.events.emit('image', null);
       }
+      const hints = gameData.data.data.hints;
+      if (hints) {
+        timer.startHints(hints, gameData.data.data.maxTime);
+      }
 
       console.log('UPDATED gameEvent');
     }).catch((e) => {
@@ -134,6 +141,8 @@ class App extends Component {
         this.socket.emit(socketNames.EVENT_FINISH, {finish: true});
         game.events.emit('end');
       }
+
+      timer.stop();
     }).catch((e) => {
       console.log(e);
     });

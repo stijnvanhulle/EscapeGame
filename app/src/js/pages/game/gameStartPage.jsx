@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T14:09:02+01:00
+* @Last modified time: 2016-12-20T16:45:50+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -29,6 +29,7 @@ class GameStartPage extends Component {
     this.state = {
       countdown: countdown,
       canStart: false,
+      message: '',
       startTime: moment().add('seconds', countdown).valueOf(),
       input: '',
       error: '',
@@ -98,17 +99,23 @@ class GameStartPage extends Component {
   start = () => {
     const self = this;
     let {countdown} = this.state;
-    this.setState({canStart: true});
-    let timer = setInterval(function() {
-      if (countdown == 0) {
-        clearInterval(timer);
-      } else {
-        countdown--;
-        self.setState({countdown, canStart: true});
-      }
-    }, 1000);
 
-    self.startGame();
+    this.setState({message: this.props.game.description, canStart: true});
+    setTimeout(() => {
+      self.setState({message: null});
+
+      let timer = setInterval(function() {
+        if (countdown == 0) {
+          clearInterval(timer);
+        } else {
+          countdown--;
+          self.setState({countdown});
+        }
+      }, 1000);
+
+      self.startGame();
+    }, 3000);
+
   }
 
   render() {
@@ -126,9 +133,14 @@ class GameStartPage extends Component {
       } else if (this.state.countdown == 0) {
         div = <div></div>;
       } else {
-        div = <div>
-          starting in {this.state.countdown}
-        </div>;
+        if (this.state.message) {
+          div = <div>{this.state.message}</div>;
+        } else {
+          div = <div>
+            starting in {this.state.countdown}
+          </div>;
+        }
+
       }
 
     } else {

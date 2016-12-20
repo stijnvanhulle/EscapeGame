@@ -3,7 +3,7 @@
 * @Date:   2016-11-30T21:03:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T12:48:59+01:00
+* @Last modified time: 2016-12-20T17:20:04+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -11,6 +11,7 @@ module.exports = {
   DISCONNECT: 'disconnect',
   CONNECT: 'connection',
   ONLINE: 'online',
+  BEACON: 'beacon',
   PI: 'sendToPi',
   PI_RESET: 'piReset',
   INPUT: 'sendInput',

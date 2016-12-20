@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:24:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T12:23:40+01:00
+* @Last modified time: 2016-12-20T15:05:08+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -14,6 +14,7 @@ module.exports = {
   UPLOAD: API + '/upload',
   MEMBER: API + '/member',
   GAME: API + '/game',
+  GAME_CANCEL: API + '/game/cancel',
   GAME_GET: API + '/game' + '/{id}/',
   GAME_CREATE: API + '/game' + '/{id}/create',
   GAME_DATA: API + '/game' + '/{id}/data',

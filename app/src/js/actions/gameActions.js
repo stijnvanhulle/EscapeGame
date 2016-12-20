@@ -3,7 +3,7 @@
 * @Date:   2016-11-05T14:35:35+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T14:42:37+01:00
+* @Last modified time: 2016-12-20T15:05:32+01:00
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
@@ -43,6 +43,7 @@ export function loadPlayers_SUCCESS(players) {
 export function updateGame(game) {
   return {type: actionsUrl.UPDATE_GAME, game};
 }
+
 
 //thunk:
 export function createPlayer(player) {

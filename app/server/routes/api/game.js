@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T12:20:32+01:00
+* @Last modified time: 2016-12-20T16:07:27+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -42,6 +42,31 @@ module.exports = [
     }
 
   }, {
+    method: `POST`,
+    path: url.GAME_CANCEL,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {gameController} = require('../../controllers');
+      try {
+        let {players, teamName} = request.payload;
+        //players = JSON.parse(players);
+        const game = new Game(teamName, players);
+
+        gameController.cancelJobs().then((doc) => {
+          reply(true);
+        }).catch(err => {
+          throw new Error(err);
+        });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
     method: `GET`,
     path: url.GAME_GET,
     config: {
@@ -62,12 +87,10 @@ module.exports = [
           return gameController.getGameDataByGameName(game.gameName);
         }).then(gameDatas => {
           const description = gameDatas.filter(item => {
-            if (item.typeId = eventType.id) {
+            if (item.typeId == eventType.id) {
               return item;
             }
-          }).map(item => {
-            return item.data.description;
-          });
+          })[0].data.data.description;
           game.setDescription(description);
           reply(game);
         }).catch(e => {

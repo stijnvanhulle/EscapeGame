@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T13:02:20+01:00
+* @Last modified time: 2016-12-20T17:19:37+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
@@ -12,17 +12,34 @@ const mqttNames = require('../lib/mqttNames');
 const scheduleJob = require('../lib/scheduleJob');
 let users = [];
 
+let onlineDevice = [];
+
 const onMessageSocket = (io, socket, client) => {
 
   socket.on(socketNames.PI, data => {
-    client.publish('message', JSON.stringify(data));
+    client.publish(mqttNames.MESSAGE, JSON.stringify(data));
   });
   socket.on(socketNames.PI_RESET, data => {
-    client.publish('reset', JSON.stringify(true));
+    client.publish(mqttNames.RESET, JSON.stringify(true));
   });
 
   socket.on(socketNames.ONLINE, obj => {
-    console.log(obj);
+    const contains = onlineDevice.filter(item => item.device == obj.device).length > 0;
+
+    if (contains) {
+      onlineDevice = onlineDevice.map(item => {
+        if (item.device) {
+          if (item.device == obj.device) {
+            return obj;
+          }
+        }
+
+      });
+    } else {
+      onlineDevice.push(obj);
+    }
+
+    console.log('ONLINE DEVICES: ', onlineDevice);
   });
 
   socket.on(socketNames.DISCONNECT, () => {
@@ -35,6 +52,7 @@ const onMessageSocket = (io, socket, client) => {
     let success = scheduleJob.finishNextJob(jobHash, {finishDate, input});
   });
   socket.on(socketNames.BEACON, (obj) => {
+    console.log(obj);
     const {beaconId, range} = obj;
     console.log(beaconId, range);
   });

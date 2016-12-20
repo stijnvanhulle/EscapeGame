@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T12:50:08+01:00
+* @Last modified time: 2016-12-20T14:54:10+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -39,12 +39,13 @@ const onMessage = (client, events, io) => {
           obj.device = obj.device.toLowerCase();
         io.emit('online', obj);
 
-        lcd.writeDisplay("DAG");
-        soundSensor.reading(realtime = false, timeout = 10);
+        lcd.writeDisplay("WELKOM");
+        /*soundSensor.reading(realtime = false, timeout = 10);
         soundSensor.events.on('read', (value) => {
           console.log('Read', value);
           lcd.writeDisplay(value);
         });
+        */
 
         var dect = {
           image1: 'img1.jpg',

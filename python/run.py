@@ -1,3 +1,12 @@
+# @Author: Stijn Van Hulle <stijnvanhulle>
+# @Date:   2016-11-28T13:51:38+01:00
+# @Email:  me@stijnvanhulle.be
+# @Last modified by:   stijnvanhulle
+# @Last modified time: 2016-12-20T14:52:41+01:00
+# @License: stijnvanhulle.be
+
+
+
 #!/usr/bin/env python
 
 from time import sleep, time
@@ -59,6 +68,12 @@ def isFloat(str):
 		return True
 	except ValueError:
 		return False
+
+def isBoolean(str):
+	try:
+		return type(str) == type(True) or type(str) == type(False)
+	except ValueError:
+		return False
 def in_between(now, start, end):
 	if start <= end:
 		return start <= now < end
@@ -107,7 +122,7 @@ def sendToMessage(_port,_type="INPUT",_connectorType="DIGITAL",_isReading=False)
 		if checkValueOfSensor(sensor_value)!=-1:
 			#isReading=True
 			sensor_value=checkValueOfSensor(sensor_value)
-			
+
 		client.publish("message", makeJsonObject(sensor_value,_port,_type,False,True))
 		print('Port ' + str(_port) + ' ' + str(sensor_value))
 
@@ -125,7 +140,7 @@ def addRealtimeData(obj):
 			item=obj
 			exist=True
 		data.append(item)
-	
+
 
 	if exist:
 		realtimeData=data
@@ -150,16 +165,18 @@ def on_connect(client, userdata, rc):
 	client.subscribe("online")
 	client.subscribe("message")
 	client.subscribe("detection")
+	client.subscribe("reset")
 
 def on_message(client, userdata, msg):
-	
+
 
 	if msg.topic=="online":
 		parsed_json=json.loads(convertJson(msg.payload))
 
 	if msg.topic=="reset":
+		print("reset")
 		reset()
-		
+
 
 	if msg.topic=="message":
 		parsed_json=json.loads(convertJson(msg.payload))
@@ -178,8 +195,8 @@ def on_message(client, userdata, msg):
 				addRealtimeData({"port":_port, "type": str(_type),"value":None,"connectorType":_connectorType,"timeout":_timeout})
 			else:
 				removeRealtimeData(_port)
-				
-						
+
+
 		else:
 			_value=parsed_json['value'] if 'value' in parsed_json else None
 			_isReading=parsed_json['isReading'] if 'isReading' in parsed_json else None
@@ -188,27 +205,34 @@ def on_message(client, userdata, msg):
 			if _type is not None and _value is not None and _port is not None and _read is not None:
 
 				if isFloat(_port):
-					if _isReading==False:
+					if _isReading==False or _isReading is None:
 						removeRealtimeData(_port)
 
-					if _value==True or _value==False:
-						pinMode(_port,_type)
+					if isBoolean(_value)==True:
+						if _value==True or _value==False:
+							pinMode(_port,_type)
 
-					if _value==True:
-						if str(_connectorType).lower()=="digital":
-							digitalWrite(_port,1)
-						elif str(_connectorType).lower()=="analog":
-							analogWrite(_port,1)
-						
-						print('Port '+ str(_port) + ' is on')
+						if _value==True:
+							if str(_connectorType).lower()=="digital":
+								digitalWrite(_port,1)
+							elif str(_connectorType).lower()=="analog":
+								analogWrite(_port,1)
 
-					elif _value==False:
-						if str(_connectorType).lower()=="digital":
-							digitalWrite(_port,0)
-						elif str(_connectorType).lower()=="analog":
-							analogWrite(_port,0)
+							print('Port '+ str(_port) + ' is on')
 
-						print('Port '+ str(_port) + ' is off')
+						elif _value==False:
+							if str(_connectorType).lower()=="digital":
+								digitalWrite(_port,0)
+							elif str(_connectorType).lower()=="analog":
+								analogWrite(_port,0)
+
+							print('Port '+ str(_port) + ' is off')
+
+					else:
+						print('no boolean')
+						addRealtimeData({"port":_port, "type": str(_type),"value":str(_value),"connectorType":_connectorType,"timeout":None})
+
+
 
 				elif str(_port)=="I2C-1" or str(_port)=="I2C-2" or str(_port)=="I2C-3":
 						print('Text to display: '+ str(_value))
@@ -217,14 +241,20 @@ def on_message(client, userdata, msg):
 				else:
 					#append or remove data
 					addRealtimeData({"port":_port, "type": str(_type),"value":str(_value),"connectorType":_connectorType,"timeout":None})
-			
-			
+
+
 
 
 def reset():
-	for port in ports: 
+	global realtimeData
+
+	for port in ports:
 		digitalWrite(port,0)
 		sleep(0.1)
+
+	realtimeData=[]
+	isReading=False
+	lcd.setText("")
 
 def init():
 	global started
@@ -263,7 +293,7 @@ def makeJsonObject_detection(value=None,image1=None,image2=None,read=False):
 def exit():
 	client.publish("online", makeJsonObject(False))
 	reset()
-	
+
 
 	lcd.setRGB(100,100,100)
 	lcd.setText("IOT-DEVICE \nSTOPPING")
@@ -282,19 +312,22 @@ def realtime():
 					_timeout=item['timeout'] if 'timeout' in item else None
 					_value=item['value'] if 'value' in item else None
 					_connectorType=item["connectorType"] if 'connectorType' in item else None
-					if _port is not None and _type is not None and _timeout is not None and _connectorType is not None:
-						if _value is not None:
+					if _port is not None and _type is not None and _connectorType is not None:
+						print(_value)
+						if _value is not None or isBoolean(_value)==False:
+							print('start morse')
 							led.startMorse(str(_value),_port)
 						else:
 							sendToMessage(_port,_type,_connectorType,True)
 							sleep(0.1)
-						sleep(_timeout)
+						if _timeout is not None:
+							sleep(_timeout)
 
 	except Exception as error:
 		print('Error REALTIME:',error)
-		
 
-	
+
+
 
 def main():
 	global isCode
@@ -313,7 +346,7 @@ def main():
 					if data=='exit':
 						exit()
 						sys.exit(0)
-					else:	
+					else:
 						parsed_json=json.loads(str(data))
 						_type =parsed_json['type'] if 'type' in parsed_json else None
 						_port=parsed_json['port'] if 'port' in parsed_json else None
@@ -334,7 +367,7 @@ if __name__ == '__main__':
 	global isCode
 	isCode=None
 
-	try:	
+	try:
 		if len(sys.argv)>1:
 			MQTT_BROKER=sys.argv[1]
 			if len(sys.argv)>2:
@@ -343,11 +376,11 @@ if __name__ == '__main__':
 					isCode=True
 				else:
 					isCode=False
-		else:	
+		else:
 			input_text = str(raw_input("Ip of MQTT-broker: "))
 			if input_text:
 				MQTT_BROKER=input_text
-			
+
 		#executor = ProcessPoolExecutor(2)
 		#loop = trollius.get_event_loop()
 		#_main = trollius.async(loop.run_in_executor(executor, main))
