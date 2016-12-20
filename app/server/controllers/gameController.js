@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T17:08:09+01:00
+* @Last modified time: 2016-12-20T12:16:22+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -88,6 +88,36 @@ const getGameDataById = (id) => {
         });
       } else {
         reject('No id found');
+      }
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
+
+const getGameDataByGameName = (gameName) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (gameName) {
+        GameDataModel.find({gameName: gameName}).exec(function(err, docs) {
+          if (err) {
+            reject(err);
+          } else {
+            let gameDatas = docs.map((item) => {
+              let gameData = new GameData();
+              gameData.load(item);
+              return gameData;
+            });
+            resolve(gameDatas);
+
+          }
+        });
+      } else {
+        reject('No gameName found');
       }
 
     } catch (e) {
@@ -695,7 +725,6 @@ const createGameData = ({
       if (!gameId && !gameName) {
         reject('Gameid, gamename not filled in');
       }
-      console.log(moment().format());
       let _previousGameEvent;
       promise = (gameData, i) => {
         return new Promise((resolve, reject) => {
@@ -714,6 +743,9 @@ const createGameData = ({
         });
       };
       types = {
+        'description': {
+          amount: 0
+        },
         'finish': {
           amount: 0
         },
@@ -838,6 +870,8 @@ module.exports.getGameDataById = getGameDataById;
 module.exports.updateGameEventsFrom = updateGameEventsFrom;
 module.exports.createGameData = createGameData;
 module.exports.addEvent = addEvent;
+module.exports.getEventType=getEventType;
 module.exports.addPlayers = addPlayers;
 module.exports.cancelJobs = cancelJobs;
 module.exports.finishGameEventFromHash = finishGameEventFromHash;
+module.exports.getGameDataByGameName=getGameDataByGameName;

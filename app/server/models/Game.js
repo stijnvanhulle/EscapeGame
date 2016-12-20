@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:50:07+01:00
+* @Last modified time: 2016-12-20T12:14:19+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -15,9 +15,10 @@ class Emitter extends EventEmitter {}
 
 class Game {
   //obj of players
-  constructor(teamName = '', players = []) {
+  constructor(teamName = '', players = [], gameName = 'alien') {
     this.players = players;
     this.teamName = teamName;
+    this.gameName = gameName;
     this.reset();
 
   }
@@ -32,8 +33,18 @@ class Game {
   generateAlienName() {
     this.alienName = c.name({nationality: "it"});
   }
+  setDescription(description) {
+    this.description = description;
+  }
 
-  load({players, teamName, date, id, alienName}) {
+  load({
+    players,
+    teamName,
+    date,
+    id,
+    alienName,
+    gameName
+  }) {
     try {
       this.alienName = alienName
         ? alienName
@@ -50,6 +61,9 @@ class Game {
       this.date = date
         ? date
         : this.date;
+      this.gameName = gameName
+        ? gameName
+        : this.gameName;
 
     } catch (e) {
       console.log(e);
@@ -85,6 +99,7 @@ class Game {
       var copy = Object.assign({}, obj);
       copy.events = null;
       copy.model = null;
+      copy.description = null;
       if (stringify) {
         json = JSON.stringify(copy);
       } else {
@@ -102,7 +117,7 @@ class Game {
         json['_id'] = undefined;
         json['__v'] = undefined;
       }
-        return JSON.parse(JSON.stringify(json));
+      return JSON.parse(JSON.stringify(json));
     } catch (e) {
       console.log(e);
       json = JSON.stringify({});

@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T15:45:24+01:00
+* @Last modified time: 2016-12-20T12:16:52+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -43,6 +43,7 @@ class App extends Component {
           console.log('GAME LOADED', this.props.game);
 
         }).catch(err => {
+          //localStorage.setItem('gameId', null);
           console.log(err);
         });
       }
@@ -119,9 +120,7 @@ class App extends Component {
       console.log(e);
     });
 
-
-
-    piController.start(gameEvent,gameData);
+    piController.start(gameEvent, gameData);
   }
   handleWSEventEnd = obj => {
     console.log('End event:', obj);
@@ -138,7 +137,7 @@ class App extends Component {
     }).catch((e) => {
       console.log(e);
     });
-      piController.end(gameEvent,gameData);
+    piController.end(gameEvent, gameData);
   }
 
   // EVENTS

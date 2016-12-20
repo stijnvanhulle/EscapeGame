@@ -156,6 +156,9 @@ def on_message(client, userdata, msg):
 
 	if msg.topic=="online":
 		parsed_json=json.loads(convertJson(msg.payload))
+
+	if msg.topic=="reset":
+		reset()
 		
 
 	if msg.topic=="message":

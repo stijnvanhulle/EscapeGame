@@ -3,7 +3,7 @@
 * @Date:   2016-12-19T14:46:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T17:24:38+01:00
+* @Last modified time: 2016-12-20T11:11:05+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -14,6 +14,7 @@ const PORTS = {
   text: "I2C-1"
 }
 import connectorTypes from './connectorTypes';
+import socketNames from './socketNames';
 
 connectorTypes.I2C
 
@@ -29,7 +30,7 @@ piController.start = (gameEvent, gameData) => {
     const _data = data.data;
     if (true) {
       if (data.type == "light") {
-        socket.emit('sendToPi', {
+        socket.emit(socketNames.PI, {
           port: PORTS.lights,
           type: 'OUTPUT',
           connectorType: connectorTypes.DIGITAL,
@@ -41,13 +42,13 @@ piController.start = (gameEvent, gameData) => {
       }
 
       if (data.type == "bom") {
-        socket.emit('sendToPi', {
+        socket.emit(socketNames.PI, {
           port: PORTS.text,
           type: 'OUTPUT',
           connectorType: connectorTypes.I2C,
           value: "BOEEEEEEEEM",
           read: false,
-          realtime: false,
+          realtime: true,
           timeout: 0
         });
       }
@@ -60,20 +61,8 @@ piController.end = (gameEvent, gameData) => {
   return new Promise((resolve, reject) => {
     const data = gameData.data;
     const _data = data.data;
-    if (data.sendToDevice == 'pi' || data.sendToDevice) {
-      if (data.type == "light") {
-        socket.emit('sendToPi', {
-          port: PORTS.lights,
-          type: 'OUTPUT',
-          connectorType: "DIGITAL",
-          value: false,
-          read: false,
-          realtime: false,
-          timeout: 0
-        });
-      }
 
-    }
+    socket.emit(socketNames.PI_RESET, true);
 
   });
 };
@@ -81,7 +70,7 @@ piController.finish = (gameEvent, gameData) => {
   return new Promise((resolve, reject) => {
     const data = gameData.data;
     const _data = data.data;
-    if (data.sendToDevice == 'pi') {}
+    socket.emit(socketNames.PI_RESET, true);
 
   });
 };

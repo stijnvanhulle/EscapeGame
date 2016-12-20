@@ -1,4 +1,20 @@
 [{
+  "type": "description",
+  "hide": false,
+  "sendToDevice": null,
+  "data": {
+    "name": "",
+    "description": "Welkom, de bedoeling van het spel is om de aliennaam te ontvangen door opdrachten goed te volbrengen",
+    "file": null,
+    "hints": [
+      ""
+    ],
+    "maxTime": 300,
+    "isLetter": false,
+    "answer": null
+  }
+
+}, {
   "type": "start",
   "hide": false,
   "sendToDevice": null,

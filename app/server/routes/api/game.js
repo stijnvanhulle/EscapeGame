@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-13T16:49:55+01:00
+* @Last modified time: 2016-12-20T12:20:32+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -52,12 +52,27 @@ module.exports = [
       try {
         let gameId = request.params.id;
         const game = new Game();
+        let eventType;
 
         gameController.getGameById(gameId).then((doc) => {
           game.load(doc);
-          reply(doc);
-        }).catch(err => {
-          throw new Error(err);
+          return gameController.getEventType('description');
+        }).then(item => {
+          eventType = item;
+          return gameController.getGameDataByGameName(game.gameName);
+        }).then(gameDatas => {
+          const description = gameDatas.filter(item => {
+            if (item.typeId = eventType.id) {
+              return item;
+            }
+          }).map(item => {
+            return item.data.description;
+          });
+          game.setDescription(description);
+          reply(game);
+        }).catch(e => {
+          console.log(e);
+          throw new Error(e);
         });
       } catch (e) {
         console.log(e);

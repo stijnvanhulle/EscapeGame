@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-13T17:37:08+01:00
+* @Last modified time: 2016-12-19T17:41:47+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
@@ -15,6 +15,9 @@ const onMessageSocket = (io, socket, client) => {
 
   socket.on(socketNames.PI, data => {
     client.publish('message', JSON.stringify(data));
+  });
+  socket.on(socketNames.PI_RESET, data => {
+    client.publish('reset', true);
   });
 
   socket.on(socketNames.ONLINE, obj => {

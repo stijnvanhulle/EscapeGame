@@ -3,7 +3,7 @@
 * @Date:   2016-11-30T21:03:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-13T17:21:04+01:00
+* @Last modified time: 2016-12-19T17:42:01+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,6 +12,7 @@ module.exports = {
   CONNECT: 'connection',
   ONLINE: 'online',
   PI: 'sendToPi',
+  PI_RESET:'piReset',
   INPUT: 'sendInput',
   EVENT_START: 'event_start',
   EVENT_END: 'event_end',
