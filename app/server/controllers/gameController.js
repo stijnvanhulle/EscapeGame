@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T12:16:22+01:00
+* @Last modified time: 2016-12-26T15:59:25+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -19,7 +19,7 @@ const {Game, GameEvent, GameData, EventType} = require('../models');
 const {promiseFor, setToMoment} = require('../lib/functions');
 const {Game: GameModel, GameEvent: GameEventModel, GameMember: GameMemberModel, GameData: GameDataModel, EventType: EventTypeModel} = require('../models/mongo');
 
-const socketNames = require('../lib/socketNames');
+const {mqttNames,socketNames}= require('../lib/const');
 
 const addGame = (game) => {
   return new Promise((resolve, reject) => {

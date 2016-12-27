@@ -1,0 +1,60 @@
+// @Author: Stijn Van Hulle <stijnvanhulle>
+// @Date:   2016-02-22T11:07:23+01:00
+// @Email:  me@stijnvanhulle.be
+// @Last modified by:   stijnvanhulle
+// @Last modified time: 2016-09-23T22:07:40+02:00
+// @License: stijnvanhulle.be
+@import 'colors';
+
+main#login {
+	margin-left: 0;
+	width: 100%;
+
+	.ui.input {
+		width: 100%;
+	}
+}
+
+main#login {
+	background: none;
+
+	.frame {
+		max-width: 720px;
+		background: rgba(255, 255, 255, 0.93);
+		display: block;
+		position: relative;
+		padding: 20px 20px 10px;
+		border-radius: 3px;
+		box-sizing: content-box;
+		-webkit-perspective: 600px;
+		transition: opacity 0.5s cubic-bezier(0.02, 0.09, 0, 0.75);
+		box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+		margin-bottom: 25px;
+	}
+
+	.signIn {
+		margin-top: 25px;
+	}
+
+	.buttons {
+		width: calc(100% /2) !important;
+
+		button {
+			width: calc((100% /2) - 30px) !important;
+		}
+	}
+
+	#logo {
+		text-align: center;
+		margin-top: 20px;
+		margin-left: -20px;
+
+		img {
+			width: 80%;
+		}
+	}
+}
+
+main#login .row:first-child {
+	padding: 0;
+}

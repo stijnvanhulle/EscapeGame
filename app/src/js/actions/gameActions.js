@@ -3,13 +3,13 @@
 * @Date:   2016-11-05T14:35:35+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T15:05:32+01:00
+* @Last modified time: 2016-12-26T15:17:06+01:00
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
 import {setUrl, setParams} from '../lib/functions';
-import _url from './lib/url';
-import actionsUrl from './lib/actionsUrl';
+import _url from '../lib/const/url';
+import actionsUrl from '../lib/const/actionsUrl';
 
 let url = setUrl(_url);
 

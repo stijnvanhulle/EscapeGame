@@ -3,28 +3,28 @@
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-07T14:31:45+01:00
+* @Last modified time: 2016-12-27T15:05:10+01:00
 * @License: stijnvanhulle.be
 */
 
 import React from 'react';
 import TextInput from '../common/textInput';
+import {Button} from 'semantic-ui-react';
 
 const PlayerForm = ({player, onSave, onChange, saving, errors}) => {
   return (
-    <form>
-      <h1>Add player</h1>
-      <TextInput name="firstName" label="firstName" value={player.firstName?player.firstName:""} onChange={onChange} error={errors.firstName}/>
+    <form onSubmit={onSave}>
+      <TextInput name="firstName" required label="firstName" value={player.firstName?player.firstName:""} onChange={onChange} error={errors.firstName}/>
 
-      <TextInput name="lastName" label="lastName" value={player.lastName?player.lastName:""} onChange={onChange} error={errors.lastName}/>
+      <TextInput name="lastName" required label="lastName" value={player.lastName?player.lastName:""} onChange={onChange} error={errors.lastName}/>
 
-      <TextInput name="birthday" label="birthday" value={player.birthday?player.birthday:""} onChange={onChange} error={errors.birthday}/>
+      <TextInput name="birthday" required label="birthday" value={player.birthday?player.birthday:""} onChange={onChange} error={errors.birthday}/>
 
-      <TextInput name="email" label="email" value={player.email?player.email:""} onChange={onChange} error={errors.email}/>
+      <TextInput name="email" type="email" required label="email" value={player.email?player.email:""} onChange={onChange} error={errors.email}/>
 
-      <input type="submit" disabled={saving} value={saving
-        ? 'Saving...'
-        : 'Save'} className="btn btn-primary" onClick={onSave}/>
+      <Button type="submit" disabled={saving} className="gray" loading={saving}>{saving
+        ? 'Adding...'
+        : 'Add'}</Button>
     </form>
   );
 };

@@ -3,25 +3,30 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T16:42:12+01:00
+* @Last modified time: 2016-12-27T20:18:24+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import * as gameActions from '../../actions/gameActions';
-import PlayerAddPage from './playerAddPage';
-import GameStartPage from './gameStartPage';
+import {Button} from 'semantic-ui-react';
 
-import game from '../../lib/game';
 import TextInput from '../../components/common/textInput';
+
+import GameNew from './common/gameNew';
+import GameStart from './common/gameStart';
+
+import * as gameActions from '../../actions/gameActions';
+import game from '../../lib/game';
+
 
 class GamePage extends Component {
   state = {
     teamName: '',
     error: '',
-    isGameStarted: false
+    isGameStarted: false,
+    data: {}
   }
   constructor(props, context) {
     super(props, context);
@@ -30,7 +35,8 @@ class GamePage extends Component {
       this.state = {
         teamName: '',
         error: '',
-        isGameStarted: true
+        isGameStarted: true,
+        data: {}
       };
     }
 
@@ -40,11 +46,10 @@ class GamePage extends Component {
       game.reset();
     });
   }
-
   startGame = (e) => {
-    const gamers = this.prop;
-    if (this.state.teamName) {
-      this.props.actions.createGame(this.props.players, this.state.teamName).then(() => {
+    const data = this.state.data;
+    if (data.teamName) {
+      this.props.actions.createGame(this.props.players, data.teamName).then(() => {
         const {id: gameId} = this.props.game;
         if (gameId) {
           localStorage.setItem('gameId', gameId)
@@ -70,30 +75,25 @@ class GamePage extends Component {
   }
 
   render() {
-    const playerAdd = <div>
-      <h1>Game</h1>
-
-      <button onClick={this.startGame}>Start game</button>
-      <TextInput name="teamName" label="teamName" value={this.state.teamName} onChange={this.onChangeTeamName} error={this.state.error}/>
-      <PlayerAddPage/> {this.props.players.map((item, i) => messageView(item, i))}
-    </div>;
-    const gameStart = <div>
-      <h1>Game</h1>
-      <GameStartPage/>
-    </div>;
-    if (this.props.game && this.props.game.id) {
-      return (gameStart)
+    if (this.props.game) {
+      if (this.props.game.id) {
+        return (
+          <div className=''><GameStart/></div>
+        );
+      } else {
+        return (
+          <div className='box'>
+            <GameNew players={this.props.players} onStart={this.startGame} data={this.state.data} error={this.state.error}/></div>
+        );
+      }
     } else {
-      return (playerAdd);
+      return (
+        <div className='box'></div>
+      );
     }
+
   }
 }
-
-const messageView = (item, i) => {
-  return (
-    <div key={i}>{item.firstName} {item.lastName}</div>
-  );
-};
 
 const mapStateToProps = (mapState, ownProps) => {
   return {players: mapState.players, game: mapState.game};

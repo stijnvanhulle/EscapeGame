@@ -3,17 +3,18 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T16:43:27+01:00
+* @Last modified time: 2016-12-27T13:35:59+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component, PropTypes} from 'react';
-import socketNames from './lib/socketNames';
+import {socketConnect} from 'socket.io-react';
+import socketNames from './lib/const/socketNames';
 import {runAudio} from './lib/functions';
 import Header from './components/header';
 import moment from 'moment';
 import {bindActionCreators} from 'redux';
-import io from 'socket.io-client';
+
 import {connect} from 'react-redux';
 import game from './lib/game';
 import piController from './lib/piController';
@@ -55,7 +56,7 @@ class App extends Component {
   }
 
   loadSocket = () => {
-    this.socket = io(`/`);
+    this.socket = this.props.socket;
     this.socket.emit(socketNames.ONLINE, {device: 'screen'});
     this.socket.on(socketNames.ONLINE, this.handleWSOnline);
     this.socket.on(socketNames.EVENT_START, this.handleWSEventStart);
@@ -64,7 +65,6 @@ class App extends Component {
     this.socket.on(socketNames.EVENT_DATA, this.handelWSEventData);
 
     piController.loadSocket(this.socket);
-
 
     window.socket = this.socket;
     window.moment = moment;
@@ -153,9 +153,18 @@ class App extends Component {
 
   render() {
     return (
-      <div className='container-fluid'>
-        <Header/> {this.props.children}
+      <div className='container'>
+        <header><Header/></header>
+        <main>
+          <div className="logo">
+            <img src='/assets/images/logo.png'/>
+          </div>
+          <div className='container-fluid'>
+            {this.props.children}
+          </div>
+        </main>
       </div>
+
     );
 
   }
@@ -174,4 +183,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(socketConnect(App));

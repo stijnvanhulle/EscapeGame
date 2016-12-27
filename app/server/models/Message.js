@@ -3,11 +3,11 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T17:15:54+01:00
+* @Last modified time: 2016-12-26T14:48:05+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
-const connectorTypes= require('../lib/connectorTypes');
+const {connectorTypes}= require('../lib/const');
 
 //read: { "port": 5, "type": "INPUT", "read":true,"realtime":false,timeout: null }
 //write { "port": 4, "type": "OUTPUT", "read":false, value:true,"realtime":false,timeout: null }

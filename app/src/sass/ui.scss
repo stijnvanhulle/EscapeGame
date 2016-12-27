@@ -1,0 +1,200 @@
+// @Author: Stijn Van Hulle <stijnvanhulle>
+// @Date:   2016-05-20T12:36:25+02:00
+// @Email:  me@stijnvanhulle.be
+// @Last modified by:   stijnvanhulle
+// @Last modified time: 2016-12-27T13:47:20+01:00
+// @License: stijnvanhulle.be
+@import "colors";
+
+.ui.input {
+	font-size: 1em;
+	min-width: 300px;
+}
+
+
+.ui.button {
+	color: black;
+	margin-right: 0;
+	margin-right: 0;
+	background: white;
+	font-family: DINPro,"Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
+	font-weight: 400;
+	box-shadow: 0 1px 3px 0 transparent, 0 1px 1px 0 transparent, 0 2px 1px -1px rgba(0, 0, 0, 0.08);
+	border-radius: 3px;
+	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+}
+
+.ui.button.selected,
+.ui.button:focus,
+.ui.button:hover {
+	color: black;
+	background-color: #ffffff;
+	background-image: none;
+	box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084);
+	color: inherit;
+}
+
+.ui.button.active,
+.ui.button.active.selected,
+.ui.button.active:focus,
+.ui.button.active:hover,
+.ui.modal .ui.button {
+	background: #646f6d;
+	color: white;
+}
+
+.ui.button.primary,
+.ui.button.primary.selected,
+.ui.button.primary:focus,
+.ui.button.primary:hover {
+	color: white;
+	background: $blue;
+}
+
+
+.ui.button.gray {
+	background: #dedede;
+	box-shadow: none;
+}
+
+.ui.button.gray.selected,
+.ui.button.gray:focus,
+.ui.button.gray:hover {
+	box-shadow: none;
+	color: black;
+	background: #ececec;
+}
+
+.ui.button.small {
+	background: none;
+	box-shadow: none;
+	line-height: 0.6em;
+	font-size: 0.8em;
+	text-transform: uppercase;
+}
+
+.ui.button.small.selected,
+.ui.button.small:focus,
+.ui.button.small:hover {
+	box-shadow: none;
+	background: none;
+}
+
+.ui.buttons.gridButtons {
+	margin-bottom: 5px;
+	margin-top: -15px;
+}
+
+.ui.button#showStats {
+	margin-left: 5px;
+}
+
+
+
+.ui.button.login {
+	background: none;
+	box-shadow: none;
+  border-radius: 0;
+  border-bottom: 5px solid transparent;
+}
+
+.ui.button.login.selected,
+.ui.button.login:focus,
+.ui.button.login:hover {
+  background: none;
+	box-shadow: none;
+	border-bottom: 5px solid $red;
+	border-radius: 0;
+      padding-bottom: 11px;
+  color: black;
+}
+
+.ui.button.login.active {
+	background: none;
+	box-shadow: none;
+	border-bottom: 5px solid $red;
+	border-radius: 0;
+      padding-bottom: 11px;
+  color: black;
+
+}
+
+.ui.search .prompt {
+	border-radius: 0.28571429rem;
+}
+
+.ui.modal > .content > .description {
+	width: 100%;
+}
+
+.ui a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.ui a:hover {
+	text-decoration: none;
+	color: inherit;
+}
+
+.ui.selection.dropdown {
+	min-height: inherit;
+	min-width: 10em;
+}
+
+.ui.search.big {
+	line-height: 1.7em !important;
+	margin-top: 1px !important;
+	position: absolute;
+	margin-left: 8px;
+	font-size: 1em;
+}
+//for semantic web
+
+.ui.table {
+	margin-left: -1px;
+	margin-right: -1px;
+	width: calc(100% + 3px);
+	border-radius: 0;
+}
+
+.ui.selection.active.dropdown,
+.ui.selection.active.dropdown .menu {
+	border-color: $red !important;
+}
+
+.ui.selection.dropdown:focus {
+	border-color: $red !important;
+	box-shadow: none;
+}
+
+.ui.input input:focus,
+.ui.input.focus input {
+	border-color: $red !important;
+}
+
+.ui.celled.table tr td:first-child,
+.ui.celled.table tr th:first-child {
+	border-right: 0;
+}
+
+.ui.search.dropdown.firmwares {
+	width: 280px;
+}
+
+.ui.dropdown .menu > .item {
+	width: 100%;
+}
+
+.ui.celled.table tr td,
+.ui.celled.table tr th {
+	padding: 0.6em;
+}
+
+.ui.loading.button:before {
+	border: 0.2em solid #77848a;
+}
+
+#ui-datepicker-div,.ui-timepicker-wrapper,.mce-panel, .mce-widget,#overlay {
+    filter: inherit !important;
+}

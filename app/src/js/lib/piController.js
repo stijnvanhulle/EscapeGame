@@ -3,7 +3,7 @@
 * @Date:   2016-12-19T14:46:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T16:49:24+01:00
+* @Last modified time: 2016-12-26T15:15:37+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -14,8 +14,8 @@ const PORTS = {
   text: "I2C-1",
   bom:3
 }
-import connectorTypes from './connectorTypes';
-import socketNames from './socketNames';
+import connectorTypes from './const/connectorTypes';
+import socketNames from './const/socketNames';
 
 connectorTypes.I2C
 

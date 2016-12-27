@@ -1,0 +1,70 @@
+// @Author: Stijn Van Hulle <stijnvanhulle>
+// @Date:   2016-02-23T10:12:44+01:00
+// @Email:  me@stijnvanhulle.be
+// @Last modified by:   stijnvanhulle
+// @Last modified time: 2016-10-28T19:53:51+02:00
+// @License: stijnvanhulle.be
+@import '../colors';
+
+@media only screen and (max-width: 768px) {
+header.master {
+	-webkit-transition: all 0.4s cubic-bezier(.06,.09,0,.75);
+	-moz-transition: all 0.4s cubic-bezier(.06,.09,0,.75);
+	-o-transition: all 0.4s cubic-bezier(.06,.09,0,.75);
+	transition: all 0.4s cubic-bezier(.06,.09,0,.75);
+	position: fixed !important;
+}
+header.master.changeheader {
+	height: 100% !important;
+	background-color: white;
+	-webkit-transition: all 0.2s cubic-bezier(.06,.09,0,.75);
+	-moz-transition: all 0.2s cubic-bezier(.06,.09,0,.75);
+	-o-transition: all 0.2s cubic-bezier(.06,.09,0,.75);
+	transition: all 0.2s cubic-bezier(.06,.09,0,.75);
+}
+header.master.changeheader nav#menu li {
+	opacity: 0;
+	animation: fadeInTopLogin 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+	animation-fill-mode: forwards;
+}
+@for $i from 1 to 10 {
+	header.master.changeheader nav#menu li:nth-child(#{$i}) {
+		animation-delay: ($i * 0.05s) !important;
+	}
+}
+
+#menu {
+	margin-left: 0 !important;
+	margin-right: 0;
+	margin-top: 10px !important;
+	padding-top: 0 !important;
+	width: 100% !important;
+	height: 230px !important;
+}
+#menu li {
+	display: inline-block !important;
+	width: 100% !important;
+	margin-top: 15px !important;
+      text-align: center;
+}
+#menu li:hover{
+    border: none !important;
+}
+#menu li a {
+	width: 100% !important;
+	text-align: center !important;
+	padding: 10px 0 !important;
+    border: none !important;
+}
+#menu .selected {
+	box-shadow: none !important;
+	font-weight: 700 !important;
+  border: none !important;
+}
+#menu li a:hover {
+	box-shadow: none !important;
+    border: none !important;
+}#overviewEvent .map div{
+	height: 150px !important;
+}
+}

@@ -3,32 +3,44 @@
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-05T14:31:59+01:00
+* @Last modified time: 2016-12-27T14:49:03+01:00
 * @License: stijnvanhulle.be
 */
 
-
-
+import {Input} from 'semantic-ui-react'
 import React, {PropTypes} from 'react';
 
-const TextInput = ({name, label, onChange, placeholder, value, error}) => {
-  let wrapperClass = 'form-group';
+const TextInput = ({
+  name,
+  label,
+  onChange,
+  placeholder,
+  value,
+  error,
+  type,
+  required
+}) => {
+  let wrapperClass = `form-group`;
   if (error && error.length > 0) {
-    wrapperClass += " " + 'has-error';
+    wrapperClass += ` ` + `has-error`;
+  }
+  if (!type)
+    type = `text`;
+
+  if (required) {
+    required = `required`;
+  } else {
+    required = ``;
+  }
+  if (!placeholder) {
+    placeholder = label;
   }
 
   return (
     <div className={wrapperClass}>
       <label htmlFor={name}>{label}</label>
-      <div className="field">
-        <input
-          type="text"
-          name={name}
-          className="form-control"
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}/>
-        {error && <div className="alert alert-danger">{error}</div>}
+      <div className='field'>
+        <Input required={required} type={type} name={name} placeholder={placeholder} value={value} onChange={onChange}/> {error && <p className='alert alert-danger'>{error}</p>}
       </div>
     </div>
   );
@@ -36,10 +48,12 @@ const TextInput = ({name, label, onChange, placeholder, value, error}) => {
 
 TextInput.propTypes = {
   name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  required: PropTypes.bool,
   placeholder: PropTypes.string,
   value: PropTypes.string,
+  type: PropTypes.string,
   error: PropTypes.string
 };
 

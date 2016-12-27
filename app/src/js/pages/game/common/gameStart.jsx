@@ -3,22 +3,24 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T16:45:50+01:00
+* @Last modified time: 2016-12-27T23:01:13+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component} from 'react';
+import {Button} from 'semantic-ui-react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import moment from 'moment';
-import * as gameActions from '../../actions/gameActions';
-import game from '../../lib/game';
-import socketNames from '../../lib/socketNames';
-import TextInput from '../../components/common/textInput';
-import Audio from '../../components/common/audio';
-import Image from '../../components/common/image';
+import * as gameActions from 'actions/gameActions';
+import game from 'lib/game';
+import socketNames from 'lib/const/socketNames';
+import TextInput from 'components/common/textInput';
+import Audio from 'components/common/audio';
+import Image from 'components/common/image';
+import Prison from 'components/common/prison';
 
-class GameStartPage extends Component {
+class GameStart extends Component {
   state = {}
   constructor(props, context) {
     super(props, context);
@@ -35,7 +37,8 @@ class GameStartPage extends Component {
       error: '',
       audioSrc: '',
       imageSrc: '',
-      audioRepeat: true
+      audioRepeat: true,
+      data:{}
     };
 
     game.events.on('audio', (src) => {
@@ -61,7 +64,9 @@ class GameStartPage extends Component {
       }
 
     });
+
   }
+
   startGame = () => {
     //set starttime of null for starttime on server
     //let startTime=this.state.startTime;
@@ -106,6 +111,7 @@ class GameStartPage extends Component {
 
       let timer = setInterval(function() {
         if (countdown == 0) {
+
           clearInterval(timer);
         } else {
           countdown--;
@@ -121,33 +127,59 @@ class GameStartPage extends Component {
   render() {
     let starting;
     let div;
+
+    let prison = <Prison canStart={this.state.canStart}/>;
     if (this.state.canStart) {
       if (game.currentGameData) {
         div = <div>
-          {game.currentGameData.data.data.description}
-          <TextInput name="input" label="teamName" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
-          <button onClick={this.sendInput}>Send Input</button>
-          <Audio src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
-          <Image src={this.state.imageSrc}/>
+          <Prison canStart={this.state.canStart} data={this.state.data}/>
+          <div className="interface game">
+            <div className={this.state.data.showText? 'center big':'hide'}>
+              {this.state.data.showText}
+              <h1>{game.currentGameData.data.data.description}</h1>
+              <TextInput name="input" label="value" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
+              <Button onClick={this.sendInput}>Send Input</Button>
+              <Audio src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
+              <Image className="image" src={this.state.imageSrc}/>
+            </div>
+          </div>
         </div>;
       } else if (this.state.countdown == 0) {
         div = <div></div>;
       } else {
         if (this.state.message) {
-          div = <div>{this.state.message}</div>;
+          div = <div className="interface countdown">
+            <div className="center big">
+              <h1>{this.state.message}</h1>
+            </div>
+          </div>;
         } else {
           div = <div>
-            starting in {this.state.countdown}
+
+            <div className="interface countdown">
+              <div className="center">
+                <span>starting in {this.state.countdown}</span>
+              </div>
+            </div>
           </div>;
         }
 
       }
 
     } else {
+
+      document.querySelector('body').classList.add('blue');
       div = <div>
-        <button onClick={this.start}>Start game</button>
+        <Prison canStart={this.state.canStart} data={this.state.data}/>
+        <div className="interface">
+          <div className="center">
+            <Button size='medium' primary className="center" onClick={this.start}>Resume/start game</Button>
+          </div>
+        </div>
+
       </div>;
     }
+
     return (div);
 
   }
@@ -161,4 +193,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GameStartPage);
+export default connect(mapStateToProps, mapDispatchToProps)(GameStart);

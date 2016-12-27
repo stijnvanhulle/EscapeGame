@@ -3,10 +3,10 @@
 * @Date:   2016-11-05T14:37:33+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-06T14:03:24+01:00
+* @Last modified time: 2016-12-26T15:18:11+01:00
 * @License: stijnvanhulle.be
 */
-import actionsUrl from '../actions/lib/actionsUrl';
+import actionsUrl from '../lib/const/actionsUrl';
 
 export default function gameEventReducer(state = [], action) {
   switch (action.type) {

@@ -3,12 +3,11 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T17:19:37+01:00
+* @Last modified time: 2016-12-26T15:56:22+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
-const socketNames = require('../lib/socketNames');
-const mqttNames = require('../lib/mqttNames');
+const {mqttNames,socketNames}= require('../lib/const');
 const scheduleJob = require('../lib/scheduleJob');
 let users = [];
 
