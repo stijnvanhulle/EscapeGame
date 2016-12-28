@@ -3,13 +3,13 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T16:29:12+01:00
+* @Last modified time: 2016-12-28T17:37:29+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
 const moment = require("moment");
 let model;
-let MODEL = "GameMember";
+let MODEL = "GamePlayer";
 
 module.exports.load = () => {
   const db = mongoose.connection;
@@ -35,6 +35,6 @@ module.exports.load = () => {
 module.exports.getModel = () => model;
 
 module.exports.load.attributes = {
-  name: `mongo_gameMember`,
+  name: `mongo_gamePlayer`,
   version: `0.1.0`
 };

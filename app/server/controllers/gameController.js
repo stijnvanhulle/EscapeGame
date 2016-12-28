@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-26T15:59:25+01:00
+* @Last modified time: 2016-12-28T18:19:29+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -14,12 +14,26 @@ const moment = require('moment');
 const {calculateId, random} = require('./lib/functions');
 const scheduleJob = require("../lib/scheduleJob");
 
-const {Game, GameEvent, GameData, EventType} = require('../models');
+const {
+  Game,
+  GameEvent,
+  GameData,
+  EventType,
+  GamePlayer,
+  Player
+} = require('../models');
 
-const {promiseFor, setToMoment} = require('../lib/functions');
-const {Game: GameModel, GameEvent: GameEventModel, GameMember: GameMemberModel, GameData: GameDataModel, EventType: EventTypeModel} = require('../models/mongo');
+const {promiseFor, setToMoment, isBool} = require('../lib/functions');
+const {
+  Game: GameModel,
+  Player: PlayerModel,
+  GameEvent: GameEventModel,
+  GamePlayer: GamePlayerModel,
+  GameData: GameDataModel,
+  EventType: EventTypeModel
+} = require('../models/mongo');
 
-const {mqttNames,socketNames}= require('../lib/const');
+const {mqttNames, socketNames} = require('../lib/const');
 
 const addGame = (game) => {
   return new Promise((resolve, reject) => {
@@ -566,14 +580,16 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
       const answer = data.answer;
 
       const sentData = (data, correct = false) => {
-        console.log(data);
+        console.log('EVENT_data', data);
         io.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct});
       };
+      console.log('INPUTDATA', inputData);
 
       if (answer) {
         let {value, name} = answer;
         inputData = inputData.input.toString().toLowerCase();
-        name = name.toString().toLowerCase()
+        name = name.toString().toLowerCase();
+
         if (inputData == name || inputData.indexOf('name') != -1) {
           if (isLetter) {
             getGameById(gameEvent.gameId).then(game => {
@@ -598,7 +614,11 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
         }
 
       } else {
-        resolve(false);
+        console.log(isBool(inputData.input), Boolean(inputData.input));
+        if (isBool(inputData.input) && Boolean(inputData.input) === true) {
+          sentData({}, correct = true);
+          resolve(true);
+        } else {}
       }
     } catch (e) {
       reject(e);
@@ -826,9 +846,9 @@ const addPlayers = ({players, id: gameId}) => {
       const promise = (item) => {
         return new Promise((resolve, reject) => {
           if (item) {
-            const gameMember = new GameMemberModel({gameId, playerId: item.id});
+            const gamePlayer = new GamePlayerModel({gameId, playerId: item.id});
 
-            gameMember.save().then(doc => {
+            gamePlayer.save().then(doc => {
               resolve(doc);
             }).catch(err => {
               reject(err);
@@ -854,6 +874,63 @@ const addPlayers = ({players, id: gameId}) => {
 
 };
 
+const getPlayers = (gameId) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!gameId) {
+        throw new Error('Gameid not set');
+      } else {
+        const promise = (item) => {
+          return new Promise((resolve, reject) => {
+            if (item) {
+              PlayerModel.findOne({id: item.playerId}).exec(function(err, doc) {
+                if (err) {
+                  reject(err);
+                } else {
+                  const player = new Player({firstName:doc.firstName,lastName:doc.lastName,birthday:doc.birthday,email:doc.email});
+                  player.load(doc);
+                  item.player = player;
+                  resolve(player);
+                }
+              });
+
+            } else {
+              reject('No item');
+            }
+          });
+        };
+
+        GamePlayerModel.find({gameId: gameId}).exec(function(err, docs) {
+          if (err) {
+            reject(err);
+          } else {
+            let gamePlayers = docs.map((item) => {
+              let gamePlayer = new GamePlayer();
+              gamePlayer.load(item);
+              return gamePlayer;
+            });
+            console.log(gamePlayers);
+
+            promiseFor(promise, gamePlayers).then((item) => {
+              resolve(item);
+            }).catch(err => {
+              reject(err);
+            });
+
+          }
+        });
+
+      }
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
+
 const cancelJobs = (hash) => {
   if (hash) {
     return scheduleJob.cancel(hash);
@@ -870,8 +947,9 @@ module.exports.getGameDataById = getGameDataById;
 module.exports.updateGameEventsFrom = updateGameEventsFrom;
 module.exports.createGameData = createGameData;
 module.exports.addEvent = addEvent;
-module.exports.getEventType=getEventType;
+module.exports.getEventType = getEventType;
 module.exports.addPlayers = addPlayers;
+module.exports.getPlayers = getPlayers;
 module.exports.cancelJobs = cancelJobs;
 module.exports.finishGameEventFromHash = finishGameEventFromHash;
-module.exports.getGameDataByGameName=getGameDataByGameName;
+module.exports.getGameDataByGameName = getGameDataByGameName;

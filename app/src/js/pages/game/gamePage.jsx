@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-28T14:02:50+01:00
+* @Last modified time: 2016-12-28T18:09:52+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -25,8 +25,7 @@ class GamePage extends Component {
     teamName: '',
     error: '',
     isGameStarted: false,
-    data: {},
-    isNewGame: false
+    data: {}
   }
   constructor(props, context) {
     super(props, context);
@@ -40,9 +39,6 @@ class GamePage extends Component {
       };
     }
 
-    game.events.on('isNewGame', () => {
-      this.state.isNewGame = true;
-    });
 
     game.events.on('end', () => {
       self.setState({isGameStarted: true});
@@ -56,7 +52,7 @@ class GamePage extends Component {
       this.props.actions.createGame(this.props.players, data.teamName).then(() => {
         const {id: gameId} = this.props.game;
         if (gameId) {
-          localStorage.setItem('gameId', gameId)
+          localStorage.setItem('gameId', gameId);
           game.id = gameId;
           game.started = true;
           this.setState({isGameStarted: true});
@@ -84,7 +80,7 @@ class GamePage extends Component {
       return (
         <div className=''><GameStart/></div>
       );
-    } else if (this.state.isNewGame) {
+    } else if (!game.started) {
       return (
         <div className='box'>
           <GameNew players={this.props.players} onStart={this.startGame} data={this.state.data} error={this.state.error}/></div>

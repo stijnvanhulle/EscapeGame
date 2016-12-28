@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T16:07:27+01:00
+* @Last modified time: 2016-12-28T17:49:47+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -84,6 +84,9 @@ module.exports = [
           return gameController.getEventType('description');
         }).then(item => {
           eventType = item;
+          return gameController.getPlayers(game.id);
+        }).then(players => {
+          game.players = players;
           return gameController.getGameDataByGameName(game.gameName);
         }).then(gameDatas => {
           const description = gameDatas.filter(item => {

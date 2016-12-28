@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-28T16:07:13+01:00
+* @Last modified time: 2016-12-28T18:20:48+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -42,14 +42,13 @@ class App extends Component {
     try {
       const gameId = JSON.parse(localStorage.getItem('gameId'));
       if (gameId) {
+        game.id = gameId;
+        game.started = true;
         this.props.actions.getGame(gameId).then(() => {
-          game.id = gameId;
-          game.started = true;
-          game.events.emit('isNewGame', true);
           console.log('GAME LOADED', this.props.game);
 
         }).catch(err => {
-          //localStorage.setItem('gameId', null);
+          //localStorage.setItem('gameId', '');
           console.log(err);
         });
       }
@@ -90,14 +89,16 @@ class App extends Component {
 
   handelWSEventData = obj => {
     console.log('Event data:', obj);
-    let {gameEvent, gameData, activeEvents} = obj;
-    const findGameEventId = (item) => {
-      if (item.id == gameEvent.id) {
-        return item;
-      }
-    };
-    let item = this.props.gameEvents.find(findGameEventId);
-    console.log(item);
+    const {correct} = obj;
+    const gameData = game.currentGameData;
+    const currentData = gameData.data.data;
+    const type = gameData.data.type.toLowerCase();
+
+    if (type == "bom") {
+      clearTimeout(this.timer);
+      this.timer = null;
+      game.events.emit('bomStop', correct);
+    }
 
   }
   handleWSEventFinish = obj => {
@@ -119,7 +120,7 @@ class App extends Component {
       } else if (type == "scan") {
         game.events.emit('image', currentData.file);
       } else if (type == 'bom') {
-        const time = moment(gameEvent.activateDate).diff(moment(gameEvent.endDate), 'seconds');
+        const time = Math.abs(moment(gameEvent.activateDate).diff(moment(gameEvent.endDate), 'seconds'));
 
         if (time) {
           game.events.emit('bomStart', time);
@@ -127,7 +128,7 @@ class App extends Component {
             game.events.emit('audio', currentData.file);
             clearTimeout(this.timer);
             this.timer = null;
-          }, time * 10);
+          }, time * 1000);
 
         }
 
@@ -152,9 +153,9 @@ class App extends Component {
     let {gameEvent, gameData, activeEvents} = obj;
     game.currentGameData = gameData;
     game.currentGameEvent = gameEvent;
+
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       console.log('UPDATED gameEvent');
-      game.events.emit('bomStop');
 
       if (activeEvents == 0) {
         this.socket.emit(socketNames.EVENT_FINISH, {finish: true});

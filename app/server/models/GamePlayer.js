@@ -3,56 +3,37 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-28T18:19:32+01:00
+* @Last modified time: 2016-12-28T18:15:11+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
-const {Player: Model} = require('./mongo');
+const {GamePlayer: Model} = require('./mongo');
 
 class Emitter extends EventEmitter {}
-class Player {
-  constructor({firstName, lastName, birthday, email}) {
-    if (firstName && lastName && birthday && email) {
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.birthday = parseFloat(birthday);
-      this.email = email;
 
-    } else {
-      throw new Error('Cannot make player with empty data');
-      return;
-    }
-
+class GameMember {
+  constructor() {
     this.reset();
   }
 
-  load({
-    firstName,
-    lastName,
-    birthday,
-    date,
-    email,
-    id
-  }) {
+  reset() {
+    this.date = null;
+    this.model = Model;
+    this.player=null;
+    this.game=null;
+    this.events = new Emitter();
+  }
+
+  load({gameId, playerId, date}) {
     try {
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.birthday = birthday;
-      this.email = email;
-      this.id = id;
+      this.gameId = gameId;
+      this.playerId = playerId;
       this.date = date;
 
     } catch (e) {
       console.log(e);
       throw e;
     }
-  }
-
-  reset() {
-    this.id = null;
-    this.model = Model;
-    this.date = null;
-    this.events = new Emitter();
   }
 
   save() {
@@ -76,13 +57,17 @@ class Player {
     });
   }
 
-  json(stringify = true, removeEmpty = false) {
+  json(stringify = true, removeEmpty = false, subDataJson = true) {
     var json;
     try {
       var obj = this;
       var copy = Object.assign({}, obj);
       copy.events = null;
       copy.model = null;
+      if (subDataJson) {
+        copy.data = JSON.stringify(copy.data);
+      }
+
       if (stringify) {
         json = JSON.stringify(copy);
       } else {
@@ -110,4 +95,4 @@ class Player {
 
 }
 
-module.exports = Player;
+module.exports = GameMember;
