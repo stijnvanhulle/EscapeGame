@@ -3,7 +3,7 @@
 * @Date:   2016-10-12T15:57:56+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-27T23:11:43+01:00
+* @Last modified time: 2016-12-28T15:03:08+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -36,6 +36,13 @@ const copy = new CopyWebpackPlugin([
   }
 ], {ignore: ['.DS_Store']});
 
+const copyCompatibility = new CopyWebpackPlugin([
+  {
+    from: './src/js/compatibility',
+    to: 'js'
+  }
+], {ignore: ['.DS_Store']});
+
 const config = {
 
   entry: [
@@ -65,7 +72,7 @@ const config = {
   devtool: 'source-map', // or "inline-source-map"
 
   module: {
-  noParse: [],
+    noParse: [],
     rules: [
       {
         test: /\.css$/,
@@ -83,7 +90,7 @@ const config = {
         test: /\.(jsx?)$/,
         exclude: [
           path.resolve(__dirname, 'node_modules/'),
-          'src/js/compatibility'
+          path.resolve(__dirname, 'src/js/compatibility')
         ],
         use: [
           {
@@ -111,18 +118,20 @@ const config = {
           context: './src',
           name: '[path][name].[ext]'
         }
+      },
+      {
+        test: require.resolve('snapsvg'),
+        loader: 'imports-loader?this=>window,fix=>module.exports=0'
       }
     ]
 
   },
 
-
-
   plugins: [
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     copy,
-    new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"})
+    //new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"})
   ]
 
 };

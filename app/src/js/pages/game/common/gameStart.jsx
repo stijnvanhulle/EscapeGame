@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-27T23:01:13+01:00
+* @Last modified time: 2016-12-28T13:02:07+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -38,7 +38,7 @@ class GameStart extends Component {
       audioSrc: '',
       imageSrc: '',
       audioRepeat: true,
-      data:{}
+      data: {}
     };
 
     game.events.on('audio', (src) => {
@@ -132,12 +132,13 @@ class GameStart extends Component {
     if (this.state.canStart) {
       if (game.currentGameData) {
         div = <div>
-          <Prison canStart={this.state.canStart} data={this.state.data}/>
+          <Prison canStart={this.state.canStart}/>
           <div className="interface game">
-            <div className={this.state.data.showText? 'center big':'hide'}>
-              {this.state.data.showText}
+            <div className={this.state.canStart
+              ? 'center big'
+              : 'hide'}>
               <h1>{game.currentGameData.data.data.description}</h1>
-              <TextInput name="input" label="value" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
+              <TextInput name="input" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
               <Button onClick={this.sendInput}>Send Input</Button>
               <Audio src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
               <Image className="image" src={this.state.imageSrc}/>
@@ -147,6 +148,9 @@ class GameStart extends Component {
       } else if (this.state.countdown == 0) {
         div = <div></div>;
       } else {
+        $('body').removeClass('horizon');
+        $('.prison svg #background').removeClass('horizon');
+
         if (this.state.message) {
           div = <div className="interface countdown">
             <div className="center big">
@@ -168,7 +172,6 @@ class GameStart extends Component {
 
     } else {
 
-      document.querySelector('body').classList.add('blue');
       div = <div>
         <Prison canStart={this.state.canStart} data={this.state.data}/>
         <div className="interface">

@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T14:04:11+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T16:22:46+01:00
+* @Last modified time: 2016-12-28T16:05:20+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -15,8 +15,12 @@ class Emitter extends EventEmitter {}
 let timerObj;
 
 let timer = {};
-timer.start=()=>{
-
+timer.start = (howLong) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(true);
+    }, howLong * 10);
+  });
 };
 timer.startHints = (hints, howLong) => {
   if (hints && howLong) {

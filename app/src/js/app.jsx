@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-27T13:35:59+01:00
+* @Last modified time: 2016-12-28T16:07:13+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -13,6 +13,7 @@ import socketNames from './lib/const/socketNames';
 import {runAudio} from './lib/functions';
 import Header from './components/header';
 import moment from 'moment';
+import $ from 'jquery';
 import {bindActionCreators} from 'redux';
 
 import {connect} from 'react-redux';
@@ -24,13 +25,14 @@ import * as gameActions from './actions/gameActions';
 
 //same as React.creataClass(){};
 class App extends Component {
-
+  timer = null
   constructor(props, context) {
     super(props, context);
 
     this.loadSocket();
     this.loadOldGame();
   }
+  componentDidMount() {}
   state = {
     username: ``,
     messages: [],
@@ -40,9 +42,10 @@ class App extends Component {
     try {
       const gameId = JSON.parse(localStorage.getItem('gameId'));
       if (gameId) {
-        game.id = gameId;
-        game.started = true;
         this.props.actions.getGame(gameId).then(() => {
+          game.id = gameId;
+          game.started = true;
+          game.events.emit('isNewGame', true);
           console.log('GAME LOADED', this.props.game);
 
         }).catch(err => {
@@ -66,6 +69,8 @@ class App extends Component {
 
     piController.loadSocket(this.socket);
 
+    window.$ = $;
+    window.jquery = $;
     window.socket = this.socket;
     window.moment = moment;
     window.game = game;
@@ -109,10 +114,23 @@ class App extends Component {
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       const currentData = gameData.data.data;
       const type = gameData.data.type.toLowerCase();
-      if (type == 'sound' || type == 'bom' || type == 'anthem') {
+      if (type == 'sound' || type == 'anthem') {
         game.events.emit('audio', currentData.file);
       } else if (type == "scan") {
         game.events.emit('image', currentData.file);
+      } else if (type == 'bom') {
+        const time = moment(gameEvent.activateDate).diff(moment(gameEvent.endDate), 'seconds');
+
+        if (time) {
+          game.events.emit('bomStart', time);
+          this.timer = setTimeout(() => {
+            game.events.emit('audio', currentData.file);
+            clearTimeout(this.timer);
+            this.timer = null;
+          }, time * 10);
+
+        }
+
       } else {
         game.events.emit('audio', null);
         game.events.emit('image', null);
@@ -136,6 +154,7 @@ class App extends Component {
     game.currentGameEvent = gameEvent;
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       console.log('UPDATED gameEvent');
+      game.events.emit('bomStop');
 
       if (activeEvents == 0) {
         this.socket.emit(socketNames.EVENT_FINISH, {finish: true});

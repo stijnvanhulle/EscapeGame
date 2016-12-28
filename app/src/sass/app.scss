@@ -2,7 +2,7 @@
 // @Date:   2016-02-22T11:07:23+01:00
 // @Email:  me@stijnvanhulle.be
 // @Last modified by:   stijnvanhulle
-// @Last modified time: 2016-12-27T22:51:59+01:00
+// @Last modified time: 2016-12-28T12:58:07+01:00
 // @License: stijnvanhulle.be
 @import 'colors.scss';
 
@@ -60,14 +60,13 @@ main {
 	position: absolute;
 	width: 100%;
 	height: auto;
-	background: #9ce0ff;
 	z-index: 10;
 	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
     overflow: hidden;
 	svg {
 		#sun {
 			transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
-			animation: sun 240s ease-in-out infinite;
+			animation: sun 60s ease-in-out infinite;
 		}
 
 		#cloud1,
@@ -97,6 +96,7 @@ main {
 .interface.game {
     padding-top: 95px;
   h1{
+		    text-align: center;
 		color: white;
 	}
 }
@@ -109,16 +109,18 @@ main {
 	left: 27%;
 	margin-top: -9px;
 	z-index: 11;
+		transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
 }
 
 .hidePrison {
 	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
-	animation: hidePrison 0.8s ease-in-out 0.5s;
+	animation: hidePrison 0.8s linear 0s;
 	animation-fill-mode: forwards;
 }
 
 
-.blue {
-	background: $horizon;
+.horizon {
+		transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+	animation: horizon 60s linear infinite;
 }
 //prison svg elements

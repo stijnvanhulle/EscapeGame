@@ -56,7 +56,8 @@
     "semantic-ui-react": "^0.63.1",
     "socket.io": "^1.5.1",
     "socket.io-client": "^1.7.0",
-    "socket.io-react": "^1.1.2"
+    "socket.io-react": "^1.1.2",
+    "svgjs": "^2.3.6"
   },
   "devDependencies": {
     "axios": "^0.15.2",

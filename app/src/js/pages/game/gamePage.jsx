@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-27T20:18:24+01:00
+* @Last modified time: 2016-12-28T14:02:50+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -20,13 +20,13 @@ import GameStart from './common/gameStart';
 import * as gameActions from '../../actions/gameActions';
 import game from '../../lib/game';
 
-
 class GamePage extends Component {
   state = {
     teamName: '',
     error: '',
     isGameStarted: false,
-    data: {}
+    data: {},
+    isNewGame: false
   }
   constructor(props, context) {
     super(props, context);
@@ -39,6 +39,10 @@ class GamePage extends Component {
         data: {}
       };
     }
+
+    game.events.on('isNewGame', () => {
+      this.state.isNewGame = true;
+    });
 
     game.events.on('end', () => {
       self.setState({isGameStarted: true});
@@ -75,17 +79,16 @@ class GamePage extends Component {
   }
 
   render() {
-    if (this.props.game) {
-      if (this.props.game.id) {
-        return (
-          <div className=''><GameStart/></div>
-        );
-      } else {
-        return (
-          <div className='box'>
-            <GameNew players={this.props.players} onStart={this.startGame} data={this.state.data} error={this.state.error}/></div>
-        );
-      }
+
+    if (this.props.game && this.props.game.id) {
+      return (
+        <div className=''><GameStart/></div>
+      );
+    } else if (this.state.isNewGame) {
+      return (
+        <div className='box'>
+          <GameNew players={this.props.players} onStart={this.startGame} data={this.state.data} error={this.state.error}/></div>
+      );
     } else {
       return (
         <div className='box'></div>
