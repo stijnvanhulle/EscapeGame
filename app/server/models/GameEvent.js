@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-13T17:01:16+01:00
+* @Last modified time: 2016-12-29T20:11:10+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -33,6 +33,7 @@ class GameEvent {
     this.isActive = true;
     this.activateDate = null;
     this.endDate = null;
+    this.timeBetween = null;
     this.finishDate = null;
     this.model = Model;
     this.jobHash = null;
@@ -89,6 +90,7 @@ class GameEvent {
       this.level = level
         ? parseFloat(level)
         : this.level;
+
     } catch (e) {
       console.log(e);
       throw e;
@@ -96,8 +98,18 @@ class GameEvent {
 
     return this;
   }
+  calculateTimes() {
+    const timeBetween = Math.abs(moment(this.activateDate).diff(moment(this.endDate), 'seconds'));
+    this.timeBetween = parseFloat(timeBetween);
 
-  createGameData(gameDataId = null, level = 1, startTime = moment().valueOf(), startIn = 10, maxTime = null, timeBetween = null) {
+    if (this.finishDate && this.activateData) {
+      const timePlayed = Math.abs(moment(this.activateDate).diff(moment(this.finishDate), 'seconds'));
+      this.timePlayed = parseFloat(timePlayed);
+    }
+
+  }
+
+  createData(gameDataId = null, level = 1, startTime = moment().valueOf(), startIn = 10, maxTime = null, timeBetween = null) {
     try {
       let now = moment();
       if (parseInt(level) > 3) {
@@ -170,7 +182,7 @@ class GameEvent {
 
   }
 
-  setGameData({
+  setData({
     gameId,
     gameDataId,
     isActive,

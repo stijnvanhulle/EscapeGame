@@ -2,7 +2,7 @@
 // @Date:   2016-02-22T11:07:23+01:00
 // @Email:  me@stijnvanhulle.be
 // @Last modified by:   stijnvanhulle
-// @Last modified time: 2016-12-28T12:58:07+01:00
+// @Last modified time: 2016-12-29T02:05:14+01:00
 // @License: stijnvanhulle.be
 @import 'colors.scss';
 
@@ -62,7 +62,8 @@ main {
 	height: auto;
 	z-index: 10;
 	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
-    overflow: hidden;
+	overflow: hidden;
+
 	svg {
 		#sun {
 			transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
@@ -79,6 +80,24 @@ main {
 			transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
 			animation: cloud 15s ease-in-out infinite;
 		}
+
+		#ufo1 {
+			transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+			animation: ufo 15s ease-in-out infinite;
+			animation-delay: 2s !important;
+		}
+
+		#ufo2 {
+			transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+			animation: ufo 15s ease-in-out infinite;
+			animation-delay: 3s !important;
+		}
+
+		#man1 {
+			transition: all 12s cubic-bezier(0.02, 0.09, 0, 0.75);
+			transform: translateX(0px);
+			transform: translateX(-800px);
+		}
 		@for $i from 1 to 7 {
 			#horizon path:nth-child(#{$i}) {
 				animation-delay: $i * 1s !important;
@@ -94,14 +113,13 @@ main {
 }
 
 .interface.game {
-    padding-top: 95px;
-  h1{
-		    text-align: center;
+	padding-top: 95px;
+
+	h1 {
+		text-align: center;
 		color: white;
 	}
 }
-
-
 
 .smoke {
 	position: absolute;
@@ -109,7 +127,7 @@ main {
 	left: 27%;
 	margin-top: -9px;
 	z-index: 11;
-		transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
 }
 
 .hidePrison {
@@ -118,9 +136,8 @@ main {
 	animation-fill-mode: forwards;
 }
 
-
 .horizon {
-		transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
 	animation: horizon 60s linear infinite;
 }
 //prison svg elements

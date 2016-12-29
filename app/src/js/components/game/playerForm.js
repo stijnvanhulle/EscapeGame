@@ -3,11 +3,11 @@
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-27T15:05:10+01:00
+* @Last modified time: 2016-12-29T22:37:37+01:00
 * @License: stijnvanhulle.be
 */
 
-import React from 'react';
+import React, {Component, PropTypes} from 'react';
 import TextInput from '../common/textInput';
 import {Button} from 'semantic-ui-react';
 

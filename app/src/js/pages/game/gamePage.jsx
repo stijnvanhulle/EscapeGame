@@ -3,11 +3,11 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-28T18:09:52+01:00
+* @Last modified time: 2016-12-29T23:50:00+01:00
 * @License: stijnvanhulle.be
 */
 
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Button} from 'semantic-ui-react';
@@ -29,7 +29,6 @@ class GamePage extends Component {
   }
   constructor(props, context) {
     super(props, context);
-    const self = this;
     if (game.id) {
       this.state = {
         teamName: '',
@@ -38,8 +37,14 @@ class GamePage extends Component {
         data: {}
       };
     }
+  }
 
+  componentDidMount = () => {
+    this.loadEvents();
 
+  }
+
+  loadEvents = () => {
     game.events.on('end', () => {
       self.setState({isGameStarted: true});
       self.props.actions.stopGame();
@@ -80,14 +85,11 @@ class GamePage extends Component {
       return (
         <div className=''><GameStart/></div>
       );
-    } else if (!game.started) {
-      return (
-        <div className='box'>
-          <GameNew players={this.props.players} onStart={this.startGame} data={this.state.data} error={this.state.error}/></div>
-      );
     } else {
       return (
-        <div className='box'></div>
+        <div className='box'>
+          {!game.started && <GameNew players={this.props.players} onStart={this.startGame} data={this.state.data} error={this.state.error}/>}
+        </div>
       );
     }
 
@@ -102,5 +104,11 @@ const mapDispatchToProps = dispatch => {
     actions: bindActionCreators(gameActions, dispatch)
   }
 };
+
+GameStart.propTypes = {
+  players: PropTypes.array,
+  game: PropTypes.object,
+  actions: PropTypes.object
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(GamePage);

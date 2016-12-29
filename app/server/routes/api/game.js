@@ -3,19 +3,22 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-28T17:49:47+01:00
+* @Last modified time: 2016-12-29T20:20:14+01:00
  * @License: stijnvanhulle.be
  */
 
 const url = require('./lib/url');
+const {io, client} = require('../../lib/global');
+const {mqttNames, socketNames} = require('../../lib/const');
 const moment = require('moment');
+const scheduleJob = require('../../lib/scheduleJob');
 const {Game, GameEvent} = require('../../models');
 const {promiseFor} = require('../../lib/functions');
 
 module.exports = [
   {
     method: `POST`,
-    path: url.GAME_CREATE,
+    path: url.GAME,
     config: {
       auth: false
     },
@@ -31,31 +34,6 @@ module.exports = [
         }).then(players => {
           game.players = players;
           reply(game.json(stringify = false, removeEmpty = true));
-        }).catch(err => {
-          throw new Error(err);
-        });
-      } catch (e) {
-        console.log(e);
-        reply(e);
-      }
-
-    }
-
-  }, {
-    method: `POST`,
-    path: url.GAME_CANCEL,
-    config: {
-      auth: false
-    },
-    handler: function(request, reply) {
-      const {gameController} = require('../../controllers');
-      try {
-        let {players, teamName} = request.payload;
-        //players = JSON.parse(players);
-        const game = new Game(teamName, players);
-
-        gameController.cancelJobs().then((doc) => {
-          reply(true);
         }).catch(err => {
           throw new Error(err);
         });
@@ -109,7 +87,7 @@ module.exports = [
 
   }, {
     method: `POST`,
-    path: url.GAME_DATA,
+    path: url.GAME_EVENTS,
     config: {
       auth: false
     },
@@ -119,7 +97,7 @@ module.exports = [
         let {gameName, level, startTime, startIn} = request.payload;
         let gameId = request.params.id;
 
-        gameController.createGameData({gameId, gameName, startTime, startIn, level}).then(gameEvents => {
+        gameController.createGameEvents({gameId, gameName, startTime, startIn, level}).then(gameEvents => {
           reply(gameEvents);
         }).catch(err => {
           throw new Error(err);
@@ -133,8 +111,8 @@ module.exports = [
     }
 
   }, {
-    method: `POST`,
-    path: url.GAME_UPDATE,
+    method: `PUT`,
+    path: url.GAME_EVENTS_UPDATE,
     config: {
       auth: false
     },
@@ -142,12 +120,7 @@ module.exports = [
       const {gameController} = require('../../controllers');
       try {
 
-        let {data} = request.payload;
-        gameController.updateGameData(datadata).then((item) => {
-          reply(item);
-        }).catch(err => {
-          throw new Error(err);
-        });
+        reply({implemented:false});
 
       } catch (e) {
         console.log(e);
@@ -158,7 +131,7 @@ module.exports = [
 
   }, {
     method: `POST`,
-    path: url.GAME_ADD,
+    path: url.GAME_EVENTS_ADD,
     config: {
       auth: false
     },
@@ -173,7 +146,7 @@ module.exports = [
             if (item) {
               const gameEvent = new GameEvent({gameId: request.params.id});
               gameController.getGameDataById(item.gameDataId, i).then(gameData => {
-                gameEvent.setGameData({gameDataId: gameData.id, isActive: item.isActive, activateDate: item.activateDate, endDate: item.endDate});
+                gameEvent.setData({gameDataId: gameData.id, isActive: item.isActive, activateDate: item.activateDate, endDate: item.endDate});
                 return gameController.addEvent(gameEvent, i);
               }).then(doc => {
                 gameEvent.load(doc);
@@ -216,6 +189,55 @@ module.exports = [
           return gameController.addEvent(gameEvent);
         }).then(doc => {
           reply(doc);
+        }).catch(err => {
+          throw new Error(err);
+        });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
+    method: `GET`,
+    path: url.GAME_EVENTS,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {gameController} = require('../../controllers');
+      try {
+
+        const gameId = request.params.id;
+
+        getGameEvents(gameId).then(gameEvents => {
+          reply(gameEvents);
+        }).catch(err => {
+          throw new Error(err);
+        });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
+    method: `POST`,
+    path: url.GAME_EVENTS_RECAL,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {gameController} = require('../../controllers');
+      try {
+
+        const gameId = request.params.id;
+
+        getGameEvents(gameId).then(gameEvents => {
+          io.emit(socketNames.RECALCULATE_START, gameEvents);
+          reply(gameEvents);
         }).catch(err => {
           throw new Error(err);
         });

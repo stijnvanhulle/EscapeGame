@@ -2,18 +2,18 @@
 // @Date:   2016-02-22T11:07:23+01:00
 // @Email:  me@stijnvanhulle.be
 // @Last modified by:   stijnvanhulle
-// @Last modified time: 2016-12-28T12:26:21+01:00
+// @Last modified time: 2016-12-29T01:18:44+01:00
 // @License: stijnvanhulle.be
 @import 'colors.scss';
 @keyframes sun {
 	0% {
 		fill: #f00;
-	    transform: translate(-255%,250%) rotate(20deg);
+		transform: translate(-255%,250%) rotate(20deg);
 		animation-timing-function: ease-in;
 	}
 
 	25% {
-	      transform: translate(-170%,-20%) rotate(10deg);
+		transform: translate(-170%,-20%) rotate(10deg);
 		animation-timing-function: ease-in-out;
 	}
 
@@ -23,12 +23,12 @@
 	}
 
 	75% {
-	    transform: translate(170%,-20%) rotate(10deg);
+		transform: translate(170%,-20%) rotate(10deg);
 		animation-timing-function: ease-in-out;
 	}
 
 	100% {
-	    transform: translate(345%,250%) rotate(20deg);
+		transform: translate(345%,250%) rotate(20deg);
 		animation-timing-function: ease-out;
 		fill: #f00;
 	}
@@ -53,9 +53,28 @@
 	0% {
 		transform: translate(0%,0%);
 	}
+	25% {
+		transform: translate(80%,20%);
+	}
 
 	50% {
 		transform: translate(80%,0%);
+	}
+
+	100% {
+		transform: translate(0%,0%);
+	}
+}
+@keyframes ufo {
+	0% {
+		transform: translate(0%,0%);
+	}
+	25% {
+		transform: translate(-90%,20%);
+	}
+
+	50% {
+		transform: translate(-150%,40%);
 	}
 
 	100% {

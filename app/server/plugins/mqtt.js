@@ -3,14 +3,14 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-26T15:13:38+01:00
+* @Last modified time: 2016-12-29T13:58:30+01:00
 * @License: stijnvanhulle.be
 */
 
 const mqtt = require('mqtt');
 const Message = require('../models/Message');
 const global = require('../lib/global');
-const {mqttNames,socketNames}= require('../lib/const');
+const {mqttNames, socketNames} = require('../lib/const');
 const {filter} = require('../lib/functions');
 
 const subscribe = client => {
@@ -58,6 +58,9 @@ const onMessage = (client, events, io) => {
         break;
       case mqttNames.DETECTION_FOUND:
         io.emit(socketNames.DETECTION_FOUND, obj);
+        break;
+      case mqttNames.RECALCULATE_DONE:
+        io.emit(socketNames.RECALCULATE_DONE, obj);
         break;
       default:
 

@@ -3,11 +3,11 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-27T15:32:12+01:00
+* @Last modified time: 2016-12-29T22:37:43+01:00
 * @License: stijnvanhulle.be
 */
 
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Button} from 'semantic-ui-react';
@@ -72,5 +72,12 @@ const mapDispatchToProps = dispatch => {
     actions: bindActionCreators(gameActions, dispatch)
   }
 };
+
+GameNew.propTypes = {
+  onStart: PropTypes.func.required,
+  data: PropTypes.object,
+  players:PropTypes.array,
+  actions:PropTypes.object
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameNew);

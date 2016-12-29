@@ -3,7 +3,7 @@
 * @Date:   2016-11-05T14:35:35+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-26T15:17:06+01:00
+* @Last modified time: 2016-12-29T20:20:13+01:00
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
@@ -70,7 +70,7 @@ export function createGame(players, teamName) {
       if (!(players && teamName)) {
         return Promise.reject('Not all data filled in from createGame');
       }
-      return axios.post(url.GAME_CREATE, {players, teamName}).then((response) => {
+      return axios.post(url.GAME, {players, teamName}).then((response) => {
         var data = response.data;
         dispatch(createGame_SUCCESS(data));
       }).catch((err) => {
@@ -90,7 +90,7 @@ export function createGameEvents({game, startTime, startIn}) {
       if (!(game && game.id && game.name && game.level && (startIn || startTime))) {
         return Promise.reject('Not all data filled in from createGamData');
       }
-      return axios.post(setParams(url.GAME_DATA, game.id), {
+      return axios.post(setParams(url.GAME_EVENTS, game.id), {
         gameName: game.name,
         level: game.level,
         startTime,
@@ -115,7 +115,7 @@ export function addGameEvent({game, data}) {
       if (!(data && game)) {
         return Promise.reject('Not all data filled in from addGameData');
       }
-      return axios.post(setParams(url.GAME_ADD, game.id), {data}).then((response) => {
+      return axios.post(setParams(url.GAME_EVENTS_ADD, game.id), {data}).then((response) => {
         var data = response.data;
         dispatch(addGameEvent_SUCCESS(data));
       }).catch((err) => {
@@ -135,7 +135,8 @@ export function updateGameEvent(gameEvent, serverSide = false) {
         return Promise.reject('Not all data filled in from addGameData');
       }
       if (serverSide) {
-        return axios.post(setParams(url.GAME_UPDATE, game.id), {data}).then((response) => {
+        const data=gameEvent;
+        return axios.put(setParams(url.GAME_EVENTS_UPDATE, game.id), {data}).then((response) => {
           var data = response.data;
           dispatch(updateGameEvent_SUCCESS(data));
         }).catch((err) => {

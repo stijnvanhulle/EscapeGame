@@ -3,15 +3,25 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-26T15:56:22+01:00
+* @Last modified time: 2016-12-29T20:27:32+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
-const {mqttNames,socketNames}= require('../lib/const');
+const {mqttNames, socketNames} = require('../lib/const');
+const beacons = require('../lib/beacons');
+
 const scheduleJob = require('../lib/scheduleJob');
 let users = [];
-
 let onlineDevice = [];
+
+
+const cancelJobs = (hash) => {
+  if (hash) {
+    return scheduleJob.cancel(hash);
+  } else {
+    return scheduleJob.cancelAll();
+  }
+};
 
 const onMessageSocket = (io, socket, client) => {
 
@@ -20,6 +30,10 @@ const onMessageSocket = (io, socket, client) => {
   });
   socket.on(socketNames.PI_RESET, data => {
     client.publish(mqttNames.RESET, JSON.stringify(true));
+  });
+  socket.on(socketNames.GAME_CANCEL, ok => {
+    const gameController = require('../controllers/gameController');
+    gameController.cancelJobs();
   });
 
   socket.on(socketNames.ONLINE, obj => {
@@ -54,6 +68,26 @@ const onMessageSocket = (io, socket, client) => {
     console.log(obj);
     const {beaconId, range} = obj;
     console.log(beaconId, range);
+
+    const contains = beacons.filter(item => item.beaconId == obj.beaconId).length > 0;
+
+    if (contains) {
+      beacons = beacons.map(item => {
+        if (item.beaconId == obj.beaconId) {
+          return obj;
+        }
+      });
+    } else {
+      beacons.push(obj);
+    }
+
+  });
+
+  socket.on(socketNames.RECALCULATE_START, (obj) => {
+    client.public(mqttNames.RECALCULATE_START, JSON.stringify(obj));
+  });
+  socket.on(socketNames.RECALCULATE_DONE, (obj) => {
+    //update gameEvents
   });
 
   socket.on(socketNames.DETECTION_FIND, (obj) => {

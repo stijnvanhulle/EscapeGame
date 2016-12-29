@@ -3,11 +3,11 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-28T13:02:07+01:00
+* @Last modified time: 2016-12-29T23:50:37+01:00
 * @License: stijnvanhulle.be
 */
 
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {Button} from 'semantic-ui-react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -19,13 +19,13 @@ import TextInput from 'components/common/textInput';
 import Audio from 'components/common/audio';
 import Image from 'components/common/image';
 import Prison from 'components/common/prison';
+import Countdown from 'components/common/countdown';
 
 class GameStart extends Component {
   state = {}
   constructor(props, context) {
     super(props, context);
     this.socket = window.socket;
-    let self = this;
     let countdown = 2;
 
     this.state = {
@@ -41,6 +41,13 @@ class GameStart extends Component {
       data: {}
     };
 
+  }
+
+  componentDidMount = () => {
+    this.loadEvents();
+  }
+
+  loadEvents = () => {
     game.events.on('audio', (src) => {
       if (src) {
         this.setState({audioSrc: src});
@@ -64,9 +71,7 @@ class GameStart extends Component {
       }
 
     });
-
   }
-
   startGame = () => {
     //set starttime of null for starttime on server
     //let startTime=this.state.startTime;
@@ -108,20 +113,12 @@ class GameStart extends Component {
     this.setState({message: this.props.game.description, canStart: true});
     setTimeout(() => {
       self.setState({message: null});
-
-      let timer = setInterval(function() {
-        if (countdown == 0) {
-
-          clearInterval(timer);
-        } else {
-          countdown--;
-          self.setState({countdown});
-        }
-      }, 1000);
-
       self.startGame();
     }, 3000);
 
+  }
+  isDoneCounting = () => {
+    this.setState({countdown: 0});
   }
 
   render() {
@@ -129,6 +126,7 @@ class GameStart extends Component {
     let div;
 
     let prison = <Prison canStart={this.state.canStart}/>;
+    
     if (this.state.canStart) {
       if (game.currentGameData) {
         div = <div>
@@ -140,7 +138,7 @@ class GameStart extends Component {
               <h1>{game.currentGameData.data.data.description}</h1>
               <TextInput name="input" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
               <Button onClick={this.sendInput}>Send Input</Button>
-              <Audio src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
+              <Audio className="audio" src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
               <Image className="image" src={this.state.imageSrc}/>
             </div>
           </div>
@@ -162,7 +160,12 @@ class GameStart extends Component {
 
             <div className="interface countdown">
               <div className="center">
-                <span>starting in {this.state.countdown}</span>
+                <span>starting in
+                </span>
+                <div>
+                  <Countdown className="countdown" howLong={this.state.countdown} isDone={this.isDoneCounting}/>
+                </div>
+
               </div>
             </div>
           </div>;
@@ -194,6 +197,13 @@ const mapDispatchToProps = dispatch => {
   return {
     actions: bindActionCreators(gameActions, dispatch)
   }
+}
+
+GameStart.propTypes = {
+  players: PropTypes.array,
+  game: PropTypes.object,
+  gameEvents: PropTypes.array,
+  actions: PropTypes.object
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameStart);

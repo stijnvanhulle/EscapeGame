@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-28T18:20:48+01:00
+* @Last modified time: 2016-12-29T23:55:37+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -96,9 +96,9 @@ class App extends Component {
 
     if (type == "bom") {
       clearTimeout(this.timer);
-      this.timer = null;
       game.events.emit('bomStop', correct);
     }
+      game.events.emit('stopCountdown');
 
   }
   handleWSEventFinish = obj => {
@@ -115,20 +115,20 @@ class App extends Component {
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       const currentData = gameData.data.data;
       const type = gameData.data.type.toLowerCase();
+      const timeBetween = gameEvent.timeBetween;
+
       if (type == 'sound' || type == 'anthem') {
         game.events.emit('audio', currentData.file);
       } else if (type == "scan") {
         game.events.emit('image', currentData.file);
       } else if (type == 'bom') {
-        const time = Math.abs(moment(gameEvent.activateDate).diff(moment(gameEvent.endDate), 'seconds'));
 
-        if (time) {
-          game.events.emit('bomStart', time);
+        if (timeBetween) {
+          game.events.emit('bomStart', timeBetween);
           this.timer = setTimeout(() => {
             game.events.emit('audio', currentData.file);
             clearTimeout(this.timer);
-            this.timer = null;
-          }, time * 1000);
+          }, timeBetween * 1000);
 
         }
 
@@ -136,6 +136,11 @@ class App extends Component {
         game.events.emit('audio', null);
         game.events.emit('image', null);
       }
+      if (timeBetween) {
+        timer.startCountdown(timeBetween);
+        game.events.emit('startCountdown',timeBetween);
+      }
+
       const hints = gameData.data.data.hints;
       if (hints) {
         timer.startHints(hints, gameData.data.data.maxTime);
@@ -156,6 +161,8 @@ class App extends Component {
 
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       console.log('UPDATED gameEvent');
+
+      game.events.emit('stopCountdown');
 
       if (activeEvents == 0) {
         this.socket.emit(socketNames.EVENT_FINISH, {finish: true});

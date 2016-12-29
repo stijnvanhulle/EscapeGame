@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:24:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T15:05:08+01:00
+* @Last modified time: 2016-12-29T20:17:27+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -14,12 +14,12 @@ module.exports = {
   UPLOAD: API + '/upload',
   MEMBER: API + '/member',
   GAME: API + '/game',
-  GAME_CANCEL: API + '/game/cancel',
   GAME_GET: API + '/game' + '/{id}/',
-  GAME_CREATE: API + '/game' + '/{id}/create',
-  GAME_DATA: API + '/game' + '/{id}/data',
-  GAME_ADD: API + '/game' + '/{id}/add',
-  GAME_UPDATE: API + '/game' + '/{id}/update',
+  GAME_EVENTS: API + '/game' + '/{id}/events',
+  GAME_EVENTS_UPDATE: API + '/game' + '/{id}/events/update',
+  GAME_EVENTS_ADD: API + '/game' + '/{id}/events/add',
+  GAME_EVENTS_RECAL: API + '/game' + '/{id}/events/recal',
+
   GAME_EVENT: API + '/game' + '/{id}/event',
   PLAYER: API + '/player'
 };

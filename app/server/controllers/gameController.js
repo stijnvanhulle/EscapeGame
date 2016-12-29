@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-28T18:19:29+01:00
+* @Last modified time: 2016-12-29T20:27:27+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -460,10 +460,40 @@ const updateGameEvent = (obj, isActive) => {
   });
 };
 
+const getGameEvents = (gameId) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (gameId) {
+        GameEventModel.find({gameId: gameId, isActive: true}).exec(function(err, docs) {
+          if (err) {
+            reject(err);
+          } else {
+            let gameEvents = docs.map((item) => {
+              let gameEvent = new GameEvent();
+              gameEvent.load(item);
+              gameEvent.calculateTimes();
+              return gameEvent;
+            });
+            resolve(gameEvents);
+
+          }
+        });
+      } else {
+        reject('No gameId found');
+      }
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+};
+
 const updateGameEventsFrom = (previousGameEvent) => {
   return new Promise((resolve, reject) => {
     let isFirstTime = true;
-    let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 1);
+    let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 5);
     let {gameId, finishDate} = previousGameEvent;
     let _previousGameEvent = previousGameEvent;
 
@@ -479,7 +509,7 @@ const updateGameEventsFrom = (previousGameEvent) => {
             }
 
           }
-          gameEvent.createGameData(gameDataId = gameEvent.gameDataId, gameEvent.level, startTime = startTime, startIn = 0, maxTime = null, timeBetween = null);
+          gameEvent.createData(gameDataId = gameEvent.gameDataId, gameEvent.level, startTime = startTime, startIn = 0, maxTime = null, timeBetween = null);
           _previousGameEvent = gameEvent;
           isFirstTime = false;
 
@@ -531,6 +561,7 @@ const addEventScheduleRule = (gameData, gameEvent) => {
     resolve(true);
     return;
   }
+  gameEvent.calculateTimes();
   return scheduleJob.addRule(activateDate, {
     gameData,
     gameEvent
@@ -731,7 +762,7 @@ const getRandomGameData = () => {
 
 };
 
-const createGameData = ({
+const createGameEvents = ({
   gameId,
   gameName,
   startTime,
@@ -754,7 +785,7 @@ const createGameData = ({
               startTime = _previousGameEvent.endDate;
             }
 
-            gameEvent.createGameData(gameDataId = gameData.id, level, startTime, startIn = startIn, maxTime = gameData.data.maxTime, timeBetween = null);
+            gameEvent.createData(gameDataId = gameData.id, level, startTime, startIn = startIn, maxTime = gameData.data.maxTime, timeBetween = null);
             _previousGameEvent = gameEvent;
             resolve(gameEvent.json(stringify = false, removeEmpty = true));
           } else {
@@ -887,7 +918,7 @@ const getPlayers = (gameId) => {
                 if (err) {
                   reject(err);
                 } else {
-                  const player = new Player({firstName:doc.firstName,lastName:doc.lastName,birthday:doc.birthday,email:doc.email});
+                  const player = new Player({firstName: doc.firstName, lastName: doc.lastName, birthday: doc.birthday, email: doc.email});
                   player.load(doc);
                   item.player = player;
                   resolve(player);
@@ -942,10 +973,11 @@ const cancelJobs = (hash) => {
 module.exports.addGame = addGame;
 module.exports.getGameById = getGameById;
 module.exports.updateGameEvent = updateGameEvent;
+module.exports.getGameEvents = getGameEvents;
 module.exports.finishGameEvent = finishGameEvent;
 module.exports.getGameDataById = getGameDataById;
 module.exports.updateGameEventsFrom = updateGameEventsFrom;
-module.exports.createGameData = createGameData;
+module.exports.createGameEvents = createGameEvents;
 module.exports.addEvent = addEvent;
 module.exports.getEventType = getEventType;
 module.exports.addPlayers = addPlayers;
