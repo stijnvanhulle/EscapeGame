@@ -3,14 +3,39 @@
 * @Date:   2016-12-02T14:04:11+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T16:40:37+01:00
+* @Last modified time: 2016-12-31T00:02:27+01:00
 * @License: stijnvanhulle.be
 */
 
 import EventEmitter from 'events';
 import moment from 'moment';
+import eventNames from 'lib/const/eventNames';
 
-class Emitter extends EventEmitter {}
+class Emitter extends EventEmitter {
+  constructor() {
+    super();
+  }
+  resetEvents(...events) {
+    if (!events) {
+      events = Object.keys(eventNames);
+    }
+    for (var i = 0; i < events.length; i++) {
+      let eventName = eventNames[events[i]];
+      if (!eventName) {
+        eventName = events[i];
+      }
+
+      if (this.listenerCount(eventName) > 0) {
+        this.removeAllListeners(eventName);
+      }
+    }
+  }
+  resetEvent(eventName) {
+    if (this.listenerCount(eventName) > 0) {
+      this.removeAllListeners(eventName);
+    }
+  }
+}
 
 let game = {};
 game.reset = () => {
@@ -22,6 +47,8 @@ game.reset = () => {
   game.currentGameData = null;
   game.currentGameEvent = null;
   game.events = new Emitter();
+
+  //game.events.setMaxListeners(2);
 };
 game.reset();
 game.load = (item) => {

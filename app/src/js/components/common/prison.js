@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T23:54:12+01:00
+* @Last modified time: 2016-12-31T00:05:12+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -13,6 +13,7 @@ import Countdown from 'components/common/countdown';
 import Isvg from 'react-inlinesvg';
 import $ from 'jquery';
 import game from 'lib/game';
+import Bomb from 'lib/bomb';
 
 class Prison extends Component {
   state = {
@@ -29,25 +30,29 @@ class Prison extends Component {
   }
   constructor(props, context) {
     super(props, context);
+      this.loadEvents();
   }
 
   componentDidMount = () => {
     $('body').removeClass('horizon');
     $('.prison svg #background').removeClass('horizon');
 
-    this.loadEvents();
+
 
   }
 
+
   loadEvents = () => {
+    game.events.resetEvents('startCountdown','stopCountdown','hint','bomStart','bomStop');
+
     game.events.on('startCountdown', timeBetween => {
       console.log('countdown', timeBetween);
-      this.state.countdown= timeBetween;
+      this.state.countdown = timeBetween;
       this.forceUpdate();
     });
     game.events.on('stopCountdown', () => {
       console.log('countdown', 'stop');
-      this.state.countdown= null;
+      this.state.countdown = null;
       this.forceUpdate();
     });
     game.events.on('hint', (hint) => {
@@ -58,57 +63,33 @@ class Prison extends Component {
       this.state.currentBomb = this.loadBom(howLong);
     });
     game.events.on('bomStop', (isDestroyed) => {
-      let {
-        daytime,
-        rooms,
-        maxRooms,
-        prison,
-        bombs,
-        currentBomb
-      } = this.state;
+      let {currentBomb,bombs} = this.state;
 
       if (currentBomb) {
-        currentBomb.element.addClass('hide');
-        this.state.currentBomb = {};
+        this.state.currentBomb = null;
+        currentBomb.stop(isDestroyed);
 
-        bombs = bombs.map(item => {
-          if (item.id == currentBomb.id) {
-            item.isDestroyed = isDestroyed;
-            item.isExploiding = false;
-          }
-          return item;
-        });
-        this.state.bombs = bombs;
+        this.state.bombs = Bomb.updateBombs(bombs, currentBomb);
+
       }
 
     });
+
+    console.log();
   }
 
   loadBom = (howLong) => {
+    console.log('prison loadbom');
     let {daytime, rooms, maxRooms, prison, bombs} = this.state;
 
     if (bombs.length > 0) {
       const randomBomb = bombs[Math.floor(Math.random() * bombs.length)];
 
-      randomBomb.element.removeClass('hide');
+      randomBomb.show();
+      randomBomb.startExploding(howLong);
+      this.state.bombs = Bomb.updateBombs(bombs, randomBomb);
 
-      setTimeout(function() {
-        randomBomb.element.addClass('hide');
-      }, howLong * 1000);
-
-      bombs = bombs.map(item => {
-        if (item.id == randomBomb.id) {
-          item.element = randomBomb.element;
-          item.isExploiding = true;
-
-        }
-        return item;
-      });
-      this.state.bombs = bombs;
-
-      return bombs.find(item => item.id = randomBomb.id);
-
-      //room.element
+      return randomBomb;
     }
   }
 
@@ -142,11 +123,9 @@ class Prison extends Component {
     let newBombs = [];
     for (var i = 0; i < bombs.length; i++) {
       let item = $(bombs[i]);
-      if (item) {
-        item.addClass('hide');
-        item.addClass('bomb');
-        newBombs.push({id: i, element: item, isDestroyed: false, isExploiding: false});
-      }
+      let bomb = new Bomb(item, i);
+
+      newBombs.push(bomb);
 
     }
     bombs = newBombs;
