@@ -2,7 +2,7 @@
 // @Date:   2016-02-22T11:07:23+01:00
 // @Email:  me@stijnvanhulle.be
 // @Last modified by:   stijnvanhulle
-// @Last modified time: 2016-12-29T02:05:14+01:00
+// @Last modified time: 2016-12-31T13:11:24+01:00
 // @License: stijnvanhulle.be
 @import 'colors.scss';
 
@@ -63,6 +63,20 @@ main {
 	z-index: 10;
 	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
 	overflow: hidden;
+
+	.countdown {
+    color: white;
+    font-size: 1.5rem;
+    position: absolute;
+    width: 80px;
+    left: calc((100% - 80px)/2);
+    text-align: center;
+    top: 25px;
+    background: $lightBlue;
+    border-radius: 0.2em;
+    padding: 8px;
+    box-sizing: border-box;
+}
 
 	svg {
 		#sun {

@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T20:11:10+01:00
+* @Last modified time: 2016-12-31T16:23:16+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -39,6 +39,7 @@ class GameEvent {
     this.jobHash = null;
     this.isCorrect = false;
     this.letter = '';
+    this.tries = 0;
     this.events = new Emitter();
   }
 
@@ -54,7 +55,8 @@ class GameEvent {
     jobHash,
     level,
     isCorrect,
-    letter
+    letter,
+    tries
   }) {
     try {
       this.gameId = gameId
@@ -90,6 +92,9 @@ class GameEvent {
       this.level = level
         ? parseFloat(level)
         : this.level;
+      this.tries = tries
+        ? parseFloat(tries)
+        : this.tries;
 
     } catch (e) {
       console.log(e);
@@ -227,8 +232,8 @@ class GameEvent {
     this.jobHash = jobHash;
   }
   setFinish(finish) {
-    finish = setToMoment(finish);
     if (finish) {
+      finish = setToMoment(finish);
       this.finishDate = parseFloat(finish.valueOf());
     }
 
@@ -256,6 +261,9 @@ class GameEvent {
   }
   setInactive() {
     this.isActive = false;
+  }
+  addTry() {
+    this.tries++;
   }
 
   json(stringify = true, removeEmpty = false) {

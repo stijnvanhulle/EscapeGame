@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T21:42:39+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-28T17:25:14+01:00
+* @Last modified time: 2016-12-31T16:09:09+01:00
 * @License: stijnvanhulle.be
 */
 const moment = require("moment");
@@ -125,8 +125,8 @@ functions.isObject = (val) => {
 
 functions.isBool = (val) => {
   try {
-    var test = Boolean(val);
-    return true;
+
+    return val===false || val===true;
   } catch (e) {
     return false;
   } finally {}

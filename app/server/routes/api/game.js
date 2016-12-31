@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T20:20:14+01:00
+* @Last modified time: 2016-12-31T14:14:41+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -36,6 +36,33 @@ module.exports = [
           reply(game.json(stringify = false, removeEmpty = true));
         }).catch(err => {
           throw new Error(err);
+        });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
+    method: `PUT`,
+    path: url.GAME_GET,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {gameController} = require('../../controllers');
+      try {
+        let gameId = request.params.id;
+        let {data} = request.payload;
+        const game = new Game();
+        game.load(data);
+
+        gameController.updateGame(game).then((doc) => {
+          reply(doc);
+        }).catch(e => {
+          console.log(e);
+          throw new Error(e);
         });
       } catch (e) {
         console.log(e);
@@ -120,7 +147,7 @@ module.exports = [
       const {gameController} = require('../../controllers');
       try {
 
-        reply({implemented:false});
+        reply({implemented: false});
 
       } catch (e) {
         console.log(e);
@@ -146,7 +173,7 @@ module.exports = [
             if (item) {
               const gameEvent = new GameEvent({gameId: request.params.id});
               gameController.getGameDataById(item.gameDataId, i).then(gameData => {
-                gameEvent.setData({gameDataId: gameData.id, isActive: item.isActive, activateDate: item.activateDate, endDate: item.endDate});
+                gameEvent.setData({gameDataId: gameData.id, isActive: item.isActive, activateDate: item.activateDate, endDate: item.endDate, level: item.level});
                 return gameController.addEvent(gameEvent, i);
               }).then(doc => {
                 gameEvent.load(doc);

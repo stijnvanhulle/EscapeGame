@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T23:50:00+01:00
+* @Last modified time: 2016-12-31T14:18:38+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -24,7 +24,6 @@ class GamePage extends Component {
   state = {
     teamName: '',
     error: '',
-    isGameStarted: false,
     data: {}
   }
   constructor(props, context) {
@@ -33,7 +32,6 @@ class GamePage extends Component {
       this.state = {
         teamName: '',
         error: '',
-        isGameStarted: true,
         data: {}
       };
     }
@@ -46,9 +44,19 @@ class GamePage extends Component {
 
   loadEvents = () => {
     game.events.on('end', () => {
-      self.setState({isGameStarted: true});
-      self.props.actions.stopGame();
-      game.reset();
+      $('body').removeClass('horizon');
+      $('.prison svg #background').removeClass('horizon');
+
+      this.props.actions.stopGame(game.id).then(() => {
+        const {id: gameId} = this.props.game;
+        if (gameId) {
+          game.isFinised = true;
+        }
+
+      }).catch(err => {
+        console.log(err);
+      });
+
     });
   }
   startGame = (e) => {
@@ -60,7 +68,7 @@ class GamePage extends Component {
           localStorage.setItem('gameId', gameId);
           game.id = gameId;
           game.started = true;
-          this.setState({isGameStarted: true});
+
         }
 
       }).catch(err => {
@@ -82,9 +90,16 @@ class GamePage extends Component {
   render() {
 
     if (this.props.game && this.props.game.id) {
-      return (
-        <div className=''><GameStart/></div>
-      );
+      if (this.props.game.isFinished) {
+        return (
+          <div className="box">FINISHED</div>
+        )
+      } else {
+        return (
+          <div className=''><GameStart/></div>
+        );
+      }
+
     } else {
       return (
         <div className='box'>

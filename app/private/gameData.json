@@ -9,6 +9,7 @@
     "hints": [
       ""
     ],
+    "retries": null,
     "maxTime": 300,
     "isLetter": false,
     "answer": null
@@ -25,6 +26,7 @@
     "hints": [
       ""
     ],
+    "retries": null,
     "maxTime": 300,
     "isLetter": true,
     "answer": {
@@ -45,6 +47,7 @@
     "name": "",
     "description": "NUMMER speelt af",
     "file": "nummer.mp3",
+    "retries": 2,
     "maxTime": 300,
     "hints": [
       "Vul het juiste jaargetal in"
@@ -62,6 +65,7 @@
     "name": "",
     "description": "",
     "file": "bom.mp3",
+    "retries": 0,
     "maxTime": 300,
     "hints": [
       ""
@@ -77,6 +81,7 @@
     "name": "",
     "description": "Scan het juiste schilderij",
     "file": "schilderij1.jpg",
+    "retries": null,
     "maxTime": 300,
     "hints": [
       ""
@@ -95,6 +100,7 @@
     "name": "",
     "description": "",
     "file": "volkslied.mp3",
+    "retries": null,
     "maxTime": 300,
     "hints": [
       "Ga naar het juiste schilderij"
@@ -111,6 +117,8 @@
     "name": "",
     "description": "Zoek het juiste schilderij",
     "file": "/image.jpg",
+    "retries": null,
+    "maxTime": 300,
     "hints": [
       "Scan met de app"
     ],
@@ -126,6 +134,7 @@
     "name": "",
     "description": "",
     "file": null,
+    "retries": null,
     "maxTime": 300,
     "hints": [
       "Zoek de juiste key"
@@ -142,6 +151,7 @@
     "name": "",
     "description": "Zoek het juiste woord",
     "file": null,
+    "retries": null,
     "maxTime": 300,
     "hints": [
       "Kijk in de woordenboeken",
@@ -163,6 +173,7 @@
     "name": "",
     "description": "Wat is de naam van de alien?",
     "file": null,
+    "retries": 1,
     "maxTime": 300,
     "hints": [
       "Probeer de letters die je gekregen hebt de combineren",

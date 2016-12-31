@@ -3,7 +3,7 @@
 * @Date:   2016-11-05T14:35:35+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T20:20:13+01:00
+* @Last modified time: 2016-12-31T14:16:05+01:00
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
@@ -32,17 +32,16 @@ export function updateGameEvent_SUCCESS(gameEvent) {
 export function getGame_SUCCESS(game) {
   return {type: actionsUrl.GET_GAME_SUCCESS, game};
 }
-export function stopGame(game) {
-  return {type: actionsUrl.STOP_GAME, game};
+export function stopGame_SUCCESS(game) {
+  return {type: actionsUrl.STOP_GAME_SUCCESS, game};
 }
 export function loadPlayers_SUCCESS(players) {
   return {type: actionsUrl.LOAD_PLAYER_SUCCESS, players};
 };
-
-//no api needed, local game
-export function updateGame(game) {
-  return {type: actionsUrl.UPDATE_GAME, game};
+export function updateGame_SUCCESS(game) {
+  return {type: actionsUrl.UPDATE_GAME_SUCCESS, game};
 }
+
 
 
 //thunk:
@@ -98,6 +97,47 @@ export function createGameEvents({game, startTime, startIn}) {
       }).then((response) => {
         var data = response.data;
         dispatch(createGameEvents_SUCCESS(data));
+      }).catch((err) => {
+        throw err;
+      })
+
+    } catch (e) {
+      throw e;
+    }
+
+  };
+}
+
+export function updateGame(game) {
+  return dispatch => {
+    try {
+      if (!(game && game.id)) {
+        return Promise.reject('Not all data filled in from updategame');
+      }
+      return axios.put(setParams(url.GAME_GET, game.id), game).then((response) => {
+        var data = response.data;
+        dispatch(updateGame_SUCCESS(data));
+      }).catch((err) => {
+        throw err;
+      })
+
+    } catch (e) {
+      throw e;
+    }
+
+  };
+}
+
+export function stopGame(game) {
+  return dispatch => {
+    try {
+      if (!(game && game.id )) {
+        return Promise.reject('Not all data filled in from stopgame');
+      }
+      game.isFinished=true;
+      return axios.put(setParams(url.GAME_GET, game.id), game).then((response) => {
+        var data = response.data;
+        dispatch(stopGame_SUCCESS(data));
       }).catch((err) => {
         throw err;
       })

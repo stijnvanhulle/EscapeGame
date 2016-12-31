@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-31T00:03:40+01:00
+* @Last modified time: 2016-12-31T16:12:20+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -96,9 +96,13 @@ class App extends Component {
 
     if (type == "bom") {
       clearTimeout(this.timer);
+      if (!correct) {
+        game.events.emit('audio', currentData.file);
+      }
       game.events.emit('bomStop', correct);
     }
-      game.events.emit('stopCountdown');
+
+    game.events.emit('pauseCountdown', correct);
 
   }
   handleWSEventFinish = obj => {
@@ -138,7 +142,7 @@ class App extends Component {
       }
       if (timeBetween) {
         timer.startCountdown(timeBetween);
-        game.events.emit('startCountdown',timeBetween);
+        game.events.emit('startCountdown', timeBetween);
       }
 
       const hints = gameData.data.data.hints;

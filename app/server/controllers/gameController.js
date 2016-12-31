@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T20:27:27+01:00
+* @Last modified time: 2016-12-31T16:30:49+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -343,7 +343,7 @@ const getGameDataFromGameName = (gameName, types) => {
                   }
 
                 });
-                console.log(gameDatas);
+
                 resolve(gameDatas);
               }
             });
@@ -404,6 +404,35 @@ const addOnRandomArray = (array, item, amount) => {
 
 //updates
 
+const updateGame = (obj) => {
+  return new Promise((resolve, reject) => {
+    if (!obj && obj.id)
+      reject('No id for game');
+
+    if (!obj instanceof Game) {
+      reject('No instance of game');
+    }
+    obj = obj.json(stringify = false);
+    //
+    Game.update({
+      id: obj.id
+    }, {
+      teamName: obj.teamName,
+      gameName: obj.gameName,
+      alienName: obj.alienName,
+      isFinised: obj.isFinised
+    }, {
+      multi: true
+    }, function(err, raw) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(raw);
+      }
+    });
+
+  });
+};
 const updateGameEvent = (obj, isActive) => {
   return new Promise((resolve, reject) => {
     if (!obj && obj.id)
@@ -424,7 +453,8 @@ const updateGameEvent = (obj, isActive) => {
         activateDate: obj.activateDate,
         endDate: obj.endDate,
         gameDataId: obj.gameDataId,
-        level: obj.level
+        level: obj.level,
+        tries: obj.tries
       }, {
         multi: true
       }, function(err, raw) {
@@ -445,7 +475,8 @@ const updateGameEvent = (obj, isActive) => {
         activateDate: obj.activateDate,
         endDate: obj.endDate,
         gameDataId: obj.gameDataId,
-        level: obj.level
+        level: obj.level,
+        tries: obj.tries
       }, {
         multi: true
       }, function(err, raw) {
@@ -575,7 +606,7 @@ const addEventScheduleRule = (gameData, gameEvent) => {
         return getGameEventByIsActive(true);
       }).then(data => {
         const amount = data.length;
-        console.log(data);
+
         io.emit(socketNames.EVENT_START, {
           gameData: gameData.json(false, true, false),
           gameEvent: gameEvent.json(false, true, false),
@@ -611,7 +642,6 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
       const answer = data.answer;
 
       const sentData = (data, correct = false) => {
-        console.log('EVENT_data', data);
         io.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct});
       };
       console.log('INPUTDATA', inputData);
@@ -645,11 +675,13 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
         }
 
       } else {
-        console.log(isBool(inputData.input), Boolean(inputData.input));
-        if (isBool(inputData.input) && Boolean(inputData.input) === true) {
+        if (isBool(inputData.input) && inputData.input === true) {
           sentData({}, correct = true);
           resolve(true);
-        } else {}
+        } else {
+          sentData({}, correct = false);
+          resolve(false);
+        }
       }
     } catch (e) {
       reject(e);
@@ -664,24 +696,35 @@ const finishGameEventFromHash = (data) => {
       let gameEvent;
       let gameData;
 
+      let currentData;
+
       getGameEventByHash(data.jobHash).then(item => {
         gameEvent = item;
         gameEvent.setFinish(data.finishDate);
         return getGameDataById(gameEvent.gameDataId);
       }).then(item => {
         gameData = item;
+        currentData = gameData.data.data;
         if (gameData && gameEvent) {
+
           return isAnswerCorrect(data, gameData, gameEvent);
         } else {
           reject('gamedata or gamevent not filled in', gameEvent, gameData);
         }
 
       }).then(isOk => {
+        gameEvent.addTry();
         console.log('answer correct: ', isOk);
         if (isOk) {
           gameEvent.isCorrect = true;
         }
-        return finishGameEvent(gameData, gameEvent, recalculate = true);
+        console.log(currentData, gameEvent);
+        if ((currentData.retries != null && currentData.retries + 1 <= gameEvent.tries) || gameEvent.isCorrect) {
+          return finishGameEvent(gameData, gameEvent, recalculate = true);
+        } else {
+          return {runned: false};
+        }
+
       }).then(data => {
         resolve(data);
       }).catch(err => {
@@ -940,7 +983,6 @@ const getPlayers = (gameId) => {
               gamePlayer.load(item);
               return gamePlayer;
             });
-            console.log(gamePlayers);
 
             promiseFor(promise, gamePlayers).then((item) => {
               resolve(item);
@@ -971,6 +1013,7 @@ const cancelJobs = (hash) => {
 };
 
 module.exports.addGame = addGame;
+module.exports.updateGame = updateGame;
 module.exports.getGameById = getGameById;
 module.exports.updateGameEvent = updateGameEvent;
 module.exports.getGameEvents = getGameEvents;

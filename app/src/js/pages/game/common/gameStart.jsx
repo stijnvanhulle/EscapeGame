@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-30T22:50:47+01:00
+* @Last modified time: 2016-12-31T16:42:22+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -49,26 +49,19 @@ class GameStart extends Component {
 
   loadEvents = () => {
     game.events.on('audio', (src) => {
+      this.setState({imageSrc: '', audioSrc: src});
       if (src) {
-        this.setState({audioSrc: src});
-
         if (game.currentGameData.data.type.toLowerCase() == 'bom') {
           this.setState({audioRepeat: false});
         } else {
           this.setState({audioRepeat: true});
         }
-      } else {
-        this.setState({imageSrc: ''});
+        this.refs.audio.play();
       }
 
     });
     game.events.on('image', (src) => {
-      if (src) {
-        this.setState({imageSrc: src});
-      } else {
-        this.setState({imageSrc: ''});
-        this.setState({audioSrc: ''});
-      }
+      this.setState({audioSrc: '', imageSrc: src});
 
     });
   }
@@ -136,8 +129,8 @@ class GameStart extends Component {
               <h1>{game.currentGameData.data.data.description}</h1>
               <TextInput name="input" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
               <Button onClick={this.sendInput}>Send Input</Button>
-              <Audio className="audio" src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
-              <Image className="image" src={this.state.imageSrc}/>
+              <Audio ref="audio" className="audio" src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
+              <Image ref="image" className="image" src={this.state.imageSrc}/>
             </div>
           </div>
         </div>;

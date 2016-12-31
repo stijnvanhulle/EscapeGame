@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T23:15:51+01:00
+* @Last modified time: 2016-12-31T15:48:36+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -14,20 +14,19 @@ class Countdown extends Component {
   state = {
     intervalObj: null,
     interval: 1000,
-    time: 0
+    time: 0,
+    pause: false
   }
   constructor(props, context) {
     super(props, context);
   }
- 
+
   componentDidMount() {
     const {howLong} = this.props;
-    let intervalObj = setInterval(this.timer, this.state.interval);
+    if (howLong && howLong != 0) {
+      this.start(howLong);
+    }
 
-    this.setState({
-      intervalObj,
-      time: howLong * 1000
-    });
   }
   componentWillUnmount() {
     clearInterval(this.state.intervalObj);
@@ -42,6 +41,21 @@ class Countdown extends Component {
       clearInterval(this.state.intervalObj);
       this.props.isDone(true);
     }
+  }
+  pause = () => {
+    clearInterval(this.state.intervalObj);
+  }
+  stop = () => {
+    this.pause();
+    //this.setState({time: 0, intervalObj: null});
+  }
+  start = (howLong) => {
+    let intervalObj = setInterval(this.timer, this.state.interval);
+
+    this.setState({
+      intervalObj,
+      time: howLong * 1000
+    });
   }
 
   render() {
