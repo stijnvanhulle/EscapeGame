@@ -3,7 +3,7 @@
 * @Date:   2016-11-05T14:35:35+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-31T14:16:05+01:00
+* @Last modified time: 2017-01-02T21:17:00+01:00
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
@@ -41,8 +41,6 @@ export function loadPlayers_SUCCESS(players) {
 export function updateGame_SUCCESS(game) {
   return {type: actionsUrl.UPDATE_GAME_SUCCESS, game};
 }
-
-
 
 //thunk:
 export function createPlayer(player) {
@@ -116,6 +114,9 @@ export function updateGame(game) {
       }
       return axios.put(setParams(url.GAME_GET, game.id), game).then((response) => {
         var data = response.data;
+        return axios.get(setParams(url.GAME_GET, game.id));
+      }).then((response) => {
+        var data = response.data;
         dispatch(updateGame_SUCCESS(data));
       }).catch((err) => {
         throw err;
@@ -131,11 +132,14 @@ export function updateGame(game) {
 export function stopGame(game) {
   return dispatch => {
     try {
-      if (!(game && game.id )) {
+      if (!(game && game.id)) {
         return Promise.reject('Not all data filled in from stopgame');
       }
-      game.isFinished=true;
+      game.isFinished = true;
       return axios.put(setParams(url.GAME_GET, game.id), game).then((response) => {
+        var data = response.data;
+        return axios.get(setParams(url.GAME_GET, game.id));
+      }).then((response) => {
         var data = response.data;
         dispatch(stopGame_SUCCESS(data));
       }).catch((err) => {
@@ -175,7 +179,7 @@ export function updateGameEvent(gameEvent, serverSide = false) {
         return Promise.reject('Not all data filled in from addGameData');
       }
       if (serverSide) {
-        const data=gameEvent;
+        const data = gameEvent;
         return axios.put(setParams(url.GAME_EVENTS_UPDATE, game.id), {data}).then((response) => {
           var data = response.data;
           dispatch(updateGameEvent_SUCCESS(data));

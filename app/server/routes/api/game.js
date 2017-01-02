@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-31T14:14:41+01:00
+* @Last modified time: 2017-01-02T20:48:09+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -54,7 +54,7 @@ module.exports = [
       const {gameController} = require('../../controllers');
       try {
         let gameId = request.params.id;
-        let {data} = request.payload;
+        let data = request.payload;
         const game = new Game();
         game.load(data);
 

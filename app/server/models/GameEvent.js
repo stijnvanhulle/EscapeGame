@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-31T16:23:16+01:00
+* @Last modified time: 2017-01-02T20:56:48+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -143,8 +143,8 @@ class GameEvent {
         var seconds = 0;
         var minutes = 0;
         if (level == 1) {
-          minutes = 2; //TODO: set to 10
-          seconds = 0;
+          minutes = 0; //TODO: set to 10
+          seconds = 20;
           timeBetween = seconds + (minutes * 60);
         } else if (level == 2) {
           minutes = 5;

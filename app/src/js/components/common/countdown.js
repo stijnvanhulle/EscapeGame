@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-31T15:48:36+01:00
+* @Last modified time: 2017-01-02T20:51:08+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -15,7 +15,7 @@ class Countdown extends Component {
     intervalObj: null,
     interval: 1000,
     time: 0,
-    pause: false
+    isStopped: false
   }
   constructor(props, context) {
     super(props, context);
@@ -34,32 +34,40 @@ class Countdown extends Component {
   timer = () => {
     var newCount = this.state.time - this.state.interval;
     if (newCount >= 0) {
-
       this.setState({time: newCount});
     } else {
 
-      clearInterval(this.state.intervalObj);
+      this.stop();
       this.props.isDone(true);
     }
   }
   pause = () => {
     clearInterval(this.state.intervalObj);
+    this.setState({intervalObj: null});
   }
   stop = () => {
     this.pause();
-    //this.setState({time: 0, intervalObj: null});
+    this.setState({isStopped: true});
+
   }
   start = (howLong) => {
+    this.pause();
     let intervalObj = setInterval(this.timer, this.state.interval);
 
-    this.setState({
-      intervalObj,
-      time: howLong * 1000
-    });
+    if (howLong) {
+      this.setState({
+        intervalObj,
+        time: howLong * 1000,
+        isStopped: false
+      });
+    } else {
+      this.setState({intervalObj, isStopped: false});
+    }
+
   }
 
   render() {
-    const {time} = this.state;
+    const {time, isStopped} = this.state;
     let timeFormat = '00:00:00';
 
     function pad(num, size) {
@@ -78,11 +86,20 @@ class Countdown extends Component {
     if (time == 0) {
       className += ' hide';
     }
-    return (
-      <div className={className}>
-        <span>{timeFormat}</span>
-      </div>
-    );
+    if (isStopped) {
+      return (
+        <div className={className}>
+          <span>Loading ...</span>
+        </div>
+      );
+    } else {
+      return (
+        <div className={className}>
+          <span>{timeFormat}</span>
+        </div>
+      );
+    }
+
   }
 
 }

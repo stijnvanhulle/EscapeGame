@@ -3,7 +3,7 @@
 * @Date:   2016-10-12T15:57:56+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-28T15:03:08+01:00
+* @Last modified time: 2017-01-01T16:30:05+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -70,7 +70,7 @@ const config = {
   },
 
   devtool: 'source-map', // or "inline-source-map"
-
+  watch:true,
   module: {
     noParse: [],
     rules: [

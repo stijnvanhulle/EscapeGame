@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-31T14:18:38+01:00
+* @Last modified time: 2017-01-02T21:23:59+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -43,11 +43,11 @@ class GamePage extends Component {
   }
 
   loadEvents = () => {
-    game.events.on('end', () => {
+    game.events.on('eventFinish', () => {
       $('body').removeClass('horizon');
       $('.prison svg #background').removeClass('horizon');
 
-      this.props.actions.stopGame(game.id).then(() => {
+      this.props.actions.stopGame(game).then(() => {
         const {id: gameId} = this.props.game;
         if (gameId) {
           game.isFinised = true;
@@ -86,13 +86,22 @@ class GamePage extends Component {
 
     return this.setState({teamName: teamName});
   }
+  onNewGame = (e) => {
+    localStorage.setItem('gameId', 0);
+    game.events.emit('resetGame');
+    location.relaod();
+  }
 
   render() {
 
     if (this.props.game && this.props.game.id) {
       if (this.props.game.isFinished) {
         return (
-          <div className="box">FINISHED</div>
+          <div className="box">
+            <h1>FINISHED</h1>
+            <Button onClick={this.onNewGame}>New Game</Button>
+          </div>
+
         )
       } else {
         return (

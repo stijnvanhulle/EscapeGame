@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T22:37:43+01:00
+* @Last modified time: 2017-01-02T21:22:38+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -74,7 +74,7 @@ const mapDispatchToProps = dispatch => {
 };
 
 GameNew.propTypes = {
-  onStart: PropTypes.func.required,
+  onStart: PropTypes.func.isRequired,
   data: PropTypes.object,
   players:PropTypes.array,
   actions:PropTypes.object

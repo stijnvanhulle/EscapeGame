@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-31T16:12:28+01:00
+* @Last modified time: 2017-01-02T19:06:27+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -47,8 +47,12 @@ class Prison extends Component {
 
     game.events.on('startCountdown', timeBetween => {
       console.log('countdown', timeBetween);
-      this.state.countdown = timeBetween;
-      this.refs.countdown.start(timeBetween);
+      if (timeBetween) {
+        this.state.countdown = timeBetween;
+        this.refs.countdown.start(timeBetween);
+      } else {
+        this.refs.countdown.start();
+      }
 
       this.forceUpdate();
     });
@@ -179,7 +183,9 @@ class Prison extends Component {
   }
 
   isDoneCounting = () => {
-    this.setState({countdown: null});
+    this.setState({countdown: 0});
+    this.props.isDoneCounting();
+
   }
   render() {
     return (
@@ -195,6 +201,7 @@ class Prison extends Component {
 
 }
 Prison.propTypes = {
-  canStart: PropTypes.bool
+  canStart: PropTypes.bool,
+  isDoneCounting:PropTypes.func
 }
 export default Prison;

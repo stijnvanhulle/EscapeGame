@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-31T16:30:49+01:00
+* @Last modified time: 2017-01-02T21:13:46+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -23,7 +23,7 @@ const {
   Player
 } = require('../models');
 
-const {promiseFor, setToMoment, isBool} = require('../lib/functions');
+const {promiseFor, setToMoment, isBool,convertToBool} = require('../lib/functions');
 const {
   Game: GameModel,
   Player: PlayerModel,
@@ -414,13 +414,14 @@ const updateGame = (obj) => {
     }
     obj = obj.json(stringify = false);
     //
-    Game.update({
+    console.log(obj);
+    GameModel.update({
       id: obj.id
     }, {
       teamName: obj.teamName,
       gameName: obj.gameName,
       alienName: obj.alienName,
-      isFinised: obj.isFinised
+      isFinished: obj.isFinished
     }, {
       multi: true
     }, function(err, raw) {
@@ -641,9 +642,6 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
       const isLetter = data.isLetter;
       const answer = data.answer;
 
-      const sentData = (data, correct = false) => {
-        io.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct});
-      };
       console.log('INPUTDATA', inputData);
 
       if (answer) {
@@ -657,30 +655,26 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
               const sentence = game.sentence;
               return randomLetterFrom(sentence);
             }).then(letter => {
-              sentData({
-                letter
-              }, correct = true);
-              resolve(true);
+              resolve({data: {
+                  letter
+                }, correct: true});
+
             }).catch(err => {
               reject(err);
             });
           } else {
-            sentData({}, correct = false);
-            resolve(true);
+            resolve({data: null, correct: false});
           }
 
         } else {
-          sentData({});
-          resolve(false);
+          resolve({data: null, correct: false});
         }
 
       } else {
-        if (isBool(inputData.input) && inputData.input === true) {
-          sentData({}, correct = true);
-          resolve(true);
+        if (isBool(inputData.input) && convertToBool(inputData.input) === true) {
+          resolve({data: null, correct: true});
         } else {
-          sentData({}, correct = false);
-          resolve(false);
+          resolve({data: null, correct: false});
         }
       }
     } catch (e) {
@@ -690,7 +684,7 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
   });
 };
 
-const finishGameEventFromHash = (data) => {
+const finishGameEventFromHash = (inputData) => {
   return new Promise((resolve, reject) => {
     try {
       let gameEvent;
@@ -698,28 +692,34 @@ const finishGameEventFromHash = (data) => {
 
       let currentData;
 
-      getGameEventByHash(data.jobHash).then(item => {
+      getGameEventByHash(inputData.jobHash).then(item => {
         gameEvent = item;
-        gameEvent.setFinish(data.finishDate);
+        gameEvent.setFinish(inputData.finishDate);
         return getGameDataById(gameEvent.gameDataId);
       }).then(item => {
         gameData = item;
         currentData = gameData.data.data;
         if (gameData && gameEvent) {
 
-          return isAnswerCorrect(data, gameData, gameEvent);
+          return isAnswerCorrect(inputData, gameData, gameEvent);
         } else {
           reject('gamedata or gamevent not filled in', gameEvent, gameData);
         }
 
-      }).then(isOk => {
+      }).then(({data, correct}) => {
         gameEvent.addTry();
-        console.log('answer correct: ', isOk);
-        if (isOk) {
-          gameEvent.isCorrect = true;
+        gameEvent.isCorrect = correct;
+
+        let triesOver = null;
+        if (currentData.maxTries != null) {
+          triesOver = currentData.maxTries - gameEvent.tries;
         }
-        console.log(currentData, gameEvent);
-        if ((currentData.retries != null && currentData.retries + 1 <= gameEvent.tries) || gameEvent.isCorrect) {
+
+        console.log('answer correct: ', correct, triesOver);
+
+        io.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct, triesOver});
+
+        if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || gameEvent.isCorrect || triesOver == 0) {
           return finishGameEvent(gameData, gameEvent, recalculate = true);
         } else {
           return {runned: false};

@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-31T16:12:20+01:00
+* @Last modified time: 2017-01-02T21:19:05+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -25,7 +25,6 @@ import * as gameActions from './actions/gameActions';
 
 //same as React.creataClass(){};
 class App extends Component {
-  timer = null
   constructor(props, context) {
     super(props, context);
 
@@ -89,24 +88,28 @@ class App extends Component {
 
   handelWSEventData = obj => {
     console.log('Event data:', obj);
-    const {correct} = obj;
+    const {correct, triesOver} = obj;
     const gameData = game.currentGameData;
     const currentData = gameData.data.data;
     const type = gameData.data.type.toLowerCase();
 
     if (type == "bom") {
-      clearTimeout(this.timer);
       if (!correct) {
         game.events.emit('audio', currentData.file);
       }
       game.events.emit('bomStop', correct);
     }
 
-    game.events.emit('pauseCountdown', correct);
+    if (!triesOver || triesOver > 0) {
+      game.events.emit('startCountdown');
+    } else {
+      game.events.emit('pauseCountdown', correct);
+    }
 
   }
   handleWSEventFinish = obj => {
     console.log('Event finish:', obj);
+    game.events.emit('eventFinish');
 
   }
 
@@ -121,6 +124,8 @@ class App extends Component {
       const type = gameData.data.type.toLowerCase();
       const timeBetween = gameEvent.timeBetween;
 
+      game.events.emit('eventStart');
+
       if (type == 'sound' || type == 'anthem') {
         game.events.emit('audio', currentData.file);
       } else if (type == "scan") {
@@ -129,11 +134,6 @@ class App extends Component {
 
         if (timeBetween) {
           game.events.emit('bomStart', timeBetween);
-          this.timer = setTimeout(() => {
-            game.events.emit('audio', currentData.file);
-            clearTimeout(this.timer);
-          }, timeBetween * 1000);
-
         }
 
       } else {
@@ -141,7 +141,6 @@ class App extends Component {
         game.events.emit('image', null);
       }
       if (timeBetween) {
-        timer.startCountdown(timeBetween);
         game.events.emit('startCountdown', timeBetween);
       }
 
@@ -167,10 +166,10 @@ class App extends Component {
       console.log('UPDATED gameEvent');
 
       game.events.emit('stopCountdown');
+      game.events.emit('eventEnd');
 
       if (activeEvents == 0) {
         this.socket.emit(socketNames.EVENT_FINISH, {finish: true});
-        game.events.emit('end');
       }
 
       timer.stop();

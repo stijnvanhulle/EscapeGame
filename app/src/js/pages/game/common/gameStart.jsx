@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-31T16:42:22+01:00
+* @Last modified time: 2017-01-02T20:51:41+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -32,13 +32,14 @@ class GameStart extends Component {
       countdown: countdown,
       canStart: false,
       message: '',
-      startTime: moment().add('seconds', countdown).valueOf(),
+      startTime: moment().add(countdown, 'seconds').valueOf(),
       input: '',
       error: '',
       audioSrc: '',
       imageSrc: '',
       audioRepeat: true,
-      data: {}
+      data: {},
+      showDescription: true
     };
 
   }
@@ -60,6 +61,13 @@ class GameStart extends Component {
       }
 
     });
+    game.events.on('eventStart', () => {
+      this.setState({showDescription: true, input: ''});
+    });
+    game.events.on('eventEnd', () => {
+      this.setState({showDescription: false, input: ''});
+    });
+
     game.events.on('image', (src) => {
       this.setState({audioSrc: '', imageSrc: src});
 
@@ -113,6 +121,13 @@ class GameStart extends Component {
   isDoneCounting = () => {
     this.setState({countdown: 0});
   }
+  isDoneCountingPrison = () => {
+    const type = game.currentGameData.data.type.toLowerCase();
+    const currentData = game.currentGameData.data.data;
+    if (type == 'bom') {
+      game.events.emit('audio', currentData.file);
+    }
+  }
 
   render() {
     let starting;
@@ -121,12 +136,12 @@ class GameStart extends Component {
     if (this.state.canStart) {
       if (game.currentGameData) {
         div = <div>
-          <Prison canStart={this.state.canStart}/>
+          <Prison canStart={this.state.canStart} isDoneCounting={this.isDoneCountingPrison}/>
           <div className="interface game">
             <div className={this.state.canStart
               ? 'center big'
               : 'hide'}>
-              <h1>{game.currentGameData.data.data.description}</h1>
+              <h1>{this.state.showDescription && game.currentGameData.data.data.description}</h1>
               <TextInput name="input" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
               <Button onClick={this.sendInput}>Send Input</Button>
               <Audio ref="audio" className="audio" src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
