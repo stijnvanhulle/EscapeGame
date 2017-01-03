@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T20:56:48+01:00
+* @Last modified time: 2017-01-03T13:54:04+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -43,22 +43,23 @@ class GameEvent {
     this.events = new Emitter();
   }
 
-  load({
-    gameId,
-    gameDataId,
-    date,
-    id,
-    isActive,
-    activateDate,
-    endDate,
-    finishDate,
-    jobHash,
-    level,
-    isCorrect,
-    letter,
-    tries
-  }) {
+  load(data) {
     try {
+      const {
+        gameId,
+        gameDataId,
+        date,
+        id,
+        isActive,
+        activateDate,
+        endDate,
+        finishDate,
+        jobHash,
+        level,
+        isCorrect,
+        letter,
+        tries
+      } = data;
       this.gameId = gameId
         ? parseFloat(gameId)
         : this.gameId;
@@ -83,6 +84,9 @@ class GameEvent {
       this.endDate = endDate
         ? parseFloat(endDate)
         : this.endDate;
+      this.finishDate = finishDate
+        ? parseFloat(finishDate)
+        : this.finishDate;
       this.jobHash = jobHash
         ? jobHash
         : this.jobHash;

@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T21:23:59+01:00
+* @Last modified time: 2017-01-03T12:59:32+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -89,7 +89,8 @@ class GamePage extends Component {
   onNewGame = (e) => {
     localStorage.setItem('gameId', 0);
     game.events.emit('resetGame');
-    location.relaod();
+    this.props.router.push('/');
+    location.reload();
   }
 
   render() {
@@ -99,7 +100,7 @@ class GamePage extends Component {
         return (
           <div className="box">
             <h1>FINISHED</h1>
-            <Button onClick={this.onNewGame}>New Game</Button>
+            <Button size='medium' primary onClick={this.onNewGame}>New Game</Button>
           </div>
 
         )

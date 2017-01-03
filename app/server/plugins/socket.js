@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T20:27:32+01:00
+* @Last modified time: 2017-01-03T13:10:56+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
@@ -84,14 +84,14 @@ const onMessageSocket = (io, socket, client) => {
   });
 
   socket.on(socketNames.RECALCULATE_START, (obj) => {
-    client.public(mqttNames.RECALCULATE_START, JSON.stringify(obj));
+    client.publish(mqttNames.RECALCULATE_START, JSON.stringify(obj));
   });
   socket.on(socketNames.RECALCULATE_DONE, (obj) => {
     //update gameEvents
   });
 
   socket.on(socketNames.DETECTION_FIND, (obj) => {
-    client.public(mqttNames.DETECTION_FIND, JSON.stringify(obj));
+    client.publish(mqttNames.DETECTION_FIND, JSON.stringify(obj));
   });
 
   socket.on(socketNames.EVENT_FINISH, (obj) => {

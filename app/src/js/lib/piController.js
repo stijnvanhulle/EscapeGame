@@ -3,37 +3,54 @@
 * @Date:   2016-12-19T14:46:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-26T15:15:37+01:00
+* @Last modified time: 2017-01-03T14:48:50+01:00
 * @License: stijnvanhulle.be
 */
 
-let socket;
-
-const PORTS = {
-  lights: 6,
-  text: "I2C-1",
-  bom:3
-}
 import connectorTypes from './const/connectorTypes';
 import socketNames from './const/socketNames';
 
-connectorTypes.I2C
-
-let piController = {};
+let piController = {
+  PORTS: {
+    lights: 6,
+    text: "I2C-1",
+    bom: 3
+  },
+  socket: null,
+  type: null
+};
 
 piController.loadSocket = (_socket) => {
-  socket = _socket;
+  piController.socket = _socket;
   piController.end();
+};
+
+piController.tickBom = (time) => {
+  let socket=piController.socket;
+  
+  socket.emit(socketNames.PI, {
+    port: piController.PORTS.text,
+    type: 'OUTPUT',
+    connectorType: connectorTypes.I2C,
+    value: 'TIME: ' + time.toString(),
+    read: false,
+    realtime: true,
+    timeout: 0
+  });
 };
 
 piController.start = (gameEvent, gameData) => {
   return new Promise((resolve, reject) => {
+    let socket=piController.socket;
+
     const data = gameData.data;
     const _data = data.data;
     if (true) {
+      piController.type = data.type;
+
       if (data.type == "light") {
         socket.emit(socketNames.PI, {
-          port: PORTS.lights,
+          port: piController.PORTS.lights,
           type: 'OUTPUT',
           connectorType: connectorTypes.DIGITAL,
           value: _data.answer.name.toLowerCase(),
@@ -45,7 +62,7 @@ piController.start = (gameEvent, gameData) => {
 
       if (data.type == "bom") {
         socket.emit(socketNames.PI, {
-          port: PORTS.text,
+          port: piController.PORTS.text,
           type: 'OUTPUT',
           connectorType: connectorTypes.I2C,
           value: "BOEEEEEEEEM",
@@ -53,7 +70,7 @@ piController.start = (gameEvent, gameData) => {
           realtime: true,
           timeout: 0
         });
-        socket.emit(socketNames.PI, {
+        /*socket.emit(socketNames.PI, {
           port: PORTS.bom,
           type: 'OUTPUT',
           connectorType: connectorTypes.DIGITAL,
@@ -62,6 +79,7 @@ piController.start = (gameEvent, gameData) => {
           realtime: false,
           timeout: 0
         });
+        */
       }
 
     }
@@ -70,7 +88,7 @@ piController.start = (gameEvent, gameData) => {
 };
 piController.end = (gameEvent, gameData) => {
   return new Promise((resolve, reject) => {
-
+    let socket=piController.socket;
     try {
       const data = gameData.data;
       const _data = data.data;
@@ -82,6 +100,7 @@ piController.end = (gameEvent, gameData) => {
 };
 piController.finish = (gameEvent, gameData) => {
   return new Promise((resolve, reject) => {
+    let socket=piController.socket;
     try {
       const data = gameData.data;
       const _data = data.data;

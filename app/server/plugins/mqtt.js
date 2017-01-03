@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T13:58:30+01:00
+* @Last modified time: 2017-01-03T13:57:19+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -36,7 +36,7 @@ const onMessage = (client, events, io) => {
       case mqttNames.ONLINE:
         if (obj.device)
           obj.device = obj.device.toLowerCase();
-        io.emit('online', obj);
+        io.emit(socketNames.ONLINE, obj);
 
         lcd.writeDisplay("WELKOM");
         /*soundSensor.reading(realtime = false, timeout = 10);

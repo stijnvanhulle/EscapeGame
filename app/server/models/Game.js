@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T21:15:26+01:00
+* @Last modified time: 2017-01-03T12:38:34+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -29,6 +29,7 @@ class Game {
     this.date = null;
     this.alienName = null;
     this.isFinished = false;
+    this.isPlaying=false;
     this.events = new Emitter();
   }
   generateAlienName() {
@@ -45,7 +46,8 @@ class Game {
     id,
     alienName,
     gameName,
-    isFinished
+    isFinished,
+    isPlaying
   }) {
     try {
       this.alienName = alienName
@@ -69,6 +71,9 @@ class Game {
       this.isFinished = isFinished
         ? isFinished
         : this.isFinished;
+        this.isPlaying = isPlaying
+          ? isPlaying
+          : this.isPlaying;
 
     } catch (e) {
       console.log(e);

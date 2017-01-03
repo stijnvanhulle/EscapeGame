@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T21:13:46+01:00
+* @Last modified time: 2017-01-03T13:55:11+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -23,7 +23,7 @@ const {
   Player
 } = require('../models');
 
-const {promiseFor, setToMoment, isBool,convertToBool} = require('../lib/functions');
+const {promiseFor, setToMoment, isBool, convertToBool} = require('../lib/functions');
 const {
   Game: GameModel,
   Player: PlayerModel,
@@ -421,7 +421,8 @@ const updateGame = (obj) => {
       teamName: obj.teamName,
       gameName: obj.gameName,
       alienName: obj.alienName,
-      isFinished: obj.isFinished
+      isFinished: obj.isFinished,
+      isPlaying: obj.isPlaying
     }, {
       multi: true
     }, function(err, raw) {
@@ -501,7 +502,7 @@ const getGameEvents = (gameId) => {
             reject(err);
           } else {
             let gameEvents = docs.map((item) => {
-              let gameEvent = new GameEvent();
+              let gameEvent = new GameEvent({gameId: null});
               gameEvent.load(item);
               gameEvent.calculateTimes();
               return gameEvent;
@@ -601,8 +602,6 @@ const addEventScheduleRule = (gameData, gameEvent) => {
     console.log('RUNNING', running, ' hash: ', hash);
     return new Promise((resolve, reject) => {
       gameEvent.setJobHash(hash);
-      //updategameEvent
-      //
       updateGameEvent(gameEvent).then(doc => {
         return getGameEventByIsActive(true);
       }).then(data => {
@@ -612,6 +611,13 @@ const addEventScheduleRule = (gameData, gameEvent) => {
           gameData: gameData.json(false, true, false),
           gameEvent: gameEvent.json(false, true, false),
           activeEvents: amount
+        });
+        //recalc machine learning:
+        const gameId = gameEvent.gameId;
+        getGameEvents(gameId).then(gameEvents => {
+          io.emit(socketNames.RECALCULATE_START, {gameId, gameEvents});
+        }).catch(err => {
+          reject(err);
         });
         return timeoutEndScheduleRule(gameData, gameEvent);
       }).then(({running, runned, hash}) => {
@@ -694,7 +700,7 @@ const finishGameEventFromHash = (inputData) => {
 
       getGameEventByHash(inputData.jobHash).then(item => {
         gameEvent = item;
-        gameEvent.setFinish(inputData.finishDate);
+        gameEvent.setFinish(inputData.finishDate || moment().valueOf());
         return getGameDataById(gameEvent.gameDataId);
       }).then(item => {
         gameData = item;
@@ -722,7 +728,12 @@ const finishGameEventFromHash = (inputData) => {
         if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || gameEvent.isCorrect || triesOver == 0) {
           return finishGameEvent(gameData, gameEvent, recalculate = true);
         } else {
-          return {runned: false};
+          updateGameEvent(gameEvent).then(() => {
+            return {runned: false};
+          }).catch(() => {
+            reject('Cannot update gameevent');
+          });
+
         }
 
       }).then(data => {

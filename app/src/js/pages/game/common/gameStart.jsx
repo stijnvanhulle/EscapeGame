@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T20:51:41+01:00
+* @Last modified time: 2017-01-03T12:49:11+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -78,8 +78,10 @@ class GameStart extends Component {
     //let startTime=this.state.startTime;
     let startTime;
     let startIn = this.state.countdown;
-
-    this.props.actions.createGameEvents({game, startTime, startIn}).then(() => {
+    game.isPlaying = true;
+    this.props.actions.updateGame(game).then(() => {
+      return this.props.actions.createGameEvents({game, startTime, startIn});
+    }).then(() => {
       const gameEvents = this.props.gameEvents;
       console.log('GameEvents v1', gameEvents);
       return this.props.actions.addGameEvent({data: gameEvents, game});
@@ -108,13 +110,15 @@ class GameStart extends Component {
     }
   }
   start = () => {
-    const self = this;
     let {countdown} = this.state;
 
     this.setState({message: this.props.game.description, canStart: true});
     setTimeout(() => {
-      self.setState({message: null});
-      self.startGame();
+      this.setState({message: null});
+      if (!game.isPlaying) {
+        this.startGame();
+      }
+
     }, 3000);
 
   }
@@ -185,7 +189,10 @@ class GameStart extends Component {
         <Prison canStart={this.state.canStart} data={this.state.data}/>
         <div className="interface">
           <div className="center">
-            <Button size='medium' primary className="center" onClick={this.start}>Resume/start game</Button>
+            <Button size='medium' primary className="center" onClick={this.start}>
+              {this.props.game.isPlaying
+                ? 'Resume game'
+                : 'Start game'}</Button>
           </div>
         </div>
 

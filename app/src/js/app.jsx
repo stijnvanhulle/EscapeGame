@@ -3,25 +3,25 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T21:19:05+01:00
+* @Last modified time: 2017-01-03T13:45:18+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component, PropTypes} from 'react';
 import {socketConnect} from 'socket.io-react';
-import socketNames from './lib/const/socketNames';
-import {runAudio} from './lib/functions';
-import Header from './components/header';
+import socketNames from 'lib/const/socketNames';
+import {runAudio} from 'lib/functions';
+import Header from 'components/header';
 import moment from 'moment';
 import $ from 'jquery';
 import {bindActionCreators} from 'redux';
 
 import {connect} from 'react-redux';
-import game from './lib/game';
-import piController from './lib/piController';
-import timer from './lib/timer';
+import game from 'lib/game';
+import piController from 'lib/piController';
+import timer from 'lib/timer';
 
-import * as gameActions from './actions/gameActions';
+import * as gameActions from 'actions/gameActions';
 
 //same as React.creataClass(){};
 class App extends Component {

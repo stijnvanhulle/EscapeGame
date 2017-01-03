@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T14:04:11+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T19:26:23+01:00
+* @Last modified time: 2017-01-03T12:37:56+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -47,6 +47,7 @@ game.reset = () => {
   game.currentGameEvent = null;
   game.events = new Emitter();
   game.isFinished=false;
+  game.isPlaying=false;
 
   //game.events.setMaxListeners(2);
 };

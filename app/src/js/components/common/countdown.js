@@ -3,12 +3,14 @@
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T20:51:08+01:00
+* @Last modified time: 2017-01-03T15:08:27+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component, PropTypes} from 'react';
 import moment from 'moment';
+import piController from 'piController';
+import {calculateTimeFormat} from 'lib/functions';
 
 class Countdown extends Component {
   state = {
@@ -32,9 +34,11 @@ class Countdown extends Component {
     clearInterval(this.state.intervalObj);
   }
   timer = () => {
-    var newCount = this.state.time - this.state.interval;
-    if (newCount >= 0) {
-      this.setState({time: newCount});
+    var newTime = this.state.time - this.state.interval;
+    if (newTime >= 0) {
+      let timeFormat = calculateTimeFormat(newTime);
+      piController.tickBom(timeFormat);
+      this.setState({time: newTime});
     } else {
 
       this.stop();
@@ -68,18 +72,7 @@ class Countdown extends Component {
 
   render() {
     const {time, isStopped} = this.state;
-    let timeFormat = '00:00:00';
-
-    function pad(num, size) {
-      var s = "0000" + num;
-      return s.substr(s.length - size);
-    }
-
-    var seconds = Math.floor(time / 1000);
-    var minutes = Math.floor(seconds / 60);
-    seconds = seconds - (minutes * 60);
-
-    timeFormat = pad(minutes, 2) + ':' + pad(seconds, 2);
+    let timeFormat = calculateTimeFormat(time);
 
     let className = this.props.className || 'countdown';
 
