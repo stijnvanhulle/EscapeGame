@@ -3,10 +3,11 @@
 * @Date:   2016-11-28T21:42:39+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T18:46:56+01:00
+* @Last modified time: 2017-01-04T17:39:08+01:00
 * @License: stijnvanhulle.be
 */
 const moment = require("moment");
+const json2csv = require('json2csv');
 
 let functions = {};
 
@@ -19,6 +20,24 @@ functions.filter = (items, ...filterOn) => {
 
   })
 
+};
+
+functions.convertToCsv = (data, fields) => {
+  if (!fields) {
+    for (var i = 0; i < data.length; i++) {
+      let keys = Object.keys(data[i]);
+      if (!fields) {
+        fields = keys;
+      } else {
+        if (fields.length < keys.length) {
+          fields = keys;
+        }
+      }
+
+    }
+  }
+  const result = json2csv({data, fields});
+  return result;
 };
 
 functions.setToMoment = (obj) => {

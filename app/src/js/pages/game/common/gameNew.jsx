@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T21:22:38+01:00
+* @Last modified time: 2017-01-03T21:47:23+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -26,6 +26,7 @@ class GameNew extends Component {
   }
   constructor(props, context) {
     super(props, context);
+
   }
   componentDidMount() {
     this.setState({isLoaded: true});
@@ -72,12 +73,11 @@ const mapDispatchToProps = dispatch => {
     actions: bindActionCreators(gameActions, dispatch)
   }
 };
-
 GameNew.propTypes = {
   onStart: PropTypes.func.isRequired,
   data: PropTypes.object,
-  players:PropTypes.array,
-  actions:PropTypes.object
+  players: PropTypes.array,
+  actions: PropTypes.object
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameNew);

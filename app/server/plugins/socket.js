@@ -3,17 +3,20 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T13:10:56+01:00
+* @Last modified time: 2017-01-04T20:16:19+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
 const {mqttNames, socketNames} = require('../lib/const');
 const beacons = require('../lib/beacons');
+const {convertToCsv} = require('../lib/functions')
+const Chance = require('chance');
+const c = new Chance();
 
 const scheduleJob = require('../lib/scheduleJob');
+const fileController = require('../controllers/fileController');
 let users = [];
 let onlineDevice = [];
-
 
 const cancelJobs = (hash) => {
   if (hash) {
@@ -62,7 +65,10 @@ const onMessageSocket = (io, socket, client) => {
   });
   socket.on(socketNames.INPUT, (obj) => {
     const {input, jobHash, finishDate} = obj;
-    let success = scheduleJob.finishNextJob(jobHash, {finishDate, input});
+    let success = scheduleJob.finishJob(jobHash, {finishDate, input});
+    if (!success) {
+      console.log('job fail', obj);
+    }
   });
   socket.on(socketNames.BEACON, (obj) => {
     console.log(obj);
@@ -83,8 +89,16 @@ const onMessageSocket = (io, socket, client) => {
 
   });
 
-  socket.on(socketNames.RECALCULATE_START, (obj) => {
-    client.publish(mqttNames.RECALCULATE_START, JSON.stringify(obj));
+  socket.on(socketNames.RECALCULATE_START, (gameId) => {
+    const gameController = require('../controllers/gameController');
+    gameController.getGameEvents({isActive: false}).then(gameEvents => {
+      return fileController.save(c.hash({length: 15}) + '.csv', convertToCsv(gameEvents, fields = null));
+    }).then(fileName => {
+      client.publish(mqttNames.RECALCULATE_START, JSON.stringify(fileName));
+    }).catch(err => {
+      console.log(err);
+    });
+
   });
   socket.on(socketNames.RECALCULATE_DONE, (obj) => {
     //update gameEvents

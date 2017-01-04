@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T12:49:11+01:00
+* @Last modified time: 2017-01-04T21:37:51+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -46,6 +46,10 @@ class GameStart extends Component {
 
   componentDidMount = () => {
     this.loadEvents();
+
+    if (this.props.game.isPlaying) {
+        this.state.countdown= 0;
+    }
   }
 
   loadEvents = () => {
@@ -78,19 +82,23 @@ class GameStart extends Component {
     //let startTime=this.state.startTime;
     let startTime;
     let startIn = this.state.countdown;
-    game.isPlaying = true;
-    this.props.actions.updateGame(game).then(() => {
-      return this.props.actions.createGameEvents({game, startTime, startIn});
-    }).then(() => {
-      const gameEvents = this.props.gameEvents;
-      console.log('GameEvents v1', gameEvents);
-      return this.props.actions.addGameEvent({data: gameEvents, game});
-    }).then(() => {
-      const gameEvents = this.props.gameEvents;
-      console.log('GameEvents v2', gameEvents);
-    }).catch(err => {
-      console.log(err);
-    });
+    if (!this.props.game.isPlaying) {
+      let _game=this.props.game;
+      _game.isPlaying=true;
+      this.props.actions.updateGame(_game).then(() => {
+        return this.props.actions.createGameEvents({_game, startTime, startIn});
+      }).then(() => {
+        const gameEvents = this.props.gameEvents;
+        console.log('GameEvents v1', gameEvents);
+        return this.props.actions.addGameEvent({data: gameEvents, _game});
+      }).then(() => {
+        const gameEvents = this.props.gameEvents;
+        console.log('GameEvents v2', gameEvents);
+      }).catch(err => {
+        console.log(err);
+      });
+    }
+
   }
   onChangeInput = (e) => {
     const field = e.target.name;
@@ -102,7 +110,7 @@ class GameStart extends Component {
       if (game.currentGameEvent.isActive) {
         this.socket.emit(socketNames.INPUT, {
           input,
-          jobHash: game.currentGameEvent.jobHash,
+          jobHash: game.currentGameEvent.jobHashEnd,
           finishDate: moment().valueOf()
         });
       }
@@ -111,6 +119,11 @@ class GameStart extends Component {
   }
   start = () => {
     let {countdown} = this.state;
+    let timeout = game.startTimeout;
+
+    if (this.props.game.isPlaying) {
+      timeout = 0;
+    }
 
     this.setState({message: this.props.game.description, canStart: true});
     setTimeout(() => {
@@ -119,7 +132,7 @@ class GameStart extends Component {
         this.startGame();
       }
 
-    }, 3000);
+    }, timeout);
 
   }
   isDoneCounting = () => {
@@ -173,7 +186,7 @@ class GameStart extends Component {
                 <span>starting in
                 </span>
                 <div>
-                  <Countdown className="countdown" howLong={this.state.countdown} isDone={this.isDoneCounting}/>
+                  <Countdown className="countdown" sendToPi={false} howLong={this.state.countdown} isDone={this.isDoneCounting}/>
                 </div>
 
               </div>

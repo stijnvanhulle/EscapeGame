@@ -3,7 +3,7 @@
 * @Date:   2016-11-05T14:35:35+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T21:17:00+01:00
+* @Last modified time: 2017-01-04T21:38:15+01:00
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
@@ -136,6 +136,7 @@ export function stopGame(game) {
         return Promise.reject('Not all data filled in from stopgame');
       }
       game.isFinished = true;
+      game.isPlaying = false;
       return axios.put(setParams(url.GAME_GET, game.id), game).then((response) => {
         var data = response.data;
         return axios.get(setParams(url.GAME_GET, game.id));

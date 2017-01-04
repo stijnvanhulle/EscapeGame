@@ -3,7 +3,7 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T13:45:18+01:00
+* @Last modified time: 2017-01-04T21:34:50+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -41,13 +41,12 @@ class App extends Component {
     try {
       const gameId = JSON.parse(localStorage.getItem('gameId'));
       if (gameId) {
-        game.id = gameId;
         game.started = true;
         this.props.actions.getGame(gameId).then(() => {
           console.log('GAME LOADED', this.props.game);
-
         }).catch(err => {
-          //localStorage.setItem('gameId', '');
+          localStorage.setItem('gameId', 0);
+          location.reload();
           console.log(err);
         });
       }
@@ -115,10 +114,12 @@ class App extends Component {
 
   handleWSEventStart = obj => {
     console.log('New event:', obj);
-
     let {gameEvent, gameData, activeEvents} = obj;
     game.currentGameData = gameData;
     game.currentGameEvent = gameEvent;
+
+    this.socket.emit(socketNames.RECALCULATE_START, game.id);
+
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       const currentData = gameData.data.data;
       const type = gameData.data.type.toLowerCase();

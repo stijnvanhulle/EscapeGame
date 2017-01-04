@@ -3,7 +3,7 @@
 * @Date:   2016-12-19T14:46:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T14:48:50+01:00
+* @Last modified time: 2017-01-04T13:41:29+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -27,7 +27,7 @@ piController.loadSocket = (_socket) => {
 
 piController.tickBom = (time) => {
   let socket=piController.socket;
-  
+
   socket.emit(socketNames.PI, {
     port: piController.PORTS.text,
     type: 'OUTPUT',
@@ -61,15 +61,7 @@ piController.start = (gameEvent, gameData) => {
       }
 
       if (data.type == "bom") {
-        socket.emit(socketNames.PI, {
-          port: piController.PORTS.text,
-          type: 'OUTPUT',
-          connectorType: connectorTypes.I2C,
-          value: "BOEEEEEEEEM",
-          read: false,
-          realtime: true,
-          timeout: 0
-        });
+      
         /*socket.emit(socketNames.PI, {
           port: PORTS.bom,
           type: 'OUTPUT',

@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-08T18:15:53+01:00
+* @Last modified time: 2017-01-03T16:04:53+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
@@ -86,7 +86,7 @@ const promise_eventType = (item, i) => {
 
 const loadDefaults = () => {
 
-  removeDataFromModel(MemberModel, GameDataModel, EventTypeModel, GameEventModel).then((data) => {
+  removeDataFromModel(MemberModel, GameDataModel, EventTypeModel).then((data) => {
     return promiseFor(promise_eventType, eventTypes);
   }).then((item) => {
     console.log('Gametypes added');

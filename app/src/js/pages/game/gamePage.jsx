@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T12:59:32+01:00
+* @Last modified time: 2017-01-04T21:34:26+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -28,13 +28,6 @@ class GamePage extends Component {
   }
   constructor(props, context) {
     super(props, context);
-    if (game.id) {
-      this.state = {
-        teamName: '',
-        error: '',
-        data: {}
-      };
-    }
   }
 
   componentDidMount = () => {
@@ -48,10 +41,7 @@ class GamePage extends Component {
       $('.prison svg #background').removeClass('horizon');
 
       this.props.actions.stopGame(game).then(() => {
-        const {id: gameId} = this.props.game;
-        if (gameId) {
-          game.isFinised = true;
-        }
+        console.log('Game finished',game);
 
       }).catch(err => {
         console.log(err);
@@ -66,7 +56,6 @@ class GamePage extends Component {
         const {id: gameId} = this.props.game;
         if (gameId) {
           localStorage.setItem('gameId', gameId);
-          game.id = gameId;
           game.started = true;
 
         }

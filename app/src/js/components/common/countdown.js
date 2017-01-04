@@ -3,13 +3,13 @@
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T15:08:27+01:00
+* @Last modified time: 2017-01-03T22:31:01+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component, PropTypes} from 'react';
 import moment from 'moment';
-import piController from 'piController';
+import piController from 'lib/piController';
 import {calculateTimeFormat} from 'lib/functions';
 
 class Countdown extends Component {
@@ -36,8 +36,11 @@ class Countdown extends Component {
   timer = () => {
     var newTime = this.state.time - this.state.interval;
     if (newTime >= 0) {
-      let timeFormat = calculateTimeFormat(newTime);
-      piController.tickBom(timeFormat);
+      if(this.props.sendToPi){
+        let timeFormat = calculateTimeFormat(newTime);
+        piController.tickBom(timeFormat);
+      }
+
       this.setState({time: newTime});
     } else {
 
@@ -99,7 +102,8 @@ class Countdown extends Component {
 Countdown.propTypes = {
   className: PropTypes.string,
   howLong: PropTypes.number.isRequired,
-  isDone: PropTypes.func
+  isDone: PropTypes.func,
+  sendToPi:PropTypes.bool
 }
 
 export default Countdown;

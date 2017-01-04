@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T12:52:36+01:00
+* @Last modified time: 2017-01-03T22:31:32+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -193,7 +193,7 @@ class Prison extends Component {
         <Smoke className="smoke" img={this.state.img}/>
         <Countdown className={!this.props.canStart
           ? 'hide'
-          : ''} ref='countdown' className="countdown" howLong={this.state.countdown} isDone={this.isDoneCounting}/>
+          : ''} ref='countdown' sendToPi={true} className="countdown" howLong={this.state.countdown} isDone={this.isDoneCounting}/>
         <div className="hint">{this.state.hint}</div>
         <Isvg src="/assets/images/plan.svg" uniquifyIDs={false} onLoad={this.onLoad}/>
       </div>

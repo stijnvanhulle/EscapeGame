@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T13:54:04+01:00
+* @Last modified time: 2017-01-04T20:50:38+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -26,20 +26,25 @@ class GameEvent {
   }
 
   reset() {
-    this.gameDataId = null;
-    this.date = null;
     this.id = null;
+    this.gameDataId = null;
+    this.timeBetween = null;
+    this.timePlayer = null;
     this.level = null;
-    this.isActive = true;
+
     this.activateDate = null;
     this.endDate = null;
-    this.timeBetween = null;
+
     this.finishDate = null;
-    this.model = Model;
-    this.jobHash = null;
+
+    this.jobHashStart = null;
+    this.jobHashEnd = null;
     this.isCorrect = false;
+    this.isActive = true;
     this.letter = '';
     this.tries = 0;
+    this.date = null;
+    this.model = Model;
     this.events = new Emitter();
   }
 
@@ -54,7 +59,8 @@ class GameEvent {
         activateDate,
         endDate,
         finishDate,
-        jobHash,
+        jobHashStart,
+        jobHashEnd,
         level,
         isCorrect,
         letter,
@@ -87,15 +93,18 @@ class GameEvent {
       this.finishDate = finishDate
         ? parseFloat(finishDate)
         : this.finishDate;
-      this.jobHash = jobHash
-        ? jobHash
-        : this.jobHash;
       this.letter = letter
         ? letter
         : this.letter;
       this.level = level
         ? parseFloat(level)
         : this.level;
+      this.jobHashStart = jobHashStart
+        ? jobHashStart
+        : this.jobHashStart;
+      this.jobHashEnd = jobHashEnd
+        ? jobHashEnd
+        : this.jobHashEnd;
       this.tries = tries
         ? parseFloat(tries)
         : this.tries;
@@ -111,10 +120,41 @@ class GameEvent {
     const timeBetween = Math.abs(moment(this.activateDate).diff(moment(this.endDate), 'seconds'));
     this.timeBetween = parseFloat(timeBetween);
 
-    if (this.finishDate && this.activateData) {
+    if (this.finishDate && this.activateDate) {
       const timePlayed = Math.abs(moment(this.activateDate).diff(moment(this.finishDate), 'seconds'));
       this.timePlayed = parseFloat(timePlayed);
+
+      this.percentSpeed = parseFloat(timePlayed / timeBetween);
     }
+
+  }
+  sort(...onKeys) {
+    if (!onKeys || onKeys.length < 0) {
+      onKeys = [];
+    }
+    let newObj = {};
+    let json = this.json(false, true);
+    let keys = Object.keys(json);
+
+    for (let i = 0; i < onKeys.length; i++) {
+      let onKey = onKeys[i];
+
+      for (let i2 = 0; i2 < keys.length; i2++) {
+        let key = keys[i2];
+        if (key == onKey) {
+          newObj[key] = json[key];
+          break;
+        }
+      }
+    }
+
+    for (let i = 0; i < keys.length; i++) {
+      let key = keys[i];
+      if (Object.keys(newObj).indexOf(key) == -1) {
+        newObj[key] = json[key];
+      }
+    }
+    return newObj;
 
   }
 
@@ -135,7 +175,6 @@ class GameEvent {
 
       //delay of 5 seconds for push data
       if (!startTime.isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', 5).isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', startIn).isSameOrAfter(now, 'second')) {
-        console.log(startTime.valueOf(), now.valueOf());
         throw new Error('Time is not in the future ' + startTime.format().toString() + ' now: ' + now.format().toString());
       }
 
@@ -232,8 +271,17 @@ class GameEvent {
     }
 
   }
-  setJobHash(jobHash) {
-    this.jobHash = jobHash;
+  setJobHashStart(jobHash) {
+      this.jobHashStart = jobHash;
+
+  }
+  setJobHashEnd(jobHash) {
+      this.jobHashEnd = jobHash;
+
+  }
+  clearJobHash() {
+      this.jobHashStart = null;
+        this.jobHashEnd = null;
   }
   setFinish(finish) {
     if (finish) {
@@ -270,13 +318,16 @@ class GameEvent {
     this.tries++;
   }
 
-  json(stringify = true, removeEmpty = false) {
+  json(stringify = true, removeEmpty = false, subDataJson = true) {
     var json;
     try {
       var obj = this;
       var copy = Object.assign({}, obj);
       copy.events = null;
       copy.model = null;
+      if (subDataJson) {
+
+      }
 
       if (stringify) {
         json = JSON.stringify(copy);
