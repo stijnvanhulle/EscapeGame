@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-04T21:37:51+01:00
+* @Last modified time: 2017-01-05T11:51:44+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -83,14 +83,14 @@ class GameStart extends Component {
     let startTime;
     let startIn = this.state.countdown;
     if (!this.props.game.isPlaying) {
-      let _game=this.props.game;
+      let _game=Object.assign({},this.props.game);
       _game.isPlaying=true;
       this.props.actions.updateGame(_game).then(() => {
-        return this.props.actions.createGameEvents({_game, startTime, startIn});
+        return this.props.actions.createGameEvents({game:_game, startTime, startIn, level:1});
       }).then(() => {
         const gameEvents = this.props.gameEvents;
         console.log('GameEvents v1', gameEvents);
-        return this.props.actions.addGameEvent({data: gameEvents, _game});
+        return this.props.actions.addGameEvent({data: gameEvents, game:_game});
       }).then(() => {
         const gameEvents = this.props.gameEvents;
         console.log('GameEvents v2', gameEvents);

@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T22:37:50+01:00
+* @Last modified time: 2017-01-05T01:35:13+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -27,6 +27,7 @@ class PlayerAdd extends Component {
     this.props.actions.createPlayer(this.state.player);
 
     this.setState({player: {}});
+
   }
   onPlayerChange = e => {
     const field = e.target.name;

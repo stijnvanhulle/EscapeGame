@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T22:31:32+01:00
+* @Last modified time: 2017-01-05T01:35:12+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -44,7 +44,6 @@ class Prison extends Component {
   }
 
   loadEvents = () => {
-
     game.events.on('startCountdown', timeBetween => {
       console.log('countdown', timeBetween);
       if (timeBetween) {
@@ -108,6 +107,8 @@ class Prison extends Component {
     const {canStart} = this.props;
     const {daytime, rooms, maxRooms} = this.state;
 
+
+
     let snapPrison;
     let prison = $('.prison svg');
     if (!prison) {
@@ -122,6 +123,8 @@ class Prison extends Component {
     $('body').css('animation-duration', daytime + 's');
 
     sun.css('animation-duration', daytime + 's');
+
+
 
     background.addClass('horizon');
     background.css('animation-duration', daytime + 's');

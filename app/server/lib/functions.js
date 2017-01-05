@@ -3,14 +3,19 @@
 * @Date:   2016-11-28T21:42:39+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-04T17:39:08+01:00
+* @Last modified time: 2017-01-05T14:41:22+01:00
 * @License: stijnvanhulle.be
 */
 const moment = require("moment");
 const json2csv = require('json2csv');
 
 let functions = {};
-
+/**
+ * [filter description]
+ * @param  {[type]} items    [description]
+ * @param  {[type]} filterOn [description]
+ * @return {[type]}          [description]
+ */
 functions.filter = (items, ...filterOn) => {
   const keys = Object.keys(items);
   return keys.filter((item) => {

@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-04T21:17:51+01:00
+* @Last modified time: 2017-01-05T12:50:20+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -764,7 +764,6 @@ const finishGameEventFromHash = (inputData) => {
 
       getGameEventByHash(inputData.jobHash).then(item => {
         gameEvent = item;
-        gameEvent.setFinish(inputData.finishDate || moment().valueOf());
         return getGameDataById(gameEvent.gameDataId);
       }).then(item => {
         gameData = item;
@@ -792,6 +791,7 @@ const finishGameEventFromHash = (inputData) => {
         if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || gameEvent.isCorrect || triesOver == 0) {
           return endGameEvent(gameData, gameEvent, recalculate = true);
         } else {
+          gameEvent.setFinish(inputData.finishDate || gameEvent.endDate);
           updateGameEvent(gameEvent).then(() => {
             return {runned: false};
           }).catch(() => {

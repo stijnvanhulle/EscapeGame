@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-04T20:16:19+01:00
+* @Last modified time: 2017-01-05T16:26:33+01:00
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
@@ -70,21 +70,62 @@ const onMessageSocket = (io, socket, client) => {
       console.log('job fail', obj);
     }
   });
+  socket.on(socketNames.IMAGE, data => {
+    try {
+      data = JSON.parse(data);
+      fileController.saveBase64(c.hash({length: 15}) + '', data).then(result => {
+        console.log(result);
+        if (result) {
+          let obj={
+            image1:'/Users/stijnvanhulle/GitHub/EscapePlan/app/private/images/cola.png',
+            image2:result,
+            read:true
+          }
+          client.publish(mqttNames.DETECTION_FIND, JSON.stringify(obj));
+        }
+
+      }).catch(err => {
+        console.log(err);
+      });
+    } catch (e) {
+      console.log(e);
+    }
+
+  });
   socket.on(socketNames.BEACON, (obj) => {
-    console.log(obj);
-    const {beaconId, range} = obj;
-    console.log(beaconId, range);
+    try {
+      let beacon = JSON.parse(obj);
+      let {beaconId, range} = obj;
+      beacon.beaconId = beacon.beaconId.toLowerCase();
+      beacon.range = parseInt(beacon.range);
 
-    const contains = beacons.filter(item => item.beaconId == obj.beaconId).length > 0;
-
-    if (contains) {
-      beacons = beacons.map(item => {
-        if (item.beaconId == obj.beaconId) {
-          return obj;
+      const contains = beacons.items.find(item => {
+        if (item) {
+          if (item.beaconId == beacon.beaconId) {
+            return item;
+          };
         }
       });
-    } else {
-      beacons.push(obj);
+
+      if (contains) {
+        beacons.items = beacons.items.filter(item => {
+          if (item) {
+            if (item.beaconId == beacon.beaconId) {
+              return beacon;
+            }
+          }
+
+        });
+      } else {
+        if (beacon) {
+          beacons.items.push(beacon);
+        }
+
+      }
+
+      console.log(beacons);
+    } catch (e) {
+      console.log(e);
     }
 
   });

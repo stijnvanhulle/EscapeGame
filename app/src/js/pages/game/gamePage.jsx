@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-04T21:34:26+01:00
+* @Last modified time: 2017-01-05T16:45:35+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -40,8 +40,9 @@ class GamePage extends Component {
       $('body').removeClass('horizon');
       $('.prison svg #background').removeClass('horizon');
 
-      this.props.actions.stopGame(game).then(() => {
-        console.log('Game finished',game);
+      let _game = Object.assign({}, this.props.game);
+      this.props.actions.stopGame(_game).then(() => {
+        console.log('Game finished', this.props.game);
 
       }).catch(err => {
         console.log(err);

@@ -82,8 +82,8 @@ def on_message(client, userdata, msg):
 			if _read:
 				if _image1 is not None  and _image2 is not None:
 					percent=faceDetection.getDifference(_image1,_image2)
-					print('Detection:' + percent)
-					client.publish("detection_found", makeJsonObject_detection(percent))		
+					print('Detection:' + str(percent))
+					client.publish("detection_found", makeJsonObject_detection(percent,_image1,_image2,_read))		
 	except Exception as error:
 			print('Error:',error)
 

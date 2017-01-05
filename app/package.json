@@ -6,6 +6,7 @@
     "development": "yarn run clean && nodemon . & NODE_ENV=development webpack --watch",
     "production": "yarn run clean && NODE_ENV=production webpack -p",
     "upgrade": "npm version patch --sign-git-tag=true",
+    "debug": "yarn run clean && nodemon --inspect & NODE_ENV=development webpack --watch",
     "build": "webpack",
     "server": "forever .",
     "test": "yarn clean",
@@ -28,6 +29,7 @@
   },
   "license": "UNLICENSED",
   "dependencies": {
+    "base64-img": "^1.0.3",
     "chance": "^1.0.4",
     "chance.js": "^0.0.1",
     "dotenv": "^2.0.0",
