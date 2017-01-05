@@ -1,1 +1,3 @@
-mqtt
+app/node_modules
+app/server/mongodb
+app/server/public

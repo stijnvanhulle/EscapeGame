@@ -7,6 +7,7 @@ import numpy as np
 
 def getDifference(image1,image2):
 	if image1 is not None and image2 is not None:
+		print('Loading detection')
 		sift= cv2.xfeatures2d.SIFT_create()
 		surf= cv2.xfeatures2d.SURF_create()
 		orb = cv2.ORB_create()
@@ -27,15 +28,13 @@ def getDifference(image1,image2):
 		for m,n in matches:
 		    if m.distance < 0.25*n.distance:
 		        good.append([m])
-		print('4')
 		amount=len(good)      
-		percent=amount/len(matches)
-		print(percent *100)
+		percent=float(amount/len(matches))
 		# cv2.drawMatchesKnn expects list of lists as matches.
 		#img3 = cv2.drawMatchesKnn(img1,kp1,img2,kp2,good,None,flags=2)
 		#plt.imshow(img3)
 		#plt.show()
+		val=float(percent * 100)
+		return val
 
-		return percent * 100
-
-	return -1
+	return None

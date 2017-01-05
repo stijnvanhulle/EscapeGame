@@ -1,0 +1,157 @@
+// @Author: Stijn Van Hulle <stijnvanhulle>
+// @Date:   2016-02-22T11:07:23+01:00
+// @Email:  me@stijnvanhulle.be
+// @Last modified by:   stijnvanhulle
+// @Last modified time: 2016-12-31T13:11:24+01:00
+// @License: stijnvanhulle.be
+@import 'colors.scss';
+
+#iconBar div {
+	color: black;
+	line-height: 47px;
+}
+
+#iconBar .ui.search > .results {
+	width: 100%;
+}
+
+header #iconBar .overlay {
+	width: 150px !important;
+	right: 20px;
+
+	ul {
+		li {
+			width: 100%;
+		}
+	}
+}
+
+main {
+	margin-top: 0;
+	padding-top: 0;
+}
+
+.box {
+	background: white;
+	border-radius: 0.5rem;
+	padding: 8px;
+	box-sizing: border-box;
+	min-height: 70px;
+}
+
+.logo {
+	position: relative;
+	width: 300px;
+	margin: 0 auto;
+	height: 170px;
+
+	img {
+		width: 300px;
+		height: auto;
+		margin: 0 auto;
+	}
+}
+
+.startGame {
+	margin-top: -10px !important;
+}
+
+.prison {
+	position: absolute;
+	width: 100%;
+	height: auto;
+	z-index: 10;
+	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+	overflow: hidden;
+
+	.countdown {
+    color: white;
+    font-size: 1.5rem;
+    position: absolute;
+    width: 80px;
+    left: calc((100% - 80px)/2);
+    text-align: center;
+    top: 25px;
+    background: $lightBlue;
+    border-radius: 0.2em;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+	svg {
+		#sun {
+			transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+			animation: sun 60s ease-in-out infinite;
+		}
+
+		#cloud1,
+		#cloud2,
+		#cloud3,
+		#cloud4,
+		#cloud5,
+		#cloud6,
+		#cloud7 {
+			transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+			animation: cloud 15s ease-in-out infinite;
+		}
+
+		#ufo1 {
+			transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+			animation: ufo 15s ease-in-out infinite;
+			animation-delay: 2s !important;
+		}
+
+		#ufo2 {
+			transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+			animation: ufo 15s ease-in-out infinite;
+			animation-delay: 3s !important;
+		}
+
+		#man1 {
+			transition: all 12s cubic-bezier(0.02, 0.09, 0, 0.75);
+			transform: translateX(0px);
+			transform: translateX(-800px);
+		}
+		@for $i from 1 to 7 {
+			#horizon path:nth-child(#{$i}) {
+				animation-delay: $i * 1s !important;
+			}
+		}
+	}
+}
+
+.interface {
+	z-index: 11;
+	position: relative;
+	width: 100%;
+}
+
+.interface.game {
+	padding-top: 95px;
+
+	h1 {
+		text-align: center;
+		color: white;
+	}
+}
+
+.smoke {
+	position: absolute;
+	z-index: 999;
+	left: 27%;
+	margin-top: -9px;
+	z-index: 11;
+	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+}
+
+.hidePrison {
+	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+	animation: hidePrison 0.8s linear 0s;
+	animation-fill-mode: forwards;
+}
+
+.horizon {
+	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
+	animation: horizon 60s linear infinite;
+}
+//prison svg elements

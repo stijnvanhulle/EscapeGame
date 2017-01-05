@@ -1,0 +1,443 @@
+// @Author: Stijn Van Hulle <stijnvanhulle>
+// @Date:   2016-02-22T11:07:23+01:00
+// @Email:  me@stijnvanhulle.be
+// @Last modified by:   stijnvanhulle
+// @Last modified time: 2016-12-27T22:54:07+01:00
+// @License: stijnvanhulle.be
+@import 'colors';
+@import "modules/sanitize";
+@import "modules/font";
+@import 'ui';
+@import "effects";
+@import "login";
+@import "content";
+@media only screen and (max-width: 960px) {
+	// @import "mobile/";
+}
+
+@media only screen and (max-width: 480px) {
+	 @import "mobile/480";
+}
+
+/* algemeen */
+body {
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden;
+	min-width: 320px;
+	font-family: DINPro,"Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
+	font-size: 14px;
+	line-height: 1.4285em;
+	color: $dark;
+	background: $gray;
+	font-smoothing: antialiased;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+body#error {
+	background: #37A1E8;
+}
+
+html {
+	box-sizing: border-box;
+	overflow-y: scroll !important;
+	overflow-x: hidden;
+	outline: 0;
+		font-size: 14px;
+}
+
+a {
+	color: rgb(57, 67, 76);
+	text-decoration: underline;
+}
+
+a:hover {
+	color: rgb(57, 67, 78);
+	text-decoration: none;
+}
+
+li,
+ol,
+ul {
+	text-align: left;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	list-style-type: none;
+}
+
+p {
+	color: #000;
+	font-size: 14px;
+	text-transform: none;
+	font-weight: 400;
+	text-align: justify;
+}
+
+h1,
+h2,
+h3 {
+	font-weight: 400;
+	text-align: center;
+	color: rgb(0, 0, 0);
+	text-align: left;
+	font-family: DINPro,"Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
+}
+
+h1 {
+	font-size: 1.7em;
+	font-weight: 300;
+	text-transform: uppercase;
+}
+
+h2 {
+	font-size: 1.5em;
+	font-weight: 300;
+}
+
+h3 {
+	font-size: 1.1em;
+	font-weight: 300;
+}
+
+img {
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+
+:focus {
+	outline: none;
+}
+/* hoofdelementen */
+main {
+	margin-top: 50px;
+	padding-top: 20px;
+	position: relative;
+	float: left;
+	width: 100%;
+	//background: #f9f9f9;
+}
+
+#mobile {
+	float: left;
+	width: 30px;
+	height: 30px;
+	background-image: url("/images/icons/menu.svg");
+	background-repeat: no-repeat;
+	margin-top: 5px;
+	cursor: pointer;
+}
+
+body > header {
+	//background: $dark;
+	overflow: hidden;
+	background: $white;
+	height: 50px;
+	position: fixed;
+	width: 100%;
+	color: white;
+	z-index: 999;
+	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0),0 1px 1px 0 rgba(0, 0, 0, 0),0 2px 1px -1px rgba(0, 0, 0, 0.08);
+}
+
+body > header a {
+	color: white;
+}
+
+#iconbar div {
+	padding: 8px 0 8px 8px;
+}
+//overlay
+
+#overlay {
+	display: none;
+	position: fixed;
+	z-index: 999999;
+	//animation: fadeInLogin 0.8s ease-in-out;
+	animation-iteration-count: 1;
+	transition: opacity, background 0.5s cubic-bezier(.02,.09,0,.75);
+
+	h1 {
+		text-align: center;
+		text-transform: uppercase;
+		font-size: 18px;
+		transition: none;
+		font-weight: 300;
+	}
+
+	div {
+		color: #676767;
+		font-size: 14px;
+	}
+
+	#loading {
+		animation: fillBar 4.5s both ease-in;
+		animation-iteration-count: infinite;
+		-webkit-transition: all 0.5s cubic-bezier(0.02, 0.09, 0, 0.75);
+		-moz-transition: all 0.5s cubic-bezier(0.02, 0.09, 0, 0.75);
+		-o-transition: all 0.5s cubic-bezier(0.02, 0.09, 0, 0.75);
+		height: 5px;
+		background-color: $red;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		/* transform: translate3d(200%, 0%, 0); */
+		position: relative;
+		z-index: 9;
+	}
+
+	.buttons {
+		width: 100%;
+		position: absolute;
+		bottom: 8px;
+
+		button {
+			width: 130px;
+			margin-right: 15px !important;
+			position: relative;
+		}
+	}
+}
+$overlayWidth: 500px;
+$overlayHeight: 250px;
+
+#overlay.message {
+	display: block;
+	position: fixed;
+	width: $overlayWidth;
+	border-radius: 4px;
+	box-shadow: 0 8px 10px -5px rgba(0,0,0,.14),0 16px 24px 2px rgba(0,0,0,.098),0 6px 30px 5px rgba(0,0,0,.084);
+	left: calc(50% - (#{$overlayWidth} / 2));
+	top: 60px;
+	background-color: white;
+	text-align: center;
+	color: black;
+	padding: 8px;
+	box-sizing: border-box;
+	animation: fadeInUp 0.4s ease-in-out both;
+	transition: opacity,transform 0.5s cubic-bezier(.55, 0, .1, 1);
+
+	aside {
+		overflow: hidden;
+	}
+}
+
+#overlay.prompt {
+	display: block;
+	position: fixed;
+	height: $overlayHeight;
+	width: $overlayWidth;
+	border-radius: 4px;
+	box-shadow: 0 8px 10px -5px rgba(0,0,0,.14),0 16px 24px 2px rgba(0,0,0,.098),0 6px 30px 5px rgba(0,0,0,.084);
+	left: calc(50% - (#{$overlayWidth} / 2));
+	top: calc(50% - (#{$overlayHeight} / 2));
+	background-color: white;
+	text-align: center;
+	color: black;
+	padding: 8px;
+	box-sizing: border-box;
+	animation: show 1.4s ease-in-out both;
+	transition: opacity,transform 0.5s cubic-bezier(.55, 0, .1, 1);
+}
+
+.overlay {
+	background: white;
+	padding: 8px;
+	position: absolute !important;
+	margin-top: 7px;
+	right: 45px;
+	font-size: 14px;
+	color: black;
+	width: 100px !important;
+	border-radius: 0.4em;
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 2px 1px -1px rgba(0,0,0,.12);
+	animation: show 0.5s normal forwards ease-in-out;
+	transition: all 0.5s cubic-bezier(0.02, 0.09, 0, 0.75);
+
+	ul {
+		text-align: center;
+	}
+}
+
+.overlay.more {
+	background: $icon;
+	padding: 8px;
+	width: 100px;
+	position: absolute;
+	right: -10px;
+	border-radius: 0;
+	margin-top: -7px;
+	box-shadow: none;
+	color: white;
+	animation: show 0.5s normal forwards ease-in-out;
+	transition: all 0.5s cubic-bezier(0.02, 0.09, 0, 0.75);
+
+	ul li {
+		margin-bottom: 5px;
+	}
+}
+
+.overlay.more:before {
+	border-bottom: 8px solid $icon;
+	margin-left: 60px;
+	top: -8px;
+	display: none;
+}
+
+.ion-ios-gear .overlay:before {
+	margin-left: 60px;
+}
+
+.overlay:before {
+	content: '';
+	position: absolute;
+	//margin-left: calc((50% /2) + 8px);
+	margin-left: 0;
+	top: -8px;
+	width: 0;
+	height: 0;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-bottom: 8px solid #FFF;
+	clear: both;
+}
+//classes
+
+.row {
+	margin-bottom: 10px;
+}
+
+.hidden {
+	display: none !important;
+}
+
+.right {
+	float: right;
+
+	button {
+		float: right;
+	}
+}
+
+.right > div:not(.buttons) {
+	width: auto;
+	position: relative;
+	float: right;
+}
+
+.hide {
+	display: none;
+}
+
+.left {
+	float: left;
+
+	h1,
+	h2,
+	h3 {
+		margin-bottom: 0;
+		margin-top: 0;
+	}
+
+	button {
+		float: left;
+	}
+}
+
+.full {
+	width: 100% !important;
+}
+
+.buttons {
+	box-sizing: border-box;
+	text-align: center;
+	margin: 0 auto;
+	position: relative;
+
+	button {
+		box-sizing: border-box;
+		position: relative;
+		float: left;
+	}
+}
+
+.error {
+	position: relative;
+	margin: 0 auto;
+	text-align: center;
+	top: calc((100% /2) - 20px);
+	height: 20px;
+	font-size: 1em;
+}
+
+.animationError {
+	animation: swing 0.5s ease-in-out both;
+	-webkit-transition: all 0.5s cubic-bezier(0.02, 0.09, 0, 0.75);
+	-moz-transition: all 0.5s cubic-bezier(0.02, 0.09, 0, 0.75);
+	-o-transition: all 0.5s cubic-bezier(0.02, 0.09, 0, 0.75);
+	transition: all 0.5s cubic-bezier(0.02, 0.09, 0, 0.75);
+}
+
+.center {
+	width: 300px;
+	margin: 0 auto;
+
+	.ui.button {
+		float: right;
+		line-height: 1em;
+		margin-top: 5px;
+	}
+}
+.center.big{
+	width: 550px;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.form-group {
+	padding-top: 5px;
+	padding-bottom: 5px;
+
+	label {
+		color: black;
+		float: left;
+		width: 100%;
+	}
+}
+
+.row {
+	margin-bottom: 10px;
+}
+
+.nopadding {
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+.nopadding .row > div {
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+#filter .row:first-child {
+	padding: 15px;
+}
+
+.right > .buttons button {
+	margin-left: 5px;
+}
+.right > .buttons a {
+	margin-left: 5px;
+}
+
+div#signature canvas {
+	background: white;
+	border-radius: 0.3em;
+	margin-right: 20px;
+}
+
+@import "app";

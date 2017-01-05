@@ -1,0 +1,188 @@
+[{
+  "type": "description",
+  "hide": false,
+  "sendToDevice": null,
+  "data": {
+    "name": "",
+    "description": "Welkom, de bedoeling van het spel is om de aliennaam te ontvangen door opdrachten goed te volbrengen",
+    "file": null,
+    "hints": [
+      ""
+    ],
+    "maxTries": null,
+    "maxTime": 300,
+    "isLetter": false,
+    "answer": null
+  }
+
+}, {
+  "type": "start",
+  "hide": false,
+  "sendToDevice": null,
+  "data": {
+    "name": "",
+    "description": "Zoek de juiste president",
+    "file": null,
+    "hints": [
+      ""
+    ],
+    "maxTries": null,
+    "maxTime": 300,
+    "isLetter": true,
+    "answer": {
+      "name": "President x",
+      "value": {
+        "location": "kortrijk",
+        "date": "sdfs",
+        "book": 1
+      }
+    }
+  }
+
+}, {
+  "type": "sound",
+  "hide": false,
+  "sendToDevice": null,
+  "data": {
+    "name": "",
+    "description": "NUMMER speelt af",
+    "file": "nummer.mp3",
+    "maxTries": 3,
+    "maxTime": 300,
+    "hints": [
+      "Vul het juiste jaargetal in"
+    ],
+    "isLetter": true,
+    "answer": {
+      "name": "2012"
+    }
+  }
+}, {
+  "type": "bom",
+  "hide": false,
+  "sendToDevice": null,
+  "data": {
+    "name": "",
+    "description": "",
+    "file": "bom.mp3",
+    "maxTries": 1,
+    "maxTime": 300,
+    "hints": [
+      ""
+    ],
+    "isLetter": false,
+    "answer": null
+  }
+}, {
+  "type": "light",
+  "hide": false,
+  "sendToDevice": "pi",
+  "data": {
+    "name": "",
+    "description": "Scan het juiste schilderij",
+    "file": "schilderij1.jpg",
+    "maxTries": null,
+    "maxTime": 300,
+    "hints": [
+      ""
+    ],
+    "answer": {
+      "name": "President x",
+      "value": null
+    }
+  }
+
+}, {
+  "type": "anthem",
+  "hide": false,
+  "sendToDevice": null,
+  "data": {
+    "name": "",
+    "description": "",
+    "file": "volkslied.mp3",
+    "maxTries": null,
+    "maxTime": 300,
+    "hints": [
+      "Ga naar het juiste schilderij"
+    ],
+    "isLetter": false,
+    "answer": null
+  }
+
+}, {
+  "type": "scan",
+  "hide": false,
+  "sendToDevice": true,
+  "data": {
+    "name": "",
+    "description": "Zoek het juiste schilderij",
+    "file": "/image.jpg",
+    "maxTries": null,
+    "maxTime": 300,
+    "hints": [
+      "Scan met de app"
+    ],
+    "isLetter": true,
+    "answer": null
+  }
+
+}, {
+  "type": "find",
+  "hide": false,
+  "sendToDevice": null,
+  "data": {
+    "name": "",
+    "description": "",
+    "file": null,
+    "maxTries": null,
+    "maxTime": 300,
+    "hints": [
+      "Zoek de juiste key"
+    ],
+    "isLetter": true,
+    "answer": null
+  }
+
+}, {
+  "type": "book",
+  "hide": false,
+  "sendToDevice": null,
+  "data": {
+    "name": "",
+    "description": "Zoek het juiste woord",
+    "file": null,
+    "maxTries": null,
+    "maxTime": 300,
+    "hints": [
+      "Kijk in de woordenboeken",
+      "KIjk naar de juiste pagina's",
+      "Combineer deze en vindt het jusiste woord"
+    ],
+    "isLetter": true,
+    "answer": {
+      "name": "patat",
+      "value": null
+    }
+  }
+
+}, {
+  "type": "finish",
+  "hide": false,
+  "sendToDevice": null,
+  "data": {
+    "name": "",
+    "description": "Wat is de naam van de alien?",
+    "file": null,
+    "maxTries": 2,
+    "maxTime": 300,
+    "hints": [
+      "Probeer de letters die je gekregen hebt de combineren",
+      "Locatie zit verboregn in de boeken",
+      "Kijk naar het juiste boek",
+      "De prsedident heeft een pagina met de locatie van de bunker"
+    ],
+    "isLetter": false,
+    "answer": null
+  }
+
+}]

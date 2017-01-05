@@ -1,3 +1,12 @@
+# @Author: Stijn Van Hulle <stijnvanhulle>
+# @Date:   2016-11-28T13:51:38+01:00
+# @Email:  me@stijnvanhulle.be
+# @Last modified by:   stijnvanhulle
+# @Last modified time: 2016-12-20T12:51:07+01:00
+# @License: stijnvanhulle.be
+
+
+
 #!/usr/bin/env python
 
 import time
@@ -59,12 +68,13 @@ def on_connect(client, userdata, rc):
 	print("Connected to MQTT-broker on " + MQTT_BROKER )
 	client.subscribe("online")
 	client.subscribe("message")
-	client.subscribe("detection")
+	client.subscribe("detection_find")
+	client.subscribe("detection_found")
 
 def on_message(client, userdata, msg):
 	try:
-		if msg.topic=="detection":
-			
+		if msg.topic=="detection_find":
+
 			parsed_json=json.loads(convertJson(msg.payload))
 			_image1 =parsed_json['image1']
 			_image2 =parsed_json['image2']
@@ -72,14 +82,14 @@ def on_message(client, userdata, msg):
 			if _read:
 				if _image1 is not None  and _image2 is not None:
 					percent=faceDetection.getDifference(_image1,_image2)
-					print('Detection:' + percent)
-					client.publish("detection", makeJsonObject_detection(percent))		
+					print('Detection:' + str(percent))
+					client.publish("detection_found", makeJsonObject_detection(percent,_image1,_image2,_read))		
 	except Exception as error:
 			print('Error:',error)
 
-		
-			
-			
+
+
+
 def convertJson(data):
 	data=data.decode()
 
@@ -108,11 +118,11 @@ def makeJsonObject_detection(value=None,image1=None,image2=None,read=False):
 def exit():
 	client.publish("online", makeJsonObject(False))
 
-	
+
 
 def main():
 	init()
-	
+
 	while True:
 		time.sleep(0.1)
 		data = input("Code:")
@@ -121,9 +131,9 @@ def main():
 				if data=='exit':
 					exit()
 					sys.exit(0)
-				else:	
+				else:
 					parsed_json=json.loads(convertJson(msg.payload))
-					_type =parsed_json['type'] 
+					_type =parsed_json['type']
 					_port=parsed_json['port']
 					_read=parsed_json['read']
 
@@ -140,14 +150,14 @@ def main():
 
 if __name__ == '__main__':
 
-	try:	
+	try:
 		if len(sys.argv)>1:
 			MQTT_BROKER=sys.argv[1]
-		else:	
+		else:
 			input_text = input("Ip of MQTT-broker: ")
 			if input_text:
 				MQTT_BROKER=input_text
-			
+
 		#executor = ProcessPoolExecutor(2)
 		#loop = trollius.get_event_loop()
 		#_main = trollius.async(loop.run_in_executor(executor, main))

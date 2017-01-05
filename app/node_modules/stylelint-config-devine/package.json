@@ -1,0 +1,18 @@
+{
+  "name": "stylelint-config-devine",
+  "version": "1.0.0",
+  "description": "the one and only devine.be stylelint config",
+  "main": "index.js",
+  "repository": {
+    "url": "https://github.com/devinehowest/stylelint-config-devine.git",
+    "type": "git"
+  },
+  "author": "Geoffrey Dhuyvetters <geoffrey.dhuyvetters@howest.be>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^3.8.0"
+  },
+  "dependencies": {
+    "stylelint-config-standard": "^13.0.2"
+  }
+}
