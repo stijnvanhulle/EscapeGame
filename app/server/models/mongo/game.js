@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T12:38:07+01:00
+* @Last modified time: 2017-01-06T20:51:08+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
@@ -40,6 +40,7 @@ module.exports.load = () => {
 };
 
 module.exports.getModel = () => model;
+module.exports.name = () => MODEL;
 
 module.exports.load.attributes = {
   name: `mongo_game`,

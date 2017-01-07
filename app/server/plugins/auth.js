@@ -3,13 +3,15 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-11T18:06:37+01:00
+* @Last modified time: 2017-01-07T13:44:32+01:00
 * @License: stijnvanhulle.be
 */
 const {Members, Access} = require('../models/mongo');
 const moment = require('moment');
 
 var validate = function(decoded, request, callback) {
+  decoded.expires_in=parseFloat(decoded.expires_in);
+  decoded.access_token=parseFloat(decoded.access_token);
   Access.findOne({access_token: decoded.access_token, expires_in: decoded.expires_in}).exec(function(err, access) {
     if (err)
       console.log(err);

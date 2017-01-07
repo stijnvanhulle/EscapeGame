@@ -3,13 +3,21 @@
 * @Date:   2016-11-28T21:42:39+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-05T14:41:22+01:00
+* @Last modified time: 2017-01-07T13:19:25+01:00
 * @License: stijnvanhulle.be
 */
 const moment = require("moment");
 const json2csv = require('json2csv');
 
 let functions = {};
+
+functions.new = function( obj ) {
+	try {
+		return Object.assign({},obj);
+	} catch ( e ) {
+		return obj;
+	}
+};
 /**
  * [filter description]
  * @param  {[type]} items    [description]

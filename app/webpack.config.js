@@ -3,7 +3,7 @@
 * @Date:   2016-10-12T15:57:56+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-01T16:30:05+01:00
+* @Last modified time: 2017-01-07T13:00:55+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -72,17 +72,16 @@ const config = {
   devtool: 'source-map', // or "inline-source-map"
   watch:true,
   module: {
-    noParse: [],
     rules: [
       {
         test: /\.css$/,
-        loader: extractCSS.extract({fallbackLoader: "style?sourceMap", loader: "css?sourceMap"})
+        loader: extractCSS.extract({fallbackLoader: "style-loader?sourceMap", loader: "css-loader?sourceMap"})
       }, {
         test: /\.scss$/,
-        loader: extractCSS.extract({fallbackLoader: 'style?sourceMap', loader: 'css?sourceMap!sass?sourceMap'})
+        loader: extractCSS.extract({fallbackLoader: 'style-loader?sourceMap', loader: 'css-loader?sourceMap!sass-loader?sourceMap'})
       }, {
         test: /\.html$/,
-        loader: 'html',
+        loader: 'html-loader',
         options: {
           attrs: ['audio:src', 'img:src', 'video:src', 'source:srcset'] // read src from video, img & audio tag
         }
@@ -94,9 +93,9 @@ const config = {
         ],
         use: [
           {
-            loader: 'babel'
+            loader: 'babel-loader'
           }, {
-            loader: 'eslint',
+            loader: 'eslint-loader',
             options: {
               fix: true,
               cacheDirectory: true
@@ -118,10 +117,6 @@ const config = {
           context: './src',
           name: '[path][name].[ext]'
         }
-      },
-      {
-        test: require.resolve('snapsvg'),
-        loader: 'imports-loader?this=>window,fix=>module.exports=0'
       }
     ]
 

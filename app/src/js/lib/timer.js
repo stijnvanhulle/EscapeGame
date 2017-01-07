@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T14:04:11+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-30T20:29:48+01:00
+* @Last modified time: 2017-01-07T13:04:57+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -39,8 +39,9 @@ timer.startHints = (hints, howLong) => {
 
     timerObj = setInterval(() => {
       i++;
-      game.events.emit('hint', hints[i]);
-      console.log(hints[i]);
+      let hint=hints[i];
+      game.events.emit('hint', hint);
+      console.log(hint);
       if (i == hints.length) {
         timer.stop();
       }

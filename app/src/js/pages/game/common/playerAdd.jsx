@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-05T01:35:13+01:00
+* @Last modified time: 2017-01-07T14:05:09+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -33,7 +33,7 @@ class PlayerAdd extends Component {
     const field = e.target.name;
     let player = this.state.player;
     if (field == 'birthday') {
-      player[field] = moment().valueOf().toString();
+      player[field] = parseFloat(e.target.value);
     } else {
       player[field] = e.target.value.toString();
     }

@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T16:04:53+01:00
+* @Last modified time: 2017-01-06T20:50:41+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
@@ -85,7 +85,6 @@ const promise_eventType = (item, i) => {
 };
 
 const loadDefaults = () => {
-
   removeDataFromModel(MemberModel, GameDataModel, EventTypeModel).then((data) => {
     return promiseFor(promise_eventType, eventTypes);
   }).then((item) => {
@@ -96,7 +95,6 @@ const loadDefaults = () => {
   }).catch(err => {
     console.log(err);
   });
-
   let newMember = new MemberModel({email: 'stijn.vanhulle@outlook.com', password: 'stijn', firstName: 'Stijn', lastName: 'Van Hulle'});
   newMember.save(function(err, item) {
     if (err)

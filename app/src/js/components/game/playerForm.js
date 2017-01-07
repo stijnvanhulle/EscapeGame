@@ -3,12 +3,13 @@
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-29T22:37:37+01:00
+* @Last modified time: 2017-01-07T13:58:32+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component, PropTypes} from 'react';
-import TextInput from '../common/textInput';
+import TextInput from 'components/common/textInput';
+import DateInput from 'components/common/dateInput';
 import {Button} from 'semantic-ui-react';
 
 const PlayerForm = ({player, onSave, onChange, saving, errors}) => {
@@ -18,7 +19,7 @@ const PlayerForm = ({player, onSave, onChange, saving, errors}) => {
 
       <TextInput name="lastName" required label="lastName" value={player.lastName?player.lastName:""} onChange={onChange} error={errors.lastName}/>
 
-      <TextInput name="birthday" required label="birthday" value={player.birthday?player.birthday:""} onChange={onChange} error={errors.birthday}/>
+      <DateInput name="birthday" required label="birthday" value={player.birthday?player.birthday:""} onChange={onChange} error={errors.birthday}/>
 
       <TextInput name="email" type="email" required label="email" value={player.email?player.email:""} onChange={onChange} error={errors.email}/>
 

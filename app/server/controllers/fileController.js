@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-05T16:17:39+01:00
+* @Last modified time: 2017-01-06T20:39:16+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');

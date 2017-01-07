@@ -3,11 +3,12 @@
 * @Date:   2016-10-17T21:12:13+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-04T21:34:50+01:00
+* @Last modified time: 2017-01-07T13:51:13+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component, PropTypes} from 'react';
+import axios from 'axios';
 import {socketConnect} from 'socket.io-react';
 import socketNames from 'lib/const/socketNames';
 import {runAudio} from 'lib/functions';
@@ -20,6 +21,7 @@ import {connect} from 'react-redux';
 import game from 'lib/game';
 import piController from 'lib/piController';
 import timer from 'lib/timer';
+import url from 'lib/const/url';
 
 import * as gameActions from 'actions/gameActions';
 
@@ -27,9 +29,9 @@ import * as gameActions from 'actions/gameActions';
 class App extends Component {
   constructor(props, context) {
     super(props, context);
-
+    this.loadLogin();
     this.loadSocket();
-    this.loadOldGame();
+
   }
   componentDidMount() {}
   state = {
@@ -54,7 +56,40 @@ class App extends Component {
       console.log(e);
     }
   }
+  loadToken = (cb) => {
 
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        axios.defaults.headers.common['Authorization'] = token;
+        cb(token);
+      } else {
+        cb(null);
+      }
+    } catch (e) {
+      console.log(e);
+      cb(null);
+    }
+  }
+  loadLogin = () => {
+    let email = "stijn.vanhulle@outlook.com";
+    let password = "stijn";
+    this.loadToken((token) => {
+      if (!token) {
+        axios.post(url.LOGIN, {email, password}).then((response) => {
+          var data = response.data;
+          console.log(data);
+          game.token = data.token;
+          localStorage.setItem('token', game.token);
+          axios.defaults.headers.common['Authorization'] = game.token;
+          this.loadOldGame();
+        }).catch((err) => {
+          game.token = null;
+        });
+      }
+    });
+
+  }
   loadSocket = () => {
     this.socket = this.props.socket;
     this.socket.emit(socketNames.ONLINE, {device: 'screen'});
@@ -87,16 +122,21 @@ class App extends Component {
 
   handelWSEventData = obj => {
     console.log('Event data:', obj);
-    const {correct, triesOver} = obj;
+    const {correct, triesOver, data} = obj;
     const gameData = game.currentGameData;
     const currentData = gameData.data.data;
     const type = gameData.data.type.toLowerCase();
 
     if (type == "bom") {
       if (!correct) {
+        piController.sendText('BOEM');
         game.events.emit('audio', currentData.file);
       }
       game.events.emit('bomStop', correct);
+    }
+
+    if (correct) {
+      game.letters.push(data.letter);
     }
 
     if (!triesOver || triesOver > 0) {
@@ -168,6 +208,7 @@ class App extends Component {
 
       game.events.emit('stopCountdown');
       game.events.emit('eventEnd');
+      game.events.emit('letters', game.events);
 
       if (activeEvents == 0) {
         this.socket.emit(socketNames.EVENT_FINISH, {finish: true});

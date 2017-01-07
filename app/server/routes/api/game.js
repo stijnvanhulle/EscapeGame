@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T20:48:09+01:00
+* @Last modified time: 2017-01-07T13:42:22+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -75,11 +75,12 @@ module.exports = [
     method: `GET`,
     path: url.GAME_GET,
     config: {
-      auth: false
+      auth: 'jwt'
     },
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
+                console.log(request.headers);
         let gameId = request.params.id;
         const game = new Game();
         let eventType;

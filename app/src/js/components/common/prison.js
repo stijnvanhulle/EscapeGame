@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-05T01:35:12+01:00
+* @Last modified time: 2017-01-07T13:07:39+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -66,6 +66,10 @@ class Prison extends Component {
     });
     game.events.on('hint', (hint) => {
       this.state.hint = hint;
+      this.forceUpdate();
+    });
+    game.events.on('letters', (letters) => {
+      this.state.letter = letters;
       this.forceUpdate();
     });
     game.events.on('bomStart', (howLong) => {
@@ -197,6 +201,7 @@ class Prison extends Component {
         <Countdown className={!this.props.canStart
           ? 'hide'
           : ''} ref='countdown' sendToPi={true} className="countdown" howLong={this.state.countdown} isDone={this.isDoneCounting}/>
+<div className="letters">{this.state.letters}</div>
         <div className="hint">{this.state.hint}</div>
         <Isvg src="/assets/images/plan.svg" uniquifyIDs={false} onLoad={this.onLoad}/>
       </div>
