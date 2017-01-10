@@ -19,7 +19,7 @@ const PlayerForm = ({player, onSave, onChange, saving, errors}) => {
 
       <TextInput name="lastName" required label="lastName" value={player.lastName?player.lastName:""} onChange={onChange} error={errors.lastName}/>
 
-      <DateInput name="birthday" required label="birthday" value={player.birthday?player.birthday:""} onChange={onChange} error={errors.birthday}/>
+      <DateInput name="birthday" required label="birthday" value={player.birthday?player.birthday:0} onChange={onChange} error={errors.birthday}/>
 
       <TextInput name="email" type="email" required label="email" value={player.email?player.email:""} onChange={onChange} error={errors.email}/>
 

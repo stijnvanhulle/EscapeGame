@@ -17,7 +17,7 @@ services:
     container_name: escapePlan_server
     volumes: ["./:/var/www"]
     working_dir: "/var/www"
-    ports: ["3000:3000"]
+    ports: ["3000:3000","9229:9229"]
     networks: ["nodeApp"]
     links: ["mongo","mqtt"]
   mongo:

@@ -438,7 +438,8 @@ const updateGame = (obj) => {
       gameName: obj.gameName,
       alienName: obj.alienName,
       isFinished: obj.isFinished,
-      isPlaying: obj.isPlaying
+      isPlaying: obj.isPlaying,
+      duration: obj.duration
     }, {
       multi: true
     }, function(err, raw) {
@@ -509,7 +510,7 @@ const updateGameEvent = (obj, isActive) => {
   });
 };
 
-const getGameEvents = (find) => {
+const getGameEvents = (find, canSort = false) => {
   return new Promise((resolve, reject) => {
     try {
       GameEventModel.find(find).exec(function(err, docs) {
@@ -520,7 +521,12 @@ const getGameEvents = (find) => {
             let gameEvent = new GameEvent({gameId: null});
             gameEvent.load(item);
             gameEvent.calculateTimes();
-            return gameEvent.sort('gameDataId', 'timeBetween', 'percentSpeed', 'timePlayed', 'tries', 'isCorrect', 'level');
+            if (canSort) {
+              return gameEvent.sort('gameDataId', 'timeBetween', 'percentSpeed', 'timePlayed', 'tries', 'isCorrect', 'level');
+            } else {
+              return gameEvent;
+            }
+
           });
           resolve(gameEvents);
 
@@ -537,16 +543,22 @@ const getGameEvents = (find) => {
 
 const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
   return new Promise((resolve, reject) => {
+    previousGameEvent.calculateTimes();
+
     let game;
+    let gameDuration;
     let isFirstTime = true;
     let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 5);
+
     let {gameId, finishDate} = previousGameEvent;
     let _previousGameEvent = previousGameEvent;
+    let gameEvents;
 
     const promise = (item, i, amount) => {
       return new Promise((resolve, reject) => {
+        let gameEvent;
         if (item) {
-          let gameEvent = new GameEvent({gameId});
+          gameEvent = new GameEvent({gameId});
           gameEvent.load(item);
 
           if (_previousGameEvent) {
@@ -555,7 +567,14 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
             }
 
           }
-          let data = gameLogic.createData(gameDataId = gameEvent.gameDataId, gameEvent.level, startTime = startTime, startIn = 0, maxTime = null, timeBetween = null, gameDuration = game.duration, amount=amount);
+          let data = gameLogic.createData({
+            gameDataId: gameEvent.gameDataId,
+            level: gameEvent.level,
+            startTime,
+            startIn: 0,
+            amount,
+            gameDuration
+          });
           gameEvent.setData(data);
           _previousGameEvent = gameEvent;
           isFirstTime = false;
@@ -569,7 +588,7 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
             }
 
           }).then(doc => {
-            resolve(doc);
+            resolve(gameEvent);
           }).catch(err => {
             reject(err);
           });
@@ -578,8 +597,17 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
       });
     };
 
-    getGameById(previousGameEvent.gameId).then((item) => {
+    getGameById(gameId).then((item) => {
       game = item;
+      return getGameEvents({gameId: game.id, isActive: false});
+
+    }).then(nonActiveEvents => {
+      gameDuration = parseFloat(game.duration)
+      for (var i = 0; i < nonActiveEvents.length; i++) {
+        let event = nonActiveEvents[i];
+        event.calculateTimes();
+        gameDuration = gameDuration - event.timePlayed;
+      }
       if (gameEvents) {
         return gameEvents;
       } else {
@@ -587,8 +615,18 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
       }
     }).then(_gameEvents => {
       return promiseFor(promise, _gameEvents);
-    }).then(data => {
-      resolve(data);
+    }).then(items => {
+      gameEvents = items;
+      return getGameEvents({gameId: game.id});
+    }).then(items => {
+      game.duration = 0;
+      game.calcDuration(items);
+      return updateGame(game);
+    }).then(ok => {
+      gameEvents = gameEvents.map(item => {
+        return item.json(stringify = false, removeEmpty = true);
+      });
+      resolve(gameEvents);
     }).catch(err => {
       reject(err);
     })
@@ -922,17 +960,19 @@ const createGameEvents = ({
   startTime,
   startIn,
   level,
+  gameDuration,
   types = {}
 }) => {
   return new Promise((resolve, reject) => {
     try {
       let promise,
-        game;
+        game,
+        gameEvents;
       if (!gameId && !gameName) {
         reject('Gameid, gamename not filled in');
       }
       let _previousGameEvent;
-      promise = (gameData, i) => {
+      promise = (gameData, i, amount) => {
         return new Promise((resolve, reject) => {
           if (gameData) {
             const gameEvent = new GameEvent({gameId});
@@ -940,10 +980,18 @@ const createGameEvents = ({
               startTime = _previousGameEvent.endDate;
             }
 
-            let data = gameLogic.createData(gameDataId = gameData.id, level, startTime, startIn = startIn, maxTime = gameData.data.maxTime, timeBetween = null, gameDuration = game.duration);
+            let data = gameLogic.createData({
+              gameDataId: gameData.id,
+              level,
+              startTime,
+              startIn,
+              maxTime: gameData.data.maxTime,
+              amount,
+              gameDuration
+            });
             gameEvent.setData(data);
             _previousGameEvent = gameEvent;
-            resolve(gameEvent.json(stringify = false, removeEmpty = true));
+            resolve(gameEvent);
           } else {
             reject('No item');
           }
@@ -954,7 +1002,7 @@ const createGameEvents = ({
           amount: 0
         },
         'finish': {
-          amount: 0
+          amount: 1
         },
         'anthem': {
           amount: 0
@@ -979,7 +1027,14 @@ const createGameEvents = ({
       }).then(gameDatas => {
         return promiseFor(promise, gameDatas);
       }).then((items) => {
-        resolve(items);
+        gameEvents = items;
+        game.calcDuration(gameEvents);
+        return updateGame(game);
+      }).then(ok => {
+        gameEvents = gameEvents.map(item => {
+          return item.json(stringify = false, removeEmpty = true);
+        });
+        resolve(gameEvents);
       }).catch(err => {
         reject(err);
       })

@@ -24,6 +24,21 @@ export const setGame = (_game) => {
   game = _game;
 };
 
+export const setCookie = function( key, value, expire ) {
+	if ( key && value && expire ) {
+		var expires = expire.toDate();
+		document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+	}
+
+};
+
+export const getCookie = function( key ) {
+	if ( key ) {
+		var keyValue = document.cookie.match( '(^|;) ?' + key + '=([^;]*)(;|$)' );
+		return keyValue ? keyValue[ 2 ] : null;
+	}
+
+};
 
 export const calculateTimeFormat=(time)=>{
   let timeFormat = '00:00:00';

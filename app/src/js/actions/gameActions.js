@@ -81,7 +81,7 @@ export function createGame(players, teamName,duration) {
   };
 }
 
-export function createGameEvents({game, startTime, startIn,level}) {
+export function createGameEvents({game, startTime, startIn,level,gameDuration}) {
   return dispatch => {
     try {
       if (!(game && game.id && game.gameName && level && (startIn || startTime))) {
@@ -91,7 +91,8 @@ export function createGameEvents({game, startTime, startIn,level}) {
         gameName: game.gameName,
         level,
         startTime,
-        startIn
+        startIn,
+        gameDuration
       }).then((response) => {
         var data = response.data;
         dispatch(createGameEvents_SUCCESS(data));

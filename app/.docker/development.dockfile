@@ -14,8 +14,16 @@ WORKDIR /var/www
 VOLUME /var/www
 
 RUN npm install
-
 RUN npm rebuild node-sass
+
+# use nodemon for development
+RUN npm install -g nodemon
+RUN npm install -g yarn
+RUN npm install -g webpack
+RUN npm install -g rimraf
+RUN npm install -g eslint
+
+
 
 EXPOSE $PORT
 ENTRYPOINT ["npm","run","debug"]

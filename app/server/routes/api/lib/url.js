@@ -11,6 +11,7 @@ const API = '/api'
 module.exports = {
   DEFAULT: API + '/',
   LOGIN: API + '/login',
+  AUTH: API + '/auth',
   UPLOAD: API + '/upload',
   MEMBER: API + '/member',
   GAME: API + '/game',

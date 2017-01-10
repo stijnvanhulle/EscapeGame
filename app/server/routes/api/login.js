@@ -41,8 +41,8 @@ module.exports = [
               var token = JWT.sign({
                 access_token: newAccess.access_token,
                 expires_in: newAccess.expires_in
-              }, secret);
-              reply({token});
+              }, secret,{ algorithm: 'HS256'});
+              reply({token,expires_in:parseFloat(newAccess.expires_in)});
             });
 
           } else {
@@ -57,13 +57,22 @@ module.exports = [
     }
 
   }, {
-    method: 'GET',
-    path: url.MEMBER,
+    method: 'POST',
+    path: url.AUTH,
     config: {
-      auth: 'jwt'
+      auth: false
     },
     handler: function(request, reply) {
-      reply({text: 'You used a Token!'}).header("Authorization", request.headers.authorization);
+      const {access_token} = request.payload;
+
+      Access.findOne({access_token}).exec(function(err, doc) {
+        if (err) {
+          reply(err);
+        } else {
+          reply(doc);
+        }
+      });
+
     }
   }
 ];

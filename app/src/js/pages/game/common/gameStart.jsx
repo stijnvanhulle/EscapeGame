@@ -48,7 +48,7 @@ class GameStart extends Component {
     this.loadEvents();
 
     if (this.props.game.isPlaying) {
-        this.state.countdown= 0;
+      this.state.countdown = 0;
     }
   }
 
@@ -82,14 +82,14 @@ class GameStart extends Component {
     let startTime;
     let startIn = this.state.countdown;
     if (!this.props.game.isPlaying) {
-      let _game=Object.assign({},this.props.game);
-      _game.isPlaying=true;
+      let _game = Object.assign({}, this.props.game);
+      _game.isPlaying = true;
       this.props.actions.updateGame(_game).then(() => {
-        return this.props.actions.createGameEvents({game:_game, startTime, startIn, level:1});
+        return this.props.actions.createGameEvents({game: _game, startTime, startIn, level: 5, gameDuration: 2 *60});
       }).then(() => {
         const gameEvents = this.props.gameEvents;
         console.log('GameEvents v1', gameEvents);
-        return this.props.actions.addGameEvent({data: gameEvents, game:_game});
+        return this.props.actions.addGameEvent({data: gameEvents, game: _game});
       }).then(() => {
         const gameEvents = this.props.gameEvents;
         console.log('GameEvents v2', gameEvents);
@@ -127,7 +127,7 @@ class GameStart extends Component {
     this.setState({message: this.props.game.description, canStart: true});
     setTimeout(() => {
       this.setState({message: null});
-      if (!game.isPlaying) {
+      if (!this.props.game.isPlaying) {
         this.startGame();
       }
 

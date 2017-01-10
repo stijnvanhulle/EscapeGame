@@ -16,11 +16,10 @@ class Emitter extends EventEmitter {}
 
 class Game {
   //obj of players
-  constructor(teamName = '', players = [], gameName = 'alien', duration) {
+  constructor(teamName = '', players = [], gameName = 'alien') {
     this.players = players;
     this.teamName = teamName;
     this.gameName = gameName;
-    this.duration = duration || 60;
     this.reset();
 
   }
@@ -32,6 +31,7 @@ class Game {
     this.alienName = null;
     this.isFinished = false;
     this.isPlaying = false;
+    this.duration = null;
     this.events = new Emitter();
   }
   generateAlienName() {
@@ -39,6 +39,22 @@ class Game {
   }
   setDescription(description) {
     this.description = description;
+  }
+  calcDuration(gameEvents = []) {
+    try {
+      if (!this.duration) {
+        this.duration = 0;
+      }
+      let first = gameEvents[0];
+      let last = gameEvents[gameEvents.length - 1];
+      const timeBetween = Math.abs(moment(first.activateDate).diff(moment(last.endDate), 'seconds'));
+      this.duration = timeBetween;
+      console.log('DURATION',this.duration);
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+
   }
 
   load({

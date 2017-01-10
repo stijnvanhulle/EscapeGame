@@ -9,17 +9,18 @@
 
 const API = '/api'
 export default {
-  DEFAULT: API + '/',
-LOGIN: API + '/login',
-UPLOAD: API + '/upload',
-MEMBER: API + '/member',
-GAME: API + '/game',
-GAME_GET: API + '/game' + '/{id}/',
-GAME_EVENTS: API + '/game' + '/{id}/events',
-GAME_EVENTS_UPDATE: API + '/game' + '/{id}/events/update',
-GAME_EVENTS_ADD: API + '/game' + '/{id}/events/add',
-GAME_EVENTS_RECAL: API + '/game' + '/{id}/events/recal',
+  DEFAULT : API + '/',
+  LOGIN : API + '/login',
+  AUTH : API + '/auth',
+  UPLOAD : API + '/upload',
+  MEMBER : API + '/member',
+  GAME : API + '/game',
+  GAME_GET : API + '/game' + '/{id}/',
+  GAME_EVENTS : API + '/game' + '/{id}/events',
+  GAME_EVENTS_UPDATE : API + '/game' + '/{id}/events/update',
+  GAME_EVENTS_ADD : API + '/game' + '/{id}/events/add',
+  GAME_EVENTS_RECAL : API + '/game' + '/{id}/events/recal',
 
-GAME_EVENT: API + '/game' + '/{id}/event',
-PLAYER: API + '/player'
+  GAME_EVENT : API + '/game' + '/{id}/event',
+  PLAYER : API + '/player'
 };

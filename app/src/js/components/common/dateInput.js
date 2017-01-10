@@ -35,14 +35,14 @@ const DateInput = ({
   }
 
   if(value){
-    value=moment(value);
+    value=moment(parseFloat(value));
   }else{
     value=moment();
   }
   let e={
     target:{
       name:'birthday',
-      value:null
+      value:''
     }
   }
 
@@ -64,7 +64,7 @@ DateInput.propTypes = {
   onChange: PropTypes.func.isRequired,
   required: PropTypes.bool,
   placeholder: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.number,
   type: PropTypes.string,
   error: PropTypes.string
 };

@@ -14,7 +14,9 @@ import * as gameActions from '../../../actions/gameActions';
 import PlayerForm from '../../../components/game/playerForm';
 class PlayerAdd extends Component {
   state = {
-    player: {},
+    player: {
+      birthday: moment().valueOf()
+    },
     errors: {},
     saving: false
   }
@@ -61,7 +63,7 @@ const mapDispatchToProps = dispatch => {
 PlayerAdd.propTypes = {
   players: PropTypes.array,
   game: PropTypes.object,
-  actions:PropTypes.object
+  actions: PropTypes.object
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayerAdd);

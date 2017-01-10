@@ -11,7 +11,7 @@ import React, {Component, PropTypes} from 'react';
 import axios from 'axios';
 import {socketConnect} from 'socket.io-react';
 import socketNames from 'lib/const/socketNames';
-import {runAudio} from 'lib/functions';
+import {runAudio, setCookie, getCookie} from 'lib/functions';
 import Header from 'components/header';
 import moment from 'moment';
 import $ from 'jquery';
@@ -56,38 +56,33 @@ class App extends Component {
       console.log(e);
     }
   }
-  loadToken = (cb) => {
-
+  loadToken = () => {
     try {
-      const token = localStorage.getItem('token');
-      if (token) {
-        axios.defaults.headers.common['Authorization'] = token;
-        cb(token);
-      } else {
-        cb(null);
-      }
+      const token = getCookie('token');
+      return token;
     } catch (e) {
       console.log(e);
-      cb(null);
+      return null;
     }
   }
   loadLogin = () => {
     let email = "stijn.vanhulle@outlook.com";
     let password = "stijn";
-    this.loadToken((token) => {
-      if (!token) {
-        axios.post(url.LOGIN, {email, password}).then((response) => {
-          var data = response.data;
-          console.log(data);
-          game.token = data.token;
-          localStorage.setItem('token', game.token);
-          axios.defaults.headers.common['Authorization'] = game.token;
-          this.loadOldGame();
-        }).catch((err) => {
-          game.token = null;
-        });
-      }
-    });
+    let token = this.loadToken(token);
+    if (!token) {
+      axios.post(url.LOGIN, {email, password}).then((response) => {
+        var {token, expires_in} = response.data;
+        game.token = token;
+        setCookie('token', token, moment(expires_in));
+        axios.defaults.headers.common['Authorization'] = token;
+        this.loadOldGame();
+      }).catch((err) => {
+        game.token = null;
+      });
+    } else {
+      axios.defaults.headers.common['Authorization'] = token;
+      this.loadOldGame();
+    }
 
   }
   loadSocket = () => {

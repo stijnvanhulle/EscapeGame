@@ -3,21 +3,63 @@
 * @Date:   2017-01-10T09:40:27+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-10T11:11:50+01:00
+* @Last modified time: 2017-01-10T11:58:48+01:00
 * @License: stijnvanhulle.be
 */
 const moment = require('moment');
 const {setToMoment} = require('../lib/functions');
 const levels = {
   //duration 60 minutes
-  level1: {}
-}
+  level1: {
+    duration: 1 + 0.9
+  },
+  level2: {
+    duration: 1 + 0.5
+  },
+  level3: {
+    duration: 1 + 0.2
+  },
+  level4: {
+    duration: 1 + 0.1
+  },
+  level5: {
+    duration: 1
+  },
+  level6: {
+    duration: 1 - 0.1
+  },
+  level7: {
+    duration: 1 - 0.1
+  },
+  level8: {
+    duration: 1 - 0.2
+  },
+  level9: {
+    duration: 1 - 0.5
+  },
+  level10: {
+    duration: 1 - 0.9
+  }
+};
 
 let gameLogic = {};
-gameLogic.createData = (gameDataId = null, level = 5, startTime = moment().valueOf(), startIn = 10, maxTime = null, timeBetween = null, gameDuration, amount) => {
+
+gameLogic.getLevel = (level) => {
+  return levels['level' + level];
+};
+gameLogic.createData = ({
+  gameDataId = null,
+  level = 5,
+  startTime = moment().valueOf(),
+  startIn = 10,
+  maxTime = null,
+  timeBetween = null,
+  gameDuration = 60 * 60,
+  amount
+}) => {
   try {
     let now = moment();
-    if (parseInt(level) > 3) {
+    if (parseInt(level) > 15) {
       throw new Error('Level is to big');
     }
     if (!startTime)
@@ -35,7 +77,11 @@ gameLogic.createData = (gameDataId = null, level = 5, startTime = moment().value
     }
 
     if (!timeBetween) {
-      timeBetween = gameLogic.calculateTimeBetween(gameDuration, level);
+      timeBetween = gameLogic.calculateTimeBetween(level, gameDuration, amount);
+      console.log('timeBetween', timeBetween, gameDuration);
+      if (isNaN(timeBetween)) {
+        throw new Error('Timebetween not number');
+      }
     }
 
     if (maxTime && timeBetween) {
@@ -47,7 +93,7 @@ gameLogic.createData = (gameDataId = null, level = 5, startTime = moment().value
     let activateDate = setToMoment(startTime).add('seconds', parseInt(startIn));
     let activateDate_temp = setToMoment(activateDate.valueOf());
 
-    let endDate = activateDate_temp.add('seconds', parseInt(timeBetween));
+    let endDate = activateDate_temp.add('seconds', timeBetween);
 
     if (!setToMoment(endDate).isAfter(setToMoment(activateDate))) {
       throw new Error('endDate not after activatedate');
@@ -59,7 +105,8 @@ gameLogic.createData = (gameDataId = null, level = 5, startTime = moment().value
       isActive: true,
       finishDate: null,
       gameDataId,
-      level
+      level,
+      timeBetween
     };
 
   } catch (e) {
@@ -69,22 +116,13 @@ gameLogic.createData = (gameDataId = null, level = 5, startTime = moment().value
 
 };
 
-gameLogic.calculateTimeBetween = (duration, level = 5) => { //duration in minutes
-  var seconds = 0;
-  var minutes = 0;
-  if (level == 1) {
-    minutes = 0; //TODO: set to 10
-    seconds = 20;
-    timeBetween = seconds + (minutes * 60);
-  } else if (level == 2) {
-    minutes = 5;
-    seconds = 0;
-    timeBetween = seconds + (minutes * 60);
-  } else if (level == 3) {
-    minutes = 2;
-    seconds = 0;
-    timeBetween = seconds + (minutes * 60);
-  }
+gameLogic.calculateTimeBetween = (level, gameDuration, amount) => { //duration in seconds
+  let levelObj = gameLogic.getLevel(level);
+  let itemDuration = gameDuration / amount; //in seconds
+  let timeBetween = parseFloat(itemDuration) * levelObj.duration;
+
+  return parseFloat(Math.abs(timeBetween));
+
 };
 gameLogic.levels = levels;
-module.exports.default = gameLogic;
+module.exports = gameLogic;

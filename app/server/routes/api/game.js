@@ -25,9 +25,9 @@ module.exports = [
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
-        let {players, teamName,duration} = request.payload;
+        let {players, teamName, duration} = request.payload;
         //players = JSON.parse(players);
-        const game = new Game(teamName, players,duration);
+        const game = new Game(teamName, players, duration);
 
         gameController.addGame(game).then((doc) => {
           return gameController.addPlayers(game);
@@ -75,12 +75,12 @@ module.exports = [
     method: `GET`,
     path: url.GAME_GET,
     config: {
-      auth: 'jwt'
+      auth: 'token'
     },
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
-                console.log(request.headers);
+        console.log(request.headers);
         let gameId = request.params.id;
         const game = new Game();
         let eventType;
@@ -122,10 +122,17 @@ module.exports = [
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
-        let {gameName, level, startTime, startIn} = request.payload;
+        let {gameName, level, startTime, startIn, gameDuration} = request.payload;
         let gameId = request.params.id;
 
-        gameController.createGameEvents({gameId, gameName, startTime, startIn, level}).then(gameEvents => {
+        gameController.createGameEvents({
+          gameId,
+          gameName,
+          startTime,
+          startIn,
+          level,
+          gameDuration
+        }).then(gameEvents => {
           reply(gameEvents);
         }).catch(err => {
           throw new Error(err);
@@ -263,7 +270,7 @@ module.exports = [
 
         const gameId = request.params.id;
 
-        getGameEvents(gameId).then(gameEvents => {
+        getGameEvents(gameId, canSort = true).then(gameEvents => {
           io.emit(socketNames.RECALCULATE_START, gameEvents);
           reply(gameEvents);
         }).catch(err => {
