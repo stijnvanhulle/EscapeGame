@@ -3,15 +3,19 @@
 * @Date:   2017-01-10T09:40:27+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-10T10:31:43+01:00
+* @Last modified time: 2017-01-10T11:08:22+01:00
 * @License: stijnvanhulle.be
 */
+const moment = require('moment');
+const {setToMoment} = require('../lib/functions');
+
 const levels = {
+  //duration 60 minutes
   level1: {}
 }
 
 let gameLogic = {};
-gameLogic.createData = (gameDataId = null, level = 5, startTime = moment().valueOf(), startIn = 10, maxTime = null, timeBetween = null, gameDuration) => {
+gameLogic.createData = (gameDataId = null, level = 5, startTime = moment().valueOf(), startIn = 10, maxTime = null, timeBetween = null, gameDuration, amount) => {
   try {
     let now = moment();
     if (parseInt(level) > 3) {
@@ -66,7 +70,7 @@ gameLogic.createData = (gameDataId = null, level = 5, startTime = moment().value
 
 };
 
-gameLogic.calculateTimeBetween = (duration, level = 5) => {
+gameLogic.calculateTimeBetween = (duration, level = 5) => { //duration in minutes
   var seconds = 0;
   var minutes = 0;
   if (level == 1) {
@@ -83,5 +87,5 @@ gameLogic.calculateTimeBetween = (duration, level = 5) => {
     timeBetween = seconds + (minutes * 60);
   }
 };
-
+gameLogic.levels = levels;
 module.exports.default = gameLogic;
