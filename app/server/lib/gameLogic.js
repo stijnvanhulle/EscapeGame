@@ -3,12 +3,11 @@
 * @Date:   2017-01-10T09:40:27+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-10T11:08:22+01:00
+* @Last modified time: 2017-01-10T11:11:50+01:00
 * @License: stijnvanhulle.be
 */
 const moment = require('moment');
 const {setToMoment} = require('../lib/functions');
-
 const levels = {
   //duration 60 minutes
   level1: {}
