@@ -1,0 +1,21 @@
+# latest official node image
+FROM node:latest
+
+MAINTAINER Stijn Van Hulle
+
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV MONGO=mongo
+ENV MQTT=mqtt
+ENV MONGO_PORT=27017
+
+WORKDIR /var/www
+VOLUME /var/www
+
+RUN npm install
+
+RUN npm rebuild node-sass
+
+EXPOSE $PORT
+ENTRYPOINT ["npm","run","debug"]

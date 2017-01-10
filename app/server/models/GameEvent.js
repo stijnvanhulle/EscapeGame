@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-04T20:50:38+01:00
+* @Last modified time: 2017-01-10T10:32:09+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -158,78 +158,6 @@ class GameEvent {
 
   }
 
-  createData(gameDataId = null, level = 1, startTime = moment().valueOf(), startIn = 10, maxTime = null, timeBetween = null) {
-    try {
-      let now = moment();
-      if (parseInt(level) > 3) {
-        throw new Error('Level is to big');
-      }
-      if (!startTime)
-        throw new Error('Time to start not filled in');
-      if (!gameDataId)
-        throw new Error('GameDataId not filled in');
-
-      startTime = setToMoment(startTime);
-      if (!startTime)
-        throw new Error('Time to start not a utc timestamp');
-
-      //delay of 5 seconds for push data
-      if (!startTime.isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', 5).isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', startIn).isSameOrAfter(now, 'second')) {
-        throw new Error('Time is not in the future ' + startTime.format().toString() + ' now: ' + now.format().toString());
-      }
-
-      if (!level) {
-        level = 1;
-      }
-
-      if (!timeBetween) {
-        var seconds = 0;
-        var minutes = 0;
-        if (level == 1) {
-          minutes = 0; //TODO: set to 10
-          seconds = 20;
-          timeBetween = seconds + (minutes * 60);
-        } else if (level == 2) {
-          minutes = 5;
-          seconds = 0;
-          timeBetween = seconds + (minutes * 60);
-        } else if (level == 3) {
-          minutes = 2;
-          seconds = 0;
-          timeBetween = seconds + (minutes * 60);
-        }
-      } else if (maxTime && timeBetween) {
-        if (maxTime < timeBetween) {
-          timeBetween = maxTime;
-        }
-      }
-
-      let activateDate = setToMoment(startTime).add('seconds', parseInt(startIn));
-      let activateDate_temp = setToMoment(activateDate.valueOf());
-
-      let endDate = activateDate_temp.add('seconds', parseInt(timeBetween));
-
-      if (!setToMoment(endDate).isAfter(setToMoment(activateDate))) {
-        throw new Error('endDate not after activatedate');
-        return;
-      }
-
-      this.load({
-        activateDate: parseFloat(activateDate.valueOf()),
-        endDate: parseFloat(endDate.valueOf()),
-        isActive: true,
-        finishDate: null,
-        gameDataId,
-        level
-      });
-
-    } catch (e) {
-      console.log(e);
-      throw e;
-    }
-
-  }
-
   setData({
     gameId,
     gameDataId,
@@ -272,16 +200,16 @@ class GameEvent {
 
   }
   setJobHashStart(jobHash) {
-      this.jobHashStart = jobHash;
+    this.jobHashStart = jobHash;
 
   }
   setJobHashEnd(jobHash) {
-      this.jobHashEnd = jobHash;
+    this.jobHashEnd = jobHash;
 
   }
   clearJobHash() {
-      this.jobHashStart = null;
-        this.jobHashEnd = null;
+    this.jobHashStart = null;
+    this.jobHashEnd = null;
   }
   setFinish(finish) {
     if (finish) {
@@ -325,9 +253,7 @@ class GameEvent {
       var copy = Object.assign({}, obj);
       copy.events = null;
       copy.model = null;
-      if (subDataJson) {
-
-      }
+      if (subDataJson) {}
 
       if (stringify) {
         json = JSON.stringify(copy);

@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T21:42:39+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-07T13:19:25+01:00
+* @Last modified time: 2017-01-10T10:48:07+01:00
 * @License: stijnvanhulle.be
 */
 const moment = require("moment");
@@ -80,7 +80,7 @@ functions.promiseFor = (promise, array) => {
       let ID = 0;
       var fn = function asyncMultiplyBy2(item) { // sample async action
         if (item) {
-          return promise(item, ID++);
+          return promise(item, ID++, array.length);
         } else {
           return reject('no item');
         }

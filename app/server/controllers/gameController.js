@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-05T12:50:20+01:00
+* @Last modified time: 2017-01-10T10:49:31+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -13,7 +13,7 @@ const moment = require('moment');
 
 const {calculateId, random} = require('./lib/functions');
 const scheduleJob = require("../lib/scheduleJob");
-
+const gameLogic = require('../lib/gameLogic');
 const {
   Game,
   GameEvent,
@@ -537,12 +537,13 @@ const getGameEvents = (find) => {
 
 const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
   return new Promise((resolve, reject) => {
+    let game;
     let isFirstTime = true;
     let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 5);
     let {gameId, finishDate} = previousGameEvent;
     let _previousGameEvent = previousGameEvent;
 
-    const promise = (item) => {
+    const promise = (item, i, amount) => {
       return new Promise((resolve, reject) => {
         if (item) {
           let gameEvent = new GameEvent({gameId});
@@ -554,7 +555,8 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
             }
 
           }
-          gameEvent.createData(gameDataId = gameEvent.gameDataId, gameEvent.level, startTime = startTime, startIn = 0, maxTime = null, timeBetween = null);
+          let data = gameLogic.createData(gameDataId = gameEvent.gameDataId, gameEvent.level, startTime = startTime, startIn = 0, maxTime = null, timeBetween = null, gameDuration = game.duration, amount=amount);
+          gameEvent.setData(data);
           _previousGameEvent = gameEvent;
           isFirstTime = false;
 
@@ -576,7 +578,8 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
       });
     };
 
-    Promise.resolve(true).then(() => {
+    getGameById(previousGameEvent.gameId).then((item) => {
+      game = item;
       if (gameEvents) {
         return gameEvents;
       } else {
@@ -923,7 +926,8 @@ const createGameEvents = ({
 }) => {
   return new Promise((resolve, reject) => {
     try {
-      let promise;
+      let promise,
+        game;
       if (!gameId && !gameName) {
         reject('Gameid, gamename not filled in');
       }
@@ -936,7 +940,8 @@ const createGameEvents = ({
               startTime = _previousGameEvent.endDate;
             }
 
-            gameEvent.createData(gameDataId = gameData.id, level, startTime, startIn = startIn, maxTime = gameData.data.maxTime, timeBetween = null);
+            let data = gameLogic.createData(gameDataId = gameData.id, level, startTime, startIn = startIn, maxTime = gameData.data.maxTime, timeBetween = null, gameDuration = game.duration);
+            gameEvent.setData(data);
             _previousGameEvent = gameEvent;
             resolve(gameEvent.json(stringify = false, removeEmpty = true));
           } else {
@@ -967,7 +972,11 @@ const createGameEvents = ({
           amount: 0
         }
       };
-      getGameDataFromGameName(gameName, types).then(gameDatas => {
+
+      getGameById(gameId).then(item => {
+        game = item;
+        return getGameDataFromGameName(gameName, types);
+      }).then(gameDatas => {
         return promiseFor(promise, gameDatas);
       }).then((items) => {
         resolve(items);

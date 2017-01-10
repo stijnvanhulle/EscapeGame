@@ -3,7 +3,7 @@
 * @Date:   2016-10-15T13:52:52+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-01T21:54:03+01:00
+* @Last modified time: 2017-01-08T23:41:14+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -15,8 +15,9 @@ const mongoose = require("mongoose");
 const Server = require('hapi').Server;
 //const WebpackPlugin = require('hapi-webpack-plugin');
 const port = process.env.PORT || 3000;
-const mongo=process.env.mongo|| 'localhost';
-const {version}= require('../package.json');
+const mongo = process.env.MONGO || 'localhost';
+const mongo_port = process.env.MONGO_PORT || 3000;
+const {version} = require('../package.json');
 
 const mongodb = {
   options: {
@@ -27,7 +28,7 @@ const mongodb = {
       poolSize: 5
     }
   },
-  uri: 'mongodb://'+ mongo +':3001/app'
+  uri: 'mongodb://' + mongo + ':' + mongo_port + '/app'
 };
 
 const server = new Server({
@@ -49,9 +50,9 @@ server.register(require(`./routes/`), pluginHandler);
 const startServer = () => {
   scheduleJob.cancelAll();
   mongoose.connect(mongodb.uri, mongodb.options, (err) => {
-    if (err){
+    if (err) {
       console.log(err);
-    }else{
+    } else {
       server.start(err => {
         if (err)
           console.error(err);

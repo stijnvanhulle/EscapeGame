@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-07T13:42:22+01:00
+* @Last modified time: 2017-01-10T10:00:28+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -25,9 +25,9 @@ module.exports = [
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
-        let {players, teamName} = request.payload;
+        let {players, teamName,duration} = request.payload;
         //players = JSON.parse(players);
-        const game = new Game(teamName, players);
+        const game = new Game(teamName, players,duration);
 
         gameController.addGame(game).then((doc) => {
           return gameController.addPlayers(game);

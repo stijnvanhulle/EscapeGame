@@ -291,7 +291,6 @@ def makeJsonObject_detection(value=None,image1=None,image2=None,read=False):
 	return str(item)
 
 def exit():
-	client.publish("online", makeJsonObject(False))
 	reset()
 
 

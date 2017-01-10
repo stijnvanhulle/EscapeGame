@@ -3,11 +3,12 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T12:38:34+01:00
+* @Last modified time: 2017-01-10T10:00:49+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
 const {Game: Model} = require('./mongo');
+const moment = require('moment');
 const Chance = require('chance');
 const c = new Chance();
 
@@ -15,10 +16,11 @@ class Emitter extends EventEmitter {}
 
 class Game {
   //obj of players
-  constructor(teamName = '', players = [], gameName = 'alien') {
+  constructor(teamName = '', players = [], gameName = 'alien', duration) {
     this.players = players;
     this.teamName = teamName;
     this.gameName = gameName;
+    this.duration = duration || 60;
     this.reset();
 
   }
@@ -29,7 +31,7 @@ class Game {
     this.date = null;
     this.alienName = null;
     this.isFinished = false;
-    this.isPlaying=false;
+    this.isPlaying = false;
     this.events = new Emitter();
   }
   generateAlienName() {
@@ -47,7 +49,8 @@ class Game {
     alienName,
     gameName,
     isFinished,
-    isPlaying
+    isPlaying,
+    duration
   }) {
     try {
       this.alienName = alienName
@@ -71,9 +74,12 @@ class Game {
       this.isFinished = isFinished
         ? isFinished
         : this.isFinished;
-        this.isPlaying = isPlaying
-          ? isPlaying
-          : this.isPlaying;
+      this.isPlaying = isPlaying
+        ? isPlaying
+        : this.isPlaying;
+      this.duration = duration
+        ? parseFloat(duration)
+        : this.duration;
 
     } catch (e) {
       console.log(e);
