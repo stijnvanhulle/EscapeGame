@@ -399,7 +399,7 @@ const addOnRandomArray = (array, item, amount) => {
   const newRandom = () => {
     random = Math.floor((Math.random() * array.length) + 1);
   };
-  if(amount==1){
+  if (amount == 1) {
     return newArray;
   }
 
@@ -454,6 +454,30 @@ const updateGame = (obj) => {
       }
     });
 
+  });
+};
+
+const updateGameEventsAfterGameEvent = (gameEvent, newLevel) => {
+  return new Promise((resolve, reject) => {
+    const promise = (item, i, amount) => {
+      return updateGameEvent(item);
+    };
+
+    getGameEventFromGame(gameId = gameEvent.gameId, startId = gameEvent.id + 1)
+    .then(gameEvents => {
+      gameEvents = gameEvents.map(item => {
+        item.level = newLevel;
+        return item;
+      });
+      return promiseFor(promise, gameEvents);
+    }).then(gameEvents => {
+      return updateGameEventsFrom(gameEvent);
+    }).then(gameEvents => {
+      console.log('ok2',gameEvents);
+      resolve(gameEvents);
+    }).catch(err => {
+      reject(err);
+    });
   });
 };
 const updateGameEvent = (obj, isActive) => {
@@ -545,87 +569,113 @@ const getGameEvents = (find, canSort = false) => {
   });
 };
 
-const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
+const addGameEvent = (gameEvent) => {
   return new Promise((resolve, reject) => {
-    previousGameEvent.calculateTimes();
+    try {
+      if (!gameEvent instanceof GameEvent) {
+        throw new Error('No instance of');
+      }
+      let gameId = gameEvent.gameId;
 
-    let game;
-    let gameDuration;
-    let isFirstTime = true;
-    let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 5);
+      //TODO: make for release 2
 
-    let {gameId, finishDate} = previousGameEvent;
-    let _previousGameEvent = previousGameEvent;
-    let gameEvents;
-    let gameEvents_amount;
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
 
-    const promise = (item, i, amount) => {
-      return new Promise((resolve, reject) => {
-        let gameEvent;
-        if (item) {
-          gameEvent = new GameEvent({gameId});
-          gameEvent.load(item);
+  });
 
-          if (_previousGameEvent) {
-            if (!isFirstTime) {
-              startTime = _previousGameEvent.endDate;
+};
+
+const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let game;
+      let gameDuration;
+      let isFirstTime = true;
+      let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 5);
+
+      let {gameId, finishDate} = previousGameEvent;
+      let _previousGameEvent = previousGameEvent;
+      let gameEvents;
+      let gameEvents_amount;
+
+      const promise = (item, i, amount) => {
+        return new Promise((resolve, reject) => {
+          let gameEvent;
+          if (item) {
+            gameEvent = new GameEvent({gameId});
+            gameEvent.load(item);
+
+            if (_previousGameEvent) {
+              if (!isFirstTime) {
+                startTime = _previousGameEvent.endDate;
+              }
+
             }
+            let data = gameLogic.createData({
+              gameDataId: gameEvent.gameDataId,
+              level: gameEvent.level,
+              startTime,
+              startIn: 0,
+              amount: gameEvents_amount,
+              gameDuration
+            });
+            gameEvent.setData(data);
+            _previousGameEvent = gameEvent;
+            isFirstTime = false;
+
+            getGameDataById(gameEvent.gameDataId).then(gameData => {
+              let ok = updateEventScheduleRule(gameEvent);
+              if (ok) {
+                return updateGameEvent(gameEvent);
+              } else {
+                reject('update schedule not correct', gameEvent);
+              }
+
+            }).then(doc => {
+              resolve(gameEvent);
+            }).catch(err => {
+              reject(err);
+            });
 
           }
-          let data = gameLogic.createData({
-            gameDataId: gameEvent.gameDataId,
-            level: gameEvent.level,
-            startTime,
-            startIn: 0,
-            amount: gameEvents_amount,
-            gameDuration
-          });
-          gameEvent.setData(data);
-          _previousGameEvent = gameEvent;
-          isFirstTime = false;
+        });
+      };
 
-          getGameDataById(gameEvent.gameDataId).then(gameData => {
-            let ok = updateEventScheduleRule(gameEvent);
-            if (ok) {
-              return updateGameEvent(gameEvent);
-            } else {
-              reject('update schedule not correct', gameEvent);
-            }
-
-          }).then(doc => {
-            resolve(gameEvent);
-          }).catch(err => {
-            reject(err);
-          });
-
+      getGameById(gameId).then((item) => {
+        game = item;
+        return getGameEvents({gameId: game.id});
+      }).then(items => {
+        gameEvents_amount = items.length;
+        game.duration = game.calcDuration(items, isTotal = false);
+        gameDuration = game.calcDuration(items, isTotal = true);
+        if (!game.duration || !gameDuration)
+          reject('No duration');
+        return updateGame(game);
+      }).then(ok => {
+        if (gameEvents) {
+          return gameEvents;
+        } else {
+          return getGameEventFromGame(gameId, startId = previousGameEvent.id + 1);
         }
+      }).then(_gameEvents => {
+        return promiseFor(promise, _gameEvents);
+      }).then(gameEvents => {
+        gameEvents = gameEvents.map(item => {
+          return item.json(stringify = false, removeEmpty = true);
+        });
+        resolve(gameEvents);
+      }).catch(err => {
+        reject(err);
       });
-    };
 
-    getGameById(gameId).then((item) => {
-      game = item;
-      return getGameEvents({gameId: game.id});
-    }).then(items => {
-      gameEvents_amount = items.length;
-      game.duration = game.calcDuration(items, isTotal = false);
-      gameDuration = game.calcDuration(items, isTotal = true);
-      return updateGame(game);
-    }).then(ok => {
-      if (gameEvents) {
-        return gameEvents;
-      } else {
-        return getGameEventFromGame(gameId, startId = previousGameEvent.id + 1);
-      }
-    }).then(_gameEvents => {
-      return promiseFor(promise, _gameEvents);
-    }).then(gameEvents => {
-      gameEvents = gameEvents.map(item => {
-        return item.json(stringify = false, removeEmpty = true);
-      });
-      resolve(gameEvents);
-    }).catch(err => {
-      reject(err);
-    })
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
   });
 };
 
@@ -886,6 +936,8 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
     try {
       gameEvent.setInactive();
       gameEvent.setJobHashEnd(null);
+      gameEvent.calculateTimes();
+
       if (!gameEvent.finishDate) {
         gameEvent.setFinish(gameEvent.endDate);
       }
@@ -899,12 +951,27 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
           gameEvent: gameEvent.json(false, true, false),
           activeEvents: amount
         });
+
+        //recalculate levels of timePercent, timePlayed
+        // percentspeed: 0.25=> maar een 1/4 nodig gehad om te spelen
+        let newLevel = parseFloat(gameEvent.level);
+        if (gameEvent.percentSpeed < 0.4) {
+          //kleiner==sneller
+          newLevel++;
+          return updateGameEventsAfterGameEvent(gameEvent, newLevel);
+        } else if (gameEvent.percentSpeed > 0.6) {
+          newLevel--;
+          return updateGameEventsAfterGameEvent(gameEvent, newLevel);
+        } else {
+          return Promise.resolve(true);
+        }
+
+      }).then(ok => {
         if (recalculate) {
           return updateGameEventsFrom(gameEvent);
         } else {
           resolve({runned: true});
         }
-
       }).then(obj => {
         resolve({runned: true});
       }).catch((err) => {
@@ -1025,6 +1092,8 @@ const createGameEvents = ({
       }).then((items) => {
         gameEvents = items;
         game.duration = game.calcDuration(gameEvents, isTotal = true);
+        if (!game.duration)
+          throw new Error('No duration');
         return updateGame(game);
       }).then(ok => {
         gameEvents = gameEvents.map(item => {
@@ -1051,7 +1120,7 @@ const addEvent = (gameEvent, i) => {
       if (!gameEvent instanceof GameEvent) {
         throw new Error('No instance of');
       }
-      //TODO:check of gameEvent already exists
+
       let gameData;
       getGameDataFromId(gameEvent.gameDataId).then(_gameData => {
         gameData = _gameData;

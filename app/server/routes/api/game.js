@@ -220,7 +220,7 @@ module.exports = [
         let {gameDataId, isActive, activateDate, endDate} = request.payload;
         const gameEvent = new GameEvent({gameId: request.params.id});
         gameController.getGameDataById(gameDataId).then(gameData => {
-          gameEvent.setGameData({gameDataId: gameData.id, isActive, activateDate, endDate});
+          gameEvent.setData({gameDataId: gameData.id, isActive, activateDate, endDate});
           return gameController.addEvent(gameEvent);
         }).then(doc => {
           reply(doc);

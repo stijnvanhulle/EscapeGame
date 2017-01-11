@@ -8,7 +8,7 @@
 */
 const EventEmitter = require('events');
 const moment = require('moment');
-const {setToMoment} = require('../lib/functions');
+const {setToMoment, round} = require('../lib/functions');
 const {GameEvent: Model} = require('./mongo');
 
 class Emitter extends EventEmitter {}
@@ -124,7 +124,7 @@ class GameEvent {
       const timePlayed = Math.abs(moment(this.activateDate).diff(moment(this.finishDate), 'seconds'));
       this.timePlayed = parseFloat(timePlayed);
 
-      this.percentSpeed = parseFloat(timePlayed / timeBetween);
+      this.percentSpeed = round(parseFloat(timePlayed / timeBetween), 2);
     }
 
   }

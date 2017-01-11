@@ -35,6 +35,10 @@ functions.filter = (items, ...filterOn) => {
 
 };
 
+functions.round = function(value,places) {
+  return +(Math.round(value + "e+" + places)  + "e-" + places);
+}
+
 functions.convertToCsv = (data, fields) => {
   if (!fields) {
     for (var i = 0; i < data.length; i++) {
