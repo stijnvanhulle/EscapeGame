@@ -409,6 +409,9 @@ const addOnRandomArray = (array, item, amount) => {
     if (random == oldRandom) {
       newRandom();
     }
+    if (random == array.length - 1) {
+      newRandom();
+    }
     if (random > 1 && newArray[random - 1] && newArray[random - 1].typeId == item.typeId) {
       newRandom();
     }
@@ -462,26 +465,25 @@ const updateGameEventsAfterGameEvent = (gameEvent, newLevel) => {
     const promise = (item, i, amount) => {
       return updateGameEvent(item);
     };
+    console.log('UPDATE LEVEL ', gameEvent, newLevel);
 
-    getGameEventFromGame(gameId = gameEvent.gameId, startId = gameEvent.id + 1)
-    .then(gameEvents => {
+    getGameEventFromGame(gameId = gameEvent.gameId, startId = gameEvent.id + 1).then(gameEvents => {
       gameEvents = gameEvents.map(item => {
         item.level = newLevel;
         return item;
       });
       return promiseFor(promise, gameEvents);
     }).then(gameEvents => {
-      return updateGameEventsFrom(gameEvent);
-    }).then(gameEvents => {
-      console.log('ok2',gameEvents);
+      console.log('ok1', gameEvents);
       resolve(gameEvents);
     }).catch(err => {
       reject(err);
     });
   });
 };
-const updateGameEvent = (obj, isActive) => {
+const updateGameEvent = (obj, extra = {}) => {
   return new Promise((resolve, reject) => {
+    let {ignore, isActive} = extra;
     if (!obj && obj.id)
       reject('No id for gameEvent');
 
@@ -489,51 +491,41 @@ const updateGameEvent = (obj, isActive) => {
       reject('No instance of gameEvent');
     }
     obj = obj.json(stringify = false);
-    //
-    if (isActive == null) {
-      GameEventModel.update({
-        id: obj.id
-      }, {
-        isActive: obj.isActive,
-        jobHash: obj.jobHash,
-        finishDate: obj.finishDate,
-        activateDate: obj.activateDate,
-        endDate: obj.endDate,
-        gameDataId: obj.gameDataId,
-        level: obj.level,
-        tries: obj.tries
-      }, {
-        multi: true
-      }, function(err, raw) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(raw);
-        }
-      });
-    } else {
-      GameEventModel.update({
+    let find = {
+      id: obj.id
+    };
+    if (isActive) {
+      find = {
         id: obj.id,
         isActive: isActive
-      }, {
-        isActive: obj.isActive,
-        jobHash: obj.jobHash,
-        finishDate: obj.finishDate,
-        activateDate: obj.activateDate,
-        endDate: obj.endDate,
-        gameDataId: obj.gameDataId,
-        level: obj.level,
-        tries: obj.tries
-      }, {
-        multi: true
-      }, function(err, raw) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(raw);
-        }
-      });
+      };
     }
+
+    let change = {};
+    let keys = Object.keys(obj);
+    if (ignore && ignore.length > 0) {
+      for (var i = 0; i < ignore.length; i++) {
+        for (var i2 = 0; i2 < keys.length; i2++) {
+          let key = keys[i2]
+          if (key != ignore[i]) {
+            change[key] = obj[key];
+          }
+        }
+
+      }
+    } else {
+      change = obj;
+    }
+
+    GameEventModel.update(find, change, {
+      multi: true
+    }, function(err, raw) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(raw);
+      }
+    });
 
   });
 };
@@ -625,6 +617,7 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
             gameEvent.setData(data);
             _previousGameEvent = gameEvent;
             isFirstTime = false;
+            console.log(gameEvent.calculateTimes());
 
             getGameDataById(gameEvent.gameDataId).then(gameData => {
               let ok = updateEventScheduleRule(gameEvent);
@@ -649,8 +642,8 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
         return getGameEvents({gameId: game.id});
       }).then(items => {
         gameEvents_amount = items.length;
-        game.duration = game.calcDuration(items, isTotal = false);
-        gameDuration = game.calcDuration(items, isTotal = true);
+        game.duration = game.calcDuration(items, isTimeBetween = false);
+        gameDuration = game.calcDuration(items, isTimeBetween = true);
         if (!game.duration || !gameDuration)
           reject('No duration');
         return updateGame(game);
@@ -750,7 +743,7 @@ const addEventScheduleRule = (gameData, gameEvent) => {
     }).then(job => {
       if (job && job.name) {
         gameEvent.setJobHashEnd(job.name);
-        return updateGameEvent(gameEvent);
+        return updateGameEvent(gameEvent, {ignore: ['level']});
       } else {
         reject('no job or hash', job);
       }
@@ -769,14 +762,14 @@ const updateEventScheduleRule = (gameEvent) => {
   if (gameEvent.jobHashStart && gameEvent.activateDate) {
     okUpdate = scheduleJob.updateRule(gameEvent.jobHashStart, gameEvent.activateDate);
   } else {
-    console.log('jobhash start not filled in');
+    console.log('jobhash start not filled in', gameEvent);
     okUpdate = false;
   }
 
   if (gameEvent.jobHashEnd && gameEvent.endDate) {
     okUpdate = scheduleJob.updateRule(gameEvent.jobHashEnd, gameEvent.endDate);
   } else {
-    console.log('jobhash end not filled in');
+    console.log('jobhash end not filled in', gameEvent);
     okUpdate = false;
   }
   return okUpdate;
@@ -876,10 +869,11 @@ const finishGameEventFromHash = (inputData) => {
         io.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct, triesOver});
 
         if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || gameEvent.isCorrect || triesOver == 0) {
-          gameEvent.setFinish(inputData.finishDate);
+          gameEvent.setFinish(moment.valueOf());
+          console.log(gameEvent)
           return endGameEvent(gameData, gameEvent, recalculate = true);
         } else {
-          updateGameEvent(gameEvent).then(() => {
+          updateGameEvent(gameEvent, {ignore: ['level']}).then(() => {
             return {runned: false};
           }).catch(() => {
             reject('Cannot update gameevent');
@@ -909,7 +903,7 @@ const startGameEvent = (gameData, gameEvent, recalculate = false) => {
       gameEvent.calculateTimes();
       gameEvent.setJobHashStart(null);
 
-      updateGameEvent(gameEvent).then(obj => {
+      updateGameEvent(gameEvent, {ignore: ['level']}).then(obj => {
         return getGameEventByIsActive(true, gameEvent.gameId);
       }).then(data => {
         const amount = data.length;
@@ -936,13 +930,13 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
     try {
       gameEvent.setInactive();
       gameEvent.setJobHashEnd(null);
-      gameEvent.calculateTimes();
 
       if (!gameEvent.finishDate) {
         gameEvent.setFinish(gameEvent.endDate);
       }
+      gameEvent.calculateTimes();
 
-      updateGameEvent(gameEvent).then(obj => {
+      updateGameEvent(gameEvent, {ignore: ['level']}).then(obj => {
         return getGameEventByIsActive(true, gameEvent.gameId);
       }).then(data => {
         const amount = data.length;
@@ -951,21 +945,26 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
           gameEvent: gameEvent.json(false, true, false),
           activeEvents: amount
         });
-
+        /*
         //recalculate levels of timePercent, timePlayed
         // percentspeed: 0.25=> maar een 1/4 nodig gehad om te spelen
         let newLevel = parseFloat(gameEvent.level);
-        if (gameEvent.percentSpeed < 0.4) {
+        //if (gameEvent.percentSpeed < 0.4) {
+        console.log('percentspeed', gameEvent.percentSpeed);
+        if (gameEvent.percentSpeed < 0.4 && gameEvent.percentSpeed != 1) {
           //kleiner==sneller
           newLevel++;
+          recalculate = true;
           return updateGameEventsAfterGameEvent(gameEvent, newLevel);
-        } else if (gameEvent.percentSpeed > 0.6) {
+        } else if (gameEvent.percentSpeed > 0.6 && gameEvent.percentSpeed != 1) {
           newLevel--;
+          recalculate = true;
           return updateGameEventsAfterGameEvent(gameEvent, newLevel);
         } else {
           return Promise.resolve(true);
-        }
+        }*/
 
+        return Promise.resolve(true);
       }).then(ok => {
         if (recalculate) {
           return updateGameEventsFrom(gameEvent);
@@ -1077,7 +1076,13 @@ const createGameEvents = ({
           amount: 0
         },
         'bom': {
-          amount: 2
+          amount: 3
+        },
+        'light': {
+          amount: 0
+        },
+        'scan': {
+          amount: 0
         },
         'sound': {
           amount: 0

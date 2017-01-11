@@ -131,7 +131,10 @@ class App extends Component {
     }
 
     if (correct) {
-      game.letters.push(data.letter);
+      if (data && data.letter) {
+        game.letters.push(data.letter);
+      }
+
     }
 
     if (!triesOver || triesOver > 0) {

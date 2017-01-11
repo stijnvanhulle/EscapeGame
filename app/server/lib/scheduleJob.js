@@ -8,6 +8,7 @@
 */
 const {setTomoment, promiseFor} = require('./functions');
 const fs = require('fs');
+const moment = require('moment');
 const schedule = require('node-schedule');
 const {Game, GameEvent, GameData} = require('../models');
 const Chance = require('chance');
@@ -72,7 +73,7 @@ const endJob = function(jobHash, data = null) {
     job.emit('run', data);
     return true;
   } else {
-  console.log('job not found', jobHash);
+    console.log('job not found', jobHash);
     return false;
   }
 
@@ -159,6 +160,7 @@ const addRule = (m, dataRule, f) => {
         hash
       };
 
+
       if (f && f instanceof Function) {
         f(result).then((result) => {
           result.isCanceled = schedule.cancelJob(job);
@@ -175,7 +177,7 @@ const addRule = (m, dataRule, f) => {
 
     job.on('run', () => {
       job.cancel();
-      console.log('New job is done on ' + date + ', hash: ' + hash);
+      console.log('New job is done on ' + date + ', hash: ' + hash, moment(date).format(), moment(new Date()).format());
       log();
     });
     job.on('end', (data) => {

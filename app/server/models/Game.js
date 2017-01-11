@@ -40,14 +40,14 @@ class Game {
   setDescription(description) {
     this.description = description;
   }
-  calcDuration(gameEvents = [], isTotal) {
+  calcDuration(gameEvents = [], isTimeBetween) {
     try {
       let duration = 0;
       for (var i = 0; i < gameEvents.length; i++) {
         let gameEvent = gameEvents[i];
         gameEvent.calculateTimes();
-        let time;
-        if (isTotal) {
+        let time = 0;
+        if (isTimeBetween) {
           time = gameEvent.timeBetween;
         } else {
           if (gameEvent.timePlayed) {
@@ -55,12 +55,13 @@ class Game {
           } else {
             time = gameEvent.timeBetween;
           }
+
         }
 
         duration += time;
       }
 
-      console.log('DURATION', this.duration);
+      console.log('DURATION', duration, ' isTimeBetween: ', isTimeBetween);
       return duration;
     } catch (e) {
       console.log(e);

@@ -124,7 +124,7 @@ class GameEvent {
       const timePlayed = Math.abs(moment(this.activateDate).diff(moment(this.finishDate), 'seconds'));
       this.timePlayed = parseFloat(timePlayed);
 
-      this.percentSpeed = round(parseFloat(timePlayed / timeBetween), 2);
+      this.percentSpeed = parseFloat((timePlayed / timeBetween).toFixed(2));
     }
 
   }
@@ -212,9 +212,20 @@ class GameEvent {
     this.jobHashEnd = null;
   }
   setFinish(finish) {
-    if (finish) {
-      finish = setToMoment(finish);
-      this.finishDate = parseFloat(finish.valueOf());
+    try {
+      if (finish) {
+
+        finish = setToMoment(finish);
+
+        if (setToMoment(this.activateDate).isAfter(finish)) {
+          console.log(moment().format(),finish.format());
+          throw new Error('finishdate not after activatendate', this);
+          return;
+        }
+        this.finishDate = parseFloat(finish.valueOf());
+      }
+    } catch (e) {
+      console.log(e);
     }
 
   }

@@ -34,20 +34,25 @@ class Countdown extends Component {
     clearInterval(this.state.intervalObj);
   }
   timer = () => {
-    var newTime = this.state.time - this.state.interval;
-    if (newTime > 0) {
-      if(this.props.sendToPi){
-        let timeFormat = calculateTimeFormat(newTime);
-        piController.tickBom(timeFormat);
+    if(this.state.time && this.state.interval){
+      var newTime = this.state.time - this.state.interval;
+      if (newTime > 0) {
+        if (this.props.sendToPi) {
+          let timeFormat = calculateTimeFormat(newTime);
+          piController.tickBom(timeFormat);
+        }
+
+        this.setState({time: newTime});
+        console.log(newTime);
+      } else {
+
+        this.stop();
+        this.props.isDone(true);
       }
-
-      this.setState({time: newTime});
-      console.log(newTime);
-    } else {
-
-      this.stop();
-      this.props.isDone(true);
+    }else{
+      console.log('cannot count',this.state);
     }
+
   }
   pause = () => {
     clearInterval(this.state.intervalObj);
@@ -60,16 +65,17 @@ class Countdown extends Component {
   }
   start = (howLong) => {
     this.pause();
-    let intervalObj = setInterval(this.timer, this.state.interval);
 
     if (howLong) {
       this.setState({
-        intervalObj,
         time: howLong * 1000,
         isStopped: false
       });
+
+      let intervalObj = setInterval(this.timer, this.state.interval);
+      this.setState({intervalObj});
     } else {
-      this.setState({intervalObj, isStopped: false});
+      this.setState({isStopped: false});
     }
 
   }
@@ -104,7 +110,7 @@ Countdown.propTypes = {
   className: PropTypes.string,
   howLong: PropTypes.number.isRequired,
   isDone: PropTypes.func,
-  sendToPi:PropTypes.bool
+  sendToPi: PropTypes.bool
 }
 
 export default Countdown;
