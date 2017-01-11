@@ -15,7 +15,7 @@ import PlayerForm from '../../../components/game/playerForm';
 class PlayerAdd extends Component {
   state = {
     player: {
-      birthday: moment().valueOf()
+      birthday: null
     },
     errors: {},
     saving: false
@@ -25,6 +25,10 @@ class PlayerAdd extends Component {
   }
   addPlayer = e => {
     e.preventDefault();
+    if(!this.state.player.birthday){
+      console.log('birthday not filled in');
+      return;
+    }
     console.log(`saving ${this.state.player}`);
     this.props.actions.createPlayer(this.state.player);
 

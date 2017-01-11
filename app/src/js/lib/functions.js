@@ -6,6 +6,8 @@
 * @Last modified time: 2017-01-03T15:07:09+01:00
 * @License: stijnvanhulle.be
 */
+import moment from 'moment';
+
 let game;
 
 export const setUrl = (url, hostname = `http://localhost:3000`) => {
@@ -24,23 +26,44 @@ export const setGame = (_game) => {
   game = _game;
 };
 
-export const setCookie = function( key, value, expire ) {
-	if ( key && value && expire ) {
-		var expires = expire.toDate();
-		document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
-	}
+export const checkError = (err) => {
+  let status = err.response.status;
+  if (status == 401) {
+    //unatuahroized
+    clearCookie('token');
+  }
+  if (status == 500) {}
+
+  return err;
+};
+
+export const setCookie = function(key, value, expire) {
+  if (key && value && expire) {
+    var expires = expire.toDate();
+    document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+  }
 
 };
 
-export const getCookie = function( key ) {
-	if ( key ) {
-		var keyValue = document.cookie.match( '(^|;) ?' + key + '=([^;]*)(;|$)' );
-		return keyValue ? keyValue[ 2 ] : null;
-	}
+export const clearCookie = function(key) {
+  if (key) {
+    var expires = moment().add('days', -1).toDate();
+    document.cookie = key + '=' + '' +
+        ';expires=' + expires.toUTCString();
+  }
+
+};
+export const getCookie = function(key) {
+  if (key) {
+    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+    return keyValue
+      ? keyValue[2]
+      : null;
+  }
 
 };
 
-export const calculateTimeFormat=(time)=>{
+export const calculateTimeFormat = (time) => {
   let timeFormat = '00:00:00';
 
   function pad(num, size) {

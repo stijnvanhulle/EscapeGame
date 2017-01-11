@@ -7,7 +7,7 @@
 * @License: stijnvanhulle.be
 */
 import axios from 'axios';
-import {setUrl, setParams} from '../lib/functions';
+import {setUrl, setParams, checkError} from '../lib/functions';
 import _url from '../lib/const/url';
 import actionsUrl from '../lib/const/actionsUrl';
 
@@ -52,7 +52,7 @@ export function createPlayer(player) {
         var data = response.data;
         dispatch(createPlayer_SUCCESS(data));
       }).catch((err) => {
-        throw err;
+        throw checkError(err)
       })
 
     } catch (e) {
@@ -61,17 +61,17 @@ export function createPlayer(player) {
 
   };
 }
-export function createGame(players, teamName,duration) {
+export function createGame(players, teamName, duration) {
   return dispatch => {
     try {
       if (!(players && teamName)) {
         return Promise.reject('Not all data filled in from createGame');
       }
-      return axios.post(url.GAME, {players, teamName,duration}).then((response) => {
+      return axios.post(url.GAME, {players, teamName, duration}).then((response) => {
         var data = response.data;
         dispatch(createGame_SUCCESS(data));
       }).catch((err) => {
-        throw err;
+        throw checkError(err)
       })
 
     } catch (e) {
@@ -81,7 +81,7 @@ export function createGame(players, teamName,duration) {
   };
 }
 
-export function createGameEvents({game, startTime, startIn,level,gameDuration}) {
+export function createGameEvents({game, startTime, startIn, level, gameDuration}) {
   return dispatch => {
     try {
       if (!(game && game.id && game.gameName && level && (startIn || startTime))) {
@@ -97,7 +97,7 @@ export function createGameEvents({game, startTime, startIn,level,gameDuration}) 
         var data = response.data;
         dispatch(createGameEvents_SUCCESS(data));
       }).catch((err) => {
-        throw err;
+        throw checkError(err)
       })
 
     } catch (e) {
@@ -120,7 +120,7 @@ export function updateGame(game) {
         var data = response.data;
         dispatch(updateGame_SUCCESS(data));
       }).catch((err) => {
-        throw err;
+        throw checkError(err)
       })
 
     } catch (e) {
@@ -145,7 +145,7 @@ export function stopGame(game) {
         var data = response.data;
         dispatch(stopGame_SUCCESS(data));
       }).catch((err) => {
-        throw err;
+        throw checkError(err)
       })
 
     } catch (e) {
@@ -165,7 +165,7 @@ export function addGameEvent({game, data}) {
         var data = response.data;
         dispatch(addGameEvent_SUCCESS(data));
       }).catch((err) => {
-        throw err;
+        throw checkError(err)
       })
 
     } catch (e) {
@@ -186,7 +186,7 @@ export function updateGameEvent(gameEvent, serverSide = false) {
           var data = response.data;
           dispatch(updateGameEvent_SUCCESS(data));
         }).catch((err) => {
-          throw err;
+          throw checkError(err)
         });
       } else {
         return new Promise((resolve, reject) => {
@@ -211,7 +211,7 @@ export function getGame(gameId) {
         var data = response.data;
         dispatch(getGame_SUCCESS(data));
       }).catch((err) => {
-        throw err;
+        throw checkError(err)
       })
 
     } catch (e) {
@@ -227,7 +227,7 @@ export function loadPlayers() {
         var data = response.data;
         dispatch(loadPlayers_SUCCESS(data));
       }).catch((err) => {
-        throw err;
+        throw checkError(err)
       });
     } catch (e) {
       throw e;

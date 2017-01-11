@@ -399,6 +399,10 @@ const addOnRandomArray = (array, item, amount) => {
   const newRandom = () => {
     random = Math.floor((Math.random() * array.length) + 1);
   };
+  if(amount==1){
+    return newArray;
+  }
+
   for (var i = 0; i < amount; i++) {
     let oldRandom = random;
     newRandom();
@@ -553,6 +557,7 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
     let {gameId, finishDate} = previousGameEvent;
     let _previousGameEvent = previousGameEvent;
     let gameEvents;
+    let gameEvents_amount;
 
     const promise = (item, i, amount) => {
       return new Promise((resolve, reject) => {
@@ -572,7 +577,7 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
             level: gameEvent.level,
             startTime,
             startIn: 0,
-            amount,
+            amount: gameEvents_amount,
             gameDuration
           });
           gameEvent.setData(data);
@@ -599,15 +604,13 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
 
     getGameById(gameId).then((item) => {
       game = item;
-      return getGameEvents({gameId: game.id, isActive: false});
-
-    }).then(nonActiveEvents => {
-      gameDuration = parseFloat(game.duration)
-      for (var i = 0; i < nonActiveEvents.length; i++) {
-        let event = nonActiveEvents[i];
-        event.calculateTimes();
-        gameDuration = gameDuration - event.timePlayed;
-      }
+      return getGameEvents({gameId: game.id});
+    }).then(items => {
+      gameEvents_amount = items.length;
+      game.duration = game.calcDuration(items, isTotal = false);
+      gameDuration = game.calcDuration(items, isTotal = true);
+      return updateGame(game);
+    }).then(ok => {
       if (gameEvents) {
         return gameEvents;
       } else {
@@ -615,14 +618,7 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents) => {
       }
     }).then(_gameEvents => {
       return promiseFor(promise, _gameEvents);
-    }).then(items => {
-      gameEvents = items;
-      return getGameEvents({gameId: game.id});
-    }).then(items => {
-      game.duration = 0;
-      game.calcDuration(items);
-      return updateGame(game);
-    }).then(ok => {
+    }).then(gameEvents => {
       gameEvents = gameEvents.map(item => {
         return item.json(stringify = false, removeEmpty = true);
       });
@@ -830,9 +826,9 @@ const finishGameEventFromHash = (inputData) => {
         io.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct, triesOver});
 
         if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || gameEvent.isCorrect || triesOver == 0) {
+          gameEvent.setFinish(inputData.finishDate);
           return endGameEvent(gameData, gameEvent, recalculate = true);
         } else {
-          gameEvent.setFinish(inputData.finishDate || gameEvent.endDate);
           updateGameEvent(gameEvent).then(() => {
             return {runned: false};
           }).catch(() => {
@@ -891,7 +887,7 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
       gameEvent.setInactive();
       gameEvent.setJobHashEnd(null);
       if (!gameEvent.finishDate) {
-        gameEvent.setFinish(moment().valueOf());
+        gameEvent.setFinish(gameEvent.endDate);
       }
 
       updateGameEvent(gameEvent).then(obj => {
@@ -1028,7 +1024,7 @@ const createGameEvents = ({
         return promiseFor(promise, gameDatas);
       }).then((items) => {
         gameEvents = items;
-        game.calcDuration(gameEvents);
+        game.duration = game.calcDuration(gameEvents, isTotal = true);
         return updateGame(game);
       }).then(ok => {
         gameEvents = gameEvents.map(item => {

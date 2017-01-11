@@ -166,7 +166,9 @@ class GameStart extends Component {
           </div>
         </div>;
       } else if (this.state.countdown == 0) {
-        div = <div></div>;
+        div = <div>
+          <Prison canStart={this.state.canStart} data={this.state.data}/>
+        </div>;
       } else {
         $('body').removeClass('horizon');
         $('.prison svg #background').removeClass('horizon');

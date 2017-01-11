@@ -118,10 +118,12 @@ gameLogic.createData = ({
 
 gameLogic.calculateTimeBetween = (level, gameDuration, amount) => { //duration in seconds
   let levelObj = gameLogic.getLevel(level);
-  let itemDuration = gameDuration / amount; //in seconds
+  //one amount more because
+  //timeBetween=
+  let itemDuration = gameDuration / (amount); //in seconds
   let timeBetween = parseFloat(itemDuration) * levelObj.duration;
 
-  return parseFloat(Math.abs(timeBetween));
+  return parseFloat(Math.floor(Math.abs(timeBetween)));
 
 };
 gameLogic.levels = levels;

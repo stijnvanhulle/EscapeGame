@@ -201,7 +201,9 @@ class App extends Component {
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       console.log('UPDATED gameEvent');
 
-      game.events.emit('stopCountdown');
+      setTimeout(() => {
+        game.events.emit('stopCountdown');
+      }, 1000);
       game.events.emit('eventEnd');
       game.events.emit('letters', game.events);
 
@@ -210,6 +212,7 @@ class App extends Component {
       }
 
       timer.stop();
+      this.props.actions.getGame(this.props.game.id);
     }).catch((e) => {
       console.log(e);
     });

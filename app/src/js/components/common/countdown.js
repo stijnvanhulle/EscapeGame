@@ -35,13 +35,14 @@ class Countdown extends Component {
   }
   timer = () => {
     var newTime = this.state.time - this.state.interval;
-    if (newTime >= 0) {
+    if (newTime > 0) {
       if(this.props.sendToPi){
         let timeFormat = calculateTimeFormat(newTime);
         piController.tickBom(timeFormat);
       }
 
       this.setState({time: newTime});
+      console.log(newTime);
     } else {
 
       this.stop();
