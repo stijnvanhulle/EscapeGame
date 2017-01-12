@@ -17,7 +17,8 @@ class Countdown extends Component {
     intervalObj: null,
     interval: 1000,
     time: 0,
-    isStopped: false
+    isStopped: false,
+    timeoutCount: null
   }
   constructor(props, context) {
     super(props, context);
@@ -34,7 +35,7 @@ class Countdown extends Component {
     clearInterval(this.state.intervalObj);
   }
   timer = () => {
-    if(this.state.time && this.state.interval){
+    if (this.state.time && this.state.interval) {
       var newTime = this.state.time - this.state.interval;
       if (newTime > 0) {
         if (this.props.sendToPi) {
@@ -49,34 +50,36 @@ class Countdown extends Component {
         this.stop();
         this.props.isDone(true);
       }
-    }else{
-      console.log('cannot count',this.state);
+    } else {
+      console.log('cannot count', this.state);
     }
 
   }
   pause = () => {
     clearInterval(this.state.intervalObj);
     this.setState({intervalObj: null});
+
   }
   stop = () => {
-    this.pause();
-    this.setState({isStopped: true});
+    this.state.timeoutCount = setTimeout(() => {
+      this.pause();
+      this.setState({isStopped: true});
+    }, 1000);
 
   }
   start = (howLong) => {
+    clearTimeout(this.state.timeoutCount);
+
     this.pause();
+    this.setState({isStopped: false,timeoutCount:null});
 
     if (howLong) {
       this.setState({
-        time: howLong * 1000,
-        isStopped: false
+        time: howLong * 1000
       });
-
       let intervalObj = setInterval(this.timer, this.state.interval);
       this.setState({intervalObj});
-    } else {
-      this.setState({isStopped: false});
-    }
+    } else {}
 
   }
 

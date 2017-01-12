@@ -490,6 +490,8 @@ const updateGameEvent = (obj, extra = {}) => {
     if (!obj instanceof GameEvent) {
       reject('No instance of gameEvent');
     }
+
+    console.log('update gameEvent',obj,extra);
     obj = obj.json(stringify = false);
     let find = {
       id: obj.id
@@ -586,6 +588,7 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
       let game;
       let gameDuration;
       let isFirstTime = true;
+      console.log(previousGameEvent, moment().valueOf());
       let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 5);
 
       let {gameId, finishDate} = previousGameEvent;
@@ -615,9 +618,10 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
               gameDuration
             });
             gameEvent.setData(data);
+            gameEvent.calculateTimes()
             _previousGameEvent = gameEvent;
             isFirstTime = false;
-            console.log(gameEvent.calculateTimes());
+            console.log(gameEvent);
 
             getGameDataById(gameEvent.gameDataId).then(gameData => {
               let ok = updateEventScheduleRule(gameEvent);
@@ -869,8 +873,8 @@ const finishGameEventFromHash = (inputData) => {
         io.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct, triesOver});
 
         if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || gameEvent.isCorrect || triesOver == 0) {
-          gameEvent.setFinish(moment.valueOf());
-          console.log(gameEvent)
+          gameEvent.setFinish(parseFloat(inputData.finishDate));
+          console.log(gameEvent, parseFloat(gameEvent.finishDate));
           return endGameEvent(gameData, gameEvent, recalculate = true);
         } else {
           updateGameEvent(gameEvent, {ignore: ['level']}).then(() => {
@@ -932,7 +936,9 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
       gameEvent.setJobHashEnd(null);
 
       if (!gameEvent.finishDate) {
+        console.log('no finishdate',gameEvent);
         gameEvent.setFinish(gameEvent.endDate);
+
       }
       gameEvent.calculateTimes();
 
@@ -972,6 +978,7 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
           resolve({runned: true});
         }
       }).then(obj => {
+        console.log(obj);
         resolve({runned: true});
       }).catch((err) => {
         reject(err);
