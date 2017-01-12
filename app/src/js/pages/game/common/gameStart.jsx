@@ -23,16 +23,16 @@ import Countdown from 'components/common/countdown';
 
 class GameStart extends Component {
   state = {}
+  countdown = 3;
   constructor(props, context) {
     super(props, context);
     this.socket = window.socket;
-    let countdown = 2;
 
     this.state = {
-      countdown: countdown,
+      countdown: this.countdown,
       canStart: false,
       message: '',
-      startTime: moment().add(countdown, 'seconds').valueOf(),
+      startTime: moment().add(this.countdown, 'seconds').valueOf(),
       input: '',
       error: '',
       audioSrc: '',
@@ -80,7 +80,7 @@ class GameStart extends Component {
     //set starttime of null for starttime on server
     //let startTime=this.state.startTime;
     let startTime;
-    let startIn = this.state.countdown;
+    let startIn = this.countdown;
     if (!this.props.game.isPlaying) {
       let _game = Object.assign({}, this.props.game);
       _game.isPlaying = true;
@@ -109,6 +109,7 @@ class GameStart extends Component {
       if (game.currentGameEvent.isActive) {
         this.socket.emit(socketNames.INPUT, {
           input,
+          letters:game.letters,
           jobHash: game.currentGameEvent.jobHashEnd,
           finishDate: moment().valueOf()
         });

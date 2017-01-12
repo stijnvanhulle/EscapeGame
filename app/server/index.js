@@ -18,6 +18,7 @@ const port = process.env.PORT || 3000;
 const mongo = process.env.MONGO || 'localhost';
 const mongo_port = process.env.MONGO_PORT || 3000;
 const {version} = require('../package.json');
+const {paths} = require('./lib/const');
 
 const mongodb = {
   options: {
@@ -30,6 +31,9 @@ const mongodb = {
   },
   uri: 'mongodb://' + mongo + ':' + mongo_port + '/app'
 };
+//TODO: check of is working
+paths.IMAGES= path.resolve(__dirname, './private/images/');
+paths.UPLOADS=path.resolve(__dirname, './public/uploads/');
 
 const server = new Server({
   connections: {

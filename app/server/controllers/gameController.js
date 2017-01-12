@@ -22,7 +22,7 @@ const {
   GamePlayer,
   Player
 } = require('../models');
-const {promiseFor, setToMoment, isBool, convertToBool} = require('../lib/functions');
+const {promiseFor, setToMoment, isBool, convertToBool, randomLetterFrom} = require('../lib/functions');
 const {
   Game: GameModel,
   Player: PlayerModel,
@@ -58,9 +58,7 @@ const addGame = (game) => {
     }
 
   });
-
 };
-
 const getGameById = (id) => {
   return new Promise((resolve, reject) => {
     try {
@@ -797,12 +795,6 @@ const updateEventScheduleRule = (gameEvent) => {
 
 };
 
-const randomLetterFrom = (sentence) => {
-  return new Promise((resolve, reject) => {
-    resolve('l');
-  });
-};
-
 const isAnswerCorrect = (inputData, gameData, gameEvent) => {
   return new Promise((resolve, reject) => {
     try {
@@ -815,14 +807,17 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
       if (answer) {
         let {value, name} = answer;
         inputData = inputData.input.toString().toLowerCase();
+        let letters = inputData.letters;
+        let alienName;
         name = name.toString().toLowerCase();
 
         if (inputData == name || inputData.indexOf('name') != -1) {
           if (isLetter) {
             getGameById(gameEvent.gameId).then(game => {
-              const sentence = game.sentence;
-              return randomLetterFrom(sentence);
+              alienName = game.alienName;
+              return randomLetterFrom(alienName, letters);
             }).then(letter => {
+              console.log('random letter', letter, alienName, letters);
               resolve({data: {
                   letter
                 }, correct: true});

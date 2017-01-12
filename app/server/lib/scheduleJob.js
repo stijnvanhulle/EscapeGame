@@ -175,7 +175,7 @@ const addRule = (m, dataRule, f) => {
 
           result.running = false;
           result.runned = true;
-          result.data = job.getDate();
+          result.data = job.getData();
         }).catch((err) => {
           console.log(err);
           job.cancel();

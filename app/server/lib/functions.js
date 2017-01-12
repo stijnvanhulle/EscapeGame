@@ -9,14 +9,23 @@
 const moment = require("moment");
 const json2csv = require('json2csv');
 
+String.prototype.count = function(c) {
+  var result = 0,
+    i = 0;
+  for (i; i < this.length; i++)
+    if (this[i] == c)
+      result++;
+return result;
+};
+
 let functions = {};
 
-functions.new = function( obj ) {
-	try {
-		return Object.assign({},obj);
-	} catch ( e ) {
-		return obj;
-	}
+functions.new = function(obj) {
+  try {
+    return Object.assign({}, obj);
+  } catch (e) {
+    return obj;
+  }
 };
 /**
  * [filter description]
@@ -34,27 +43,96 @@ functions.filter = (items, ...filterOn) => {
   })
 
 };
+functions.randomLetterFrom = (name, letters = null) => {
+  try {
+    let letter;
+    name = name.toString();
 
-functions.round = function(value,places) {
-  return +(Math.round(value + "e+" + places)  + "e-" + places);
+    const newRandom = () => {
+      return Math.floor((Math.random() * name.length) + 1);
+
+    };
+    const enoughLettersOver = (letter, letters) => {
+      if (letter && letters) {
+        if (lettersCounts[letter] + 1 <= nameCounts[letter]) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+
+    };
+
+    var nameArray = [];
+    name.split('').forEach(function(item) {
+      nameArray.push(item);
+    });
+
+    var nameCounts = {};
+    nameArray.forEach(function(x) {
+      nameCounts[x] = (nameCounts[x] || 0) + 1;
+    });
+
+    var lettersCounts = {};
+    letters.forEach(function(x) {
+      lettersCounts[x] = (lettersCounts[x] || 0) + 1;
+    });
+
+    if (letters && letters.length > 0) {
+      for (var i = 0; i < letters.length; i++) {
+
+        while (letter == letters[i] || letter == null) {
+          if (enoughLettersOver(letter, letters)) {
+            break;
+          } else {
+            let random = newRandom();
+            letter = name.charAt(random);
+          }
+
+        }
+
+      }
+    } else {
+      let random = newRandom();
+      letter = name.charAt(random);
+    }
+    console.log(letter);
+    return letter;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+
+};
+
+functions.round = function(value, places) {
+  return + (Math.round(value + "e+" + places) + "e-" + places);
 }
 
 functions.convertToCsv = (data, fields) => {
-  if (!fields) {
-    for (var i = 0; i < data.length; i++) {
-      let keys = Object.keys(data[i]);
-      if (!fields) {
-        fields = keys;
-      } else {
-        if (fields.length < keys.length) {
+  try {
+    if (!fields) {
+      for (var i = 0; i < data.length; i++) {
+        let keys = Object.keys(data[i]);
+        if (!fields) {
           fields = keys;
+        } else {
+          if (fields.length < keys.length) {
+            fields = keys;
+          }
         }
-      }
 
+      }
     }
+    const result = json2csv({data, fields});
+    return result;
+  } catch (e) {
+    console.log(e);
+    return null;
   }
-  const result = json2csv({data, fields});
-  return result;
+
 };
 
 functions.setToMoment = (obj) => {

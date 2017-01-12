@@ -27,14 +27,20 @@ export const setGame = (_game) => {
 };
 
 export const checkError = (err) => {
-  let status = err.response.status;
-  if (status == 401) {
-    //unatuahroized
-    clearCookie('token');
-  }
-  if (status == 500) {}
+  try {
+    let status = err.response.status;
+    if (status == 401) {
+      //unatuahroized
+      clearCookie('token');
+    }
+    if (status == 500) {}
 
-  return err;
+    return err;
+  } catch (e) {
+    console.log(e);
+    return err;
+  }
+
 };
 
 export const setCookie = function(key, value, expire) {
@@ -64,7 +70,10 @@ export const getCookie = function(key) {
 };
 
 export const calculateTimeFormat = (time) => {
-  let timeFormat = '00:00:00';
+  let timeFormat = '00:00';
+  if (!time || time == 0) {
+    return timeFormat;
+  }
 
   function pad(num, size) {
     var s = "0000" + num;

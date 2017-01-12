@@ -12,9 +12,11 @@ import axios from 'axios';
 import {socketConnect} from 'socket.io-react';
 import socketNames from 'lib/const/socketNames';
 import {runAudio, setCookie, getCookie} from 'lib/functions';
+import vm from 'lib/vm';
 import Header from 'components/header';
 import moment from 'moment';
 import $ from 'jquery';
+
 import {bindActionCreators} from 'redux';
 
 import {connect} from 'react-redux';
@@ -93,6 +95,7 @@ class App extends Component {
     this.socket.on(socketNames.EVENT_END, this.handleWSEventEnd);
     this.socket.on(socketNames.EVENT_FINISH, this.handleWSEventFinish);
     this.socket.on(socketNames.EVENT_DATA, this.handelWSEventData);
+    this.socket.on(socketNames.DETECTION_FOUND, this.handleWSDetectionFound);
 
     piController.loadSocket(this.socket);
 
@@ -101,7 +104,9 @@ class App extends Component {
     window.socket = this.socket;
     window.moment = moment;
     window.game = game;
-  }
+    window.vm = vm;
+
+  };
 
   addMessage = (type, message) => {
     const {messages} = this.state;
@@ -110,6 +115,21 @@ class App extends Component {
   }
 
   // WS
+
+  handleWSDetectionFound = obj => {
+    let {percent} = obj;
+    percent = parseFloat(percent);
+    console.log('percent detected', percent);
+    if (percent > 0) {
+      this.socket.emit(socketNames.INPUT, {
+        input: true,
+        letters: game.letters,
+        jobHash: game.currentGameEvent.jobHashEnd,
+        finishDate: moment().valueOf()
+      });
+    }
+
+  }
 
   handleWSOnline = obj => {
     console.log(obj);
@@ -203,11 +223,13 @@ class App extends Component {
 
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       console.log('UPDATED gameEvent');
+      setTimeout(() => {
+        game.events.emit('stopCountdown');
+      }, 1000);
 
-      game.events.emit('stopCountdown');
-
+      vm.hideMessage();
       game.events.emit('eventEnd');
-      game.events.emit('letters', game.events);
+      game.events.emit('letters', game.letters);
 
       if (activeEvents == 0) {
         this.socket.emit(socketNames.EVENT_FINISH, {finish: true});

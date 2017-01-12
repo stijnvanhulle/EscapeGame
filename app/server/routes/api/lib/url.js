@@ -20,6 +20,7 @@ module.exports = {
   GAME_EVENTS_UPDATE: API + '/game' + '/{id}/events/update',
   GAME_EVENTS_ADD: API + '/game' + '/{id}/events/add',
   GAME_EVENTS_RECAL: API + '/game' + '/{id}/events/recal',
+  GAME_EVENTS_CSV : API + '/game' + '/{id}/events/csv',
 
   GAME_EVENT: API + '/game' + '/{id}/event',
   PLAYER: API + '/player'

@@ -14,6 +14,7 @@ import Isvg from 'react-inlinesvg';
 import $ from 'jquery';
 import game from 'lib/game';
 import Bomb from 'lib/bomb';
+import vm from 'lib/vm';
 
 class Prison extends Component {
   state = {
@@ -65,8 +66,11 @@ class Prison extends Component {
       this.forceUpdate();
     });
     game.events.on('hint', (hint) => {
-      this.state.hint = hint;
-      this.forceUpdate();
+      //this.state.hint = hint;
+      //  this.forceUpdate();
+      vm.hideMessage();
+      vm.showMessage('hint', hint, 10000);
+
     });
     game.events.on('letters', (letters) => {
       this.state.letter = letters;
@@ -111,8 +115,6 @@ class Prison extends Component {
     const {canStart} = this.props;
     const {daytime, rooms, maxRooms} = this.state;
 
-
-
     let snapPrison;
     let prison = $('.prison svg');
     if (!prison) {
@@ -127,8 +129,6 @@ class Prison extends Component {
     $('body').css('animation-duration', daytime + 's');
 
     sun.css('animation-duration', daytime + 's');
-
-
 
     background.addClass('horizon');
     background.css('animation-duration', daytime + 's');
@@ -201,7 +201,7 @@ class Prison extends Component {
         <Countdown className={!this.props.canStart
           ? 'hide'
           : ''} ref='countdown' sendToPi={true} className="countdown" howLong={this.state.countdown} isDone={this.isDoneCounting}/>
-<div className="letters">{this.state.letters}</div>
+        <div className="letters">{this.state.letters}</div>
         <div className="hint">{this.state.hint}</div>
         <Isvg src="/assets/images/plan.svg" uniquifyIDs={false} onLoad={this.onLoad}/>
       </div>

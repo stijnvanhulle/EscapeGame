@@ -12,16 +12,17 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 const base64Img = require('base64-img');
 
-const uploads = path.resolve(__dirname, '../public/uploads/');
+const {paths} = require('../lib/const');
+
 
 module.exports.save = (fileName, data) => {
   return new Promise((resolve, reject) => {
     try {
-      mkdirp(uploads, function(err) {
+      mkdirp(paths.UPLOADS, function(err) {
         if (err) {
           reject(err);
         } else {
-          let pathFile = path.resolve(uploads, fileName);
+          let pathFile = path.resolve(path.UPLOADS, fileName);
           fs.writeFile(pathFile, data, function(err) {
             if (err) {
               reject(err);
@@ -44,11 +45,11 @@ module.exports.save = (fileName, data) => {
 module.exports.saveBase64 = (fileName, data) => {
   return new Promise((resolve, reject) => {
     try {
-      mkdirp(uploads, function(err) {
+      mkdirp(path.UPLOADS, function(err) {
         if (err) {
           reject(err);
         } else {
-          let pathFile = path.resolve(uploads);
+          let pathFile = path.resolve(path.UPLOADS);
           base64Img.img('data:image/png;base64,' + data, pathFile, fileName, function(err, filepath) {
             if (err) {
               reject(err);

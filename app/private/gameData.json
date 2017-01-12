@@ -70,7 +70,7 @@
     "hints": [
       ""
     ],
-    "isLetter": false,
+    "isLetter": true,
     "answer": null
   }
 }, {
@@ -80,7 +80,7 @@
   "data": {
     "name": "",
     "description": "Scan het juiste schilderij",
-    "file": "schilderij1.jpg",
+    "file": "cola.png",
     "maxTries": null,
     "maxTime": 300,
     "hints": [
@@ -116,7 +116,7 @@
   "data": {
     "name": "",
     "description": "Zoek het juiste schilderij",
-    "file": "/image.jpg",
+    "file": "cola.png",
     "maxTries": null,
     "maxTime": 300,
     "hints": [

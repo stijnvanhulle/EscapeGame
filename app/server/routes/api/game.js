@@ -13,7 +13,10 @@ const {mqttNames, socketNames} = require('../../lib/const');
 const moment = require('moment');
 const scheduleJob = require('../../lib/scheduleJob');
 const {Game, GameEvent} = require('../../models');
-const {promiseFor} = require('../../lib/functions');
+const {promiseFor, convertToCsv} = require('../../lib/functions');
+
+const Chance = require('chance');
+const c = new Chance();
 
 module.exports = [
   {
@@ -54,6 +57,8 @@ module.exports = [
       const {gameController} = require('../../controllers');
       try {
         let gameId = request.params.id;
+        gameId = parseFloat(gameId);
+
         let data = request.payload;
         const game = new Game();
         game.load(data);
@@ -81,6 +86,7 @@ module.exports = [
       const {gameController} = require('../../controllers');
       try {
         let gameId = request.params.id;
+        gameId = parseFloat(gameId);
         const game = new Game();
         let eventType;
 
@@ -113,6 +119,78 @@ module.exports = [
     }
 
   }, {
+    method: `GET`,
+    path: url.GAME_EVENTS,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {gameController} = require('../../controllers');
+      try {
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
+        let find = {
+          isActive: false
+        };
+        if (gameId) {
+          find = {
+            gameId,
+            isActive: false
+          };
+        }
+
+        gameController.getGameEvents(find).then(gameEvents => {
+          reply(gameEvents);
+        }).catch(err => {
+          throw new Error(err);
+        });
+
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
+    method: `POST`,
+    path: url.GAME_EVENTS_CSV,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {gameController, fileController} = require('../../controllers');
+      try {
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
+
+        let find = {
+          isActive: false
+        };
+        if (gameId) {
+          find = {
+            gameId,
+            isActive: false
+          };
+        }
+
+        gameController.getGameEvents(find, canSort = true).then(gameEvents => {
+          return fileController.save(c.hash({length: 15}) + '.csv', convertToCsv(gameEvents, fields = null));
+        }).then(fileName => {
+          reply({fileName});
+        }).catch(err => {
+          console.log(err);
+          throw new Error(err);
+        });
+
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
     method: `POST`,
     path: url.GAME_EVENTS,
     config: {
@@ -123,6 +201,8 @@ module.exports = [
       try {
         let {gameName, level, startTime, startIn, gameDuration} = request.payload;
         let gameId = request.params.id;
+
+        gameId = parseFloat(gameId);
 
         gameController.createGameEvents({
           gameId,
@@ -143,7 +223,6 @@ module.exports = [
       }
 
     }
-
   }, {
     method: `PUT`,
     path: url.GAME_EVENTS_UPDATE,
@@ -173,12 +252,14 @@ module.exports = [
       const {gameController} = require('../../controllers');
       try {
         let {data} = request.payload;
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
         //data = JSON.parse(data);
 
         const promise = (item, i) => {
           return new Promise((resolve, reject) => {
             if (item) {
-              const gameEvent = new GameEvent({gameId: request.params.id});
+              const gameEvent = new GameEvent({gameId});
               gameController.getGameDataById(item.gameDataId, i).then(gameData => {
                 gameEvent.setData({gameDataId: gameData.id, isActive: item.isActive, activateDate: item.activateDate, endDate: item.endDate, level: item.level});
                 return gameController.addEvent(gameEvent, i);
@@ -216,37 +297,16 @@ module.exports = [
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
+
         let {gameDataId, isActive, activateDate, endDate} = request.payload;
-        const gameEvent = new GameEvent({gameId: request.params.id});
+        const gameEvent = new GameEvent({gameId});
         gameController.getGameDataById(gameDataId).then(gameData => {
           gameEvent.setData({gameDataId: gameData.id, isActive, activateDate, endDate});
           return gameController.addEvent(gameEvent);
         }).then(doc => {
           reply(doc);
-        }).catch(err => {
-          throw new Error(err);
-        });
-      } catch (e) {
-        console.log(e);
-        reply(e);
-      }
-
-    }
-
-  }, {
-    method: `GET`,
-    path: url.GAME_EVENTS,
-    config: {
-      auth: false
-    },
-    handler: function(request, reply) {
-      const {gameController} = require('../../controllers');
-      try {
-
-        const gameId = request.params.id;
-
-        getGameEvents(gameId).then(gameEvents => {
-          reply(gameEvents);
         }).catch(err => {
           throw new Error(err);
         });
@@ -267,9 +327,12 @@ module.exports = [
       const {gameController} = require('../../controllers');
       try {
 
-        const gameId = request.params.id;
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
 
-        getGameEvents(gameId, canSort = true).then(gameEvents => {
+        gameController.getGameEvents({
+          gameId
+        }, canSort = true).then(gameEvents => {
           io.emit(socketNames.RECALCULATE_START, gameEvents);
           reply(gameEvents);
         }).catch(err => {

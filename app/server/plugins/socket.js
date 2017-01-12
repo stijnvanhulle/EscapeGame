@@ -7,14 +7,16 @@
 * @License: stijnvanhulle.be
 */
 const global = require('../lib/global');
-const {mqttNames, socketNames} = require('../lib/const');
+const {mqttNames, socketNames, paths} = require('../lib/const');
 const beacons = require('../lib/beacons');
 const {convertToCsv} = require('../lib/functions')
 const Chance = require('chance');
+const path = require('path');
 const c = new Chance();
 
 const scheduleJob = require('../lib/scheduleJob');
 const fileController = require('../controllers/fileController');
+
 let users = [];
 let onlineDevice = [];
 
@@ -70,16 +72,19 @@ const onMessageSocket = (io, socket, client) => {
       console.log('job fail', obj);
     }
   });
-  socket.on(socketNames.IMAGE, data => {
+  socket.on(socketNames.IMAGE, obj => {
+    //TODO: change to {data: data, image1:gameData.gameData.data.file}
     try {
-      data = JSON.parse(data);
+      obj = JSON.parse(obj);
+      let {data, image1} = obj;
+
       fileController.saveBase64(c.hash({length: 15}) + '', data).then(result => {
         console.log(result);
         if (result) {
-          let obj={
-            image1:'/Users/stijnvanhulle/GitHub/EscapePlan/app/private/images/cola.png',
-            image2:result,
-            read:true
+          let obj = {
+            image1: path.resolve(path.IMAGES, image1),
+            image2: result,
+            read: true
           }
           client.publish(mqttNames.DETECTION_FIND, JSON.stringify(obj));
         }
@@ -132,7 +137,9 @@ const onMessageSocket = (io, socket, client) => {
 
   socket.on(socketNames.RECALCULATE_START, (gameId) => {
     const gameController = require('../controllers/gameController');
-    gameController.getGameEvents({isActive: false}).then(gameEvents => {
+    gameController.getGameEvents({
+      isActive: false
+    }, canSort = true).then(gameEvents => {
       return fileController.save(c.hash({length: 15}) + '.csv', convertToCsv(gameEvents, fields = null));
     }).then(fileName => {
       client.publish(mqttNames.RECALCULATE_START, JSON.stringify(fileName));
