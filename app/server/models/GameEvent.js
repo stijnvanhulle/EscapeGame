@@ -127,6 +127,10 @@ class GameEvent {
       this.percentSpeed = parseFloat((timePlayed / timeBetween).toFixed(2));
     }
 
+    this.activateDateFormat = moment(this.activateDate).format();
+    this.endDateFormat = moment(this.endDate).format();
+    this.finishDateFormat = moment(this.finishDate).format();
+
   }
   sort(...onKeys) {
     if (!onKeys || onKeys.length < 0) {
@@ -218,7 +222,7 @@ class GameEvent {
         finish = setToMoment(finish);
 
         if (setToMoment(this.activateDate).isAfter(finish)) {
-          console.log(moment(this.activateDate).format(),finish.format());
+          console.log(moment(this.activateDate).format(), finish.format());
           throw new Error('finishdate not after activatendate', this);
           return;
         }

@@ -116,7 +116,7 @@ class App extends Component {
   }
 
   handelWSEventData = obj => {
-    console.log('Event data:', obj);
+    console.log('Event data:', obj, moment().format());
     const {correct, triesOver, data} = obj;
     const gameData = game.currentGameData;
     const currentData = gameData.data.data;
@@ -151,7 +151,7 @@ class App extends Component {
   }
 
   handleWSEventStart = obj => {
-    console.log('New event:', obj);
+    console.log('New event:', obj, moment().format());
     let {gameEvent, gameData, activeEvents} = obj;
     game.currentGameData = gameData;
     game.currentGameEvent = gameEvent;
@@ -196,7 +196,7 @@ class App extends Component {
     piController.start(gameEvent, gameData);
   }
   handleWSEventEnd = obj => {
-    console.log('End event:', obj);
+    console.log('End event:', obj, moment().format());
     let {gameEvent, gameData, activeEvents} = obj;
     game.currentGameData = gameData;
     game.currentGameEvent = gameEvent;

@@ -17,8 +17,7 @@ class Countdown extends Component {
     intervalObj: null,
     interval: 1000,
     time: 0,
-    isStopped: false,
-    timeoutCount: null
+    isStopped: false
   }
   constructor(props, context) {
     super(props, context);
@@ -61,17 +60,16 @@ class Countdown extends Component {
 
   }
   stop = () => {
-    this.state.timeoutCount = setTimeout(() => {
-      this.pause();
+    this.pause();
+    setTimeout(() => {
       this.setState({isStopped: true});
-    }, 1000);
+    }, 1000)
 
   }
   start = (howLong) => {
-    clearTimeout(this.state.timeoutCount);
 
     this.pause();
-    this.setState({isStopped: false,timeoutCount:null});
+    this.setState({isStopped: false});
 
     if (howLong) {
       this.setState({

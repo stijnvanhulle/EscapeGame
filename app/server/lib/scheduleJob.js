@@ -14,6 +14,13 @@ const {Game, GameEvent, GameData} = require('../models');
 const Chance = require('chance');
 const c = new Chance();
 
+schedule.Job.prototype.setData = function(data) {
+  this.data = data;
+};
+schedule.Job.prototype.getData = function() {
+  return this.data;
+};
+
 const cancelAll = function() {
   return new Promise((resolve, reject) => {
     const jobs = schedule.scheduledJobs;
@@ -121,9 +128,10 @@ const finishNextJob = (jobHash, data = {}) => {
   data.jobHash = jobHash;
   return finishJob(nextJobHash, data);
 };
-const updateRule = (jobHash, m) => {
+const updateRule = (jobHash, m, dataRule) => {
   let job = getJob(jobHash)
   if (job) {
+    job.setData(dataRule);
     if (m == null) {
       console.log('Not everthing filled in');
       return false;
@@ -157,7 +165,8 @@ const addRule = (m, dataRule, f) => {
         running: true,
         runned: false,
         isCanceled: false,
-        hash
+        hash,
+        data: job.getData()
       };
 
       if (f && f instanceof Function) {
@@ -166,6 +175,7 @@ const addRule = (m, dataRule, f) => {
 
           result.running = false;
           result.runned = true;
+          result.data = job.getDate();
         }).catch((err) => {
           console.log(err);
           job.cancel();
@@ -173,6 +183,8 @@ const addRule = (m, dataRule, f) => {
       }
 
     });
+
+    job.setData(dataRule);
 
     job.on('run', () => {
       job.cancel();

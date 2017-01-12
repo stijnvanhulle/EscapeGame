@@ -6,9 +6,9 @@
 * @Last modified time: 2017-01-10T10:49:31+01:00
 * @License: stijnvanhulle.be
 */
+const DELAY = 2;
 
 const {io, client} = require('../lib/global');
-
 const moment = require('moment');
 
 const {calculateId, random} = require('./lib/functions');
@@ -182,7 +182,7 @@ const getEventTypes = () => {
 const getGameEventById = (id) => {
   return new Promise((resolve, reject) => {
     if (id) {
-      GameEventModel.findOne({id: id}).sort({'id': 1}).exec(function(err, doc) {
+      GameEventModel.findOne({id: id}).exec(function(err, doc) {
         if (err) {
           reject(err);
         } else {
@@ -602,13 +602,14 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
   return new Promise((resolve, reject) => {
     try {
       let game;
+
       let gameDuration;
       let isFirstTime = true;
       console.log('previous', previousGameEvent, moment().valueOf());
-      let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 5);
+      let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', DELAY);
 
       let {gameId, finishDate} = previousGameEvent;
-      let _previousGameEvent = previousGameEvent;
+      let _previousGameEvent = Object.assign({}, previousGameEvent);
       let gameEvents;
       let gameEvents_amount;
 
@@ -629,7 +630,7 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
               gameDataId: gameEvent.gameDataId,
               level: gameEvent.level,
               startTime,
-              startIn: 0,
+              startIn: DELAY,
               amount: gameEvents_amount,
               gameDuration
             });
@@ -705,10 +706,10 @@ const timeoutEndScheduleRule = (gameData, gameEvent) => {
     let job = scheduleJob.addRule(endDate, {
       gameData,
       gameEvent
-    }, ({running, runned, hash}) => {
+    }, ({running, runned, hash, data}) => {
       return new Promise((resolve, reject) => {
         console.log('RUNNING_END', running, ' hash: ', hash);
-        endGameEvent(gameData, gameEvent).then(data => {
+        endGameEvent(gameData, data.gameEvent).then(ok => {
           resolve(runned);
         }).catch(err => {
           reject(err);
@@ -731,10 +732,10 @@ const timeoutStartScheduleRule = (gameData, gameEvent) => {
     let job = scheduleJob.addRule(activateDate, {
       gameData,
       gameEvent
-    }, ({running, runned, hash}) => {
+    }, ({running, runned, hash, data}) => {
       return new Promise((resolve, reject) => {
         console.log('RUNNING_START', running, ' hash: ', hash);
-        startGameEvent(gameData, gameEvent).then(data => {
+        startGameEvent(gameData, data.gameEvent).then(ok => {
           resolve(runned);
         }).catch(err => {
           reject(err);
@@ -780,14 +781,14 @@ const updateEventScheduleRule = (gameEvent) => {
   let okUpdate = false;
 
   if (gameEvent.jobHashStart && gameEvent.activateDate) {
-    okUpdate = scheduleJob.updateRule(gameEvent.jobHashStart, gameEvent.activateDate);
+    okUpdate = scheduleJob.updateRule(gameEvent.jobHashStart, gameEvent.activateDate, {gameEvent});
   } else {
     console.log('jobhash start not filled in', gameEvent);
     okUpdate = false;
   }
 
   if (gameEvent.jobHashEnd && gameEvent.endDate) {
-    okUpdate = scheduleJob.updateRule(gameEvent.jobHashEnd, gameEvent.endDate);
+    okUpdate = scheduleJob.updateRule(gameEvent.jobHashEnd, gameEvent.endDate, {gameEvent});
   } else {
     console.log('jobhash end not filled in', gameEvent);
     okUpdate = false;
@@ -972,26 +973,27 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
           gameEvent: gameEvent.json(false, true, false),
           activeEvents: amount
         });
-        /*
+
         //recalculate levels of timePercent, timePlayed
         // percentspeed: 0.25=> maar een 1/4 nodig gehad om te spelen
         let newLevel = parseFloat(gameEvent.level);
+
         //if (gameEvent.percentSpeed < 0.4) {
         console.log('percentspeed', gameEvent.percentSpeed);
-        if (gameEvent.percentSpeed < 0.4 && gameEvent.percentSpeed != 1) {
+        if (gameEvent.percentSpeed < 0.4) {
           //kleiner==sneller
           newLevel++;
           recalculate = true;
           return updateGameEventsAfterGameEvent(gameEvent, newLevel);
-        } else if (gameEvent.percentSpeed > 0.6 && gameEvent.percentSpeed != 1) {
+        } else if (gameEvent.percentSpeed > 0.6) {
           newLevel--;
           recalculate = true;
           return updateGameEventsAfterGameEvent(gameEvent, newLevel);
         } else {
           return Promise.resolve(true);
-        }*/
+        }
 
-        return Promise.resolve(true);
+        //return Promise.resolve(true);
       }).then(ok => {
         if (recalculate) {
           return updateGameEventsFrom(gameEvent);

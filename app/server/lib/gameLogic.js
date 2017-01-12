@@ -122,6 +122,7 @@ gameLogic.calculateTimeBetween = (level, gameDuration, amount) => { //duration i
   //timeBetween=
   let itemDuration = gameDuration / (amount); //in seconds
   let timeBetween = parseFloat(itemDuration) * levelObj.duration;
+  console.log('time', timeBetween, levelObj);
 
   return parseFloat(Math.floor(Math.abs(timeBetween)));
 
