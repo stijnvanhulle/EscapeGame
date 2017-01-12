@@ -209,12 +209,14 @@ const getGameEventByHash = (jobHash) => {
           }
         ]
       };
+      console.log('find by hash', find);
       GameEventModel.findOne(find).sort({'id': 1}).exec(function(err, doc) {
         if (err) {
           reject(err);
         } else {
           let gameEvent = new GameEvent({gameId: null});
           gameEvent.load(doc);
+          console.log('found by hash', gameEvent);
           resolve(gameEvent);
         }
       });
@@ -483,7 +485,7 @@ const updateGameEventsAfterGameEvent = (gameEvent, newLevel) => {
 };
 const updateGameEvent = (obj, extra = {}) => {
   return new Promise((resolve, reject) => {
-    let {ignore, isActive} = extra;
+    let {ignore, isActive, only} = extra;
     if (!obj && obj.id)
       reject('No id for gameEvent');
 
@@ -491,7 +493,7 @@ const updateGameEvent = (obj, extra = {}) => {
       reject('No instance of gameEvent');
     }
 
-    console.log('update gameEvent',obj,extra);
+    console.log('update gameEvent', obj, extra);
     obj = obj.json(stringify = false);
     let find = {
       id: obj.id
@@ -503,28 +505,42 @@ const updateGameEvent = (obj, extra = {}) => {
       };
     }
 
-    let change = {};
+    let change = null;
     let keys = Object.keys(obj);
     if (ignore && ignore.length > 0) {
+      change = {};
       for (var i = 0; i < ignore.length; i++) {
         for (var i2 = 0; i2 < keys.length; i2++) {
-          let key = keys[i2]
+          let key = keys[i2];
           if (key != ignore[i]) {
             change[key] = obj[key];
           }
         }
 
       }
-    } else {
-      change = obj;
     }
 
-    GameEventModel.update(find, change, {
+    if (only && only.length > 0) {
+      change = {};
+      for (var i = 0; i < only.length; i++) {
+        for (var i2 = 0; i2 < keys.length; i2++) {
+          let key = keys[i2];
+          if (key == only[i]) {
+            change[key] = obj[key];
+          }
+        }
+      }
+    }
+
+    console.log(find, change);
+
+    GameEventModel.update(find, change || obj, {
       multi: true
     }, function(err, raw) {
       if (err) {
         reject(err);
       } else {
+        console.log(raw);
         resolve(raw);
       }
     });
@@ -588,7 +604,7 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
       let game;
       let gameDuration;
       let isFirstTime = true;
-      console.log(previousGameEvent, moment().valueOf());
+      console.log('previous', previousGameEvent, moment().valueOf());
       let startTime = setToMoment(previousGameEvent.finishDate).add('seconds', 5);
 
       let {gameId, finishDate} = previousGameEvent;
@@ -846,6 +862,8 @@ const finishGameEventFromHash = (inputData) => {
         reject('Not all data filled in');
       }
 
+      console.log('finish form hash', inputData, gameEvent);
+
       getGameEventByHash(inputData.jobHash).then(item => {
         gameEvent = item;
         return getGameDataById(gameEvent.gameDataId);
@@ -874,7 +892,7 @@ const finishGameEventFromHash = (inputData) => {
 
         if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || gameEvent.isCorrect || triesOver == 0) {
           gameEvent.setFinish(parseFloat(inputData.finishDate));
-          console.log(gameEvent, parseFloat(gameEvent.finishDate));
+          console.log(gameEvent);
           return endGameEvent(gameData, gameEvent, recalculate = true);
         } else {
           updateGameEvent(gameEvent, {ignore: ['level']}).then(() => {
@@ -907,7 +925,10 @@ const startGameEvent = (gameData, gameEvent, recalculate = false) => {
       gameEvent.calculateTimes();
       gameEvent.setJobHashStart(null);
 
-      updateGameEvent(gameEvent, {ignore: ['level']}).then(obj => {
+      updateGameEvent(gameEvent, {
+        ignore: ['level'],
+        only: ['jobHashStart', 'jobHashEnd']
+      }).then(obj => {
         return getGameEventByIsActive(true, gameEvent.gameId);
       }).then(data => {
         const amount = data.length;
@@ -936,7 +957,7 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
       gameEvent.setJobHashEnd(null);
 
       if (!gameEvent.finishDate) {
-        console.log('no finishdate',gameEvent);
+        console.log('no finishdate', gameEvent);
         gameEvent.setFinish(gameEvent.endDate);
 
       }

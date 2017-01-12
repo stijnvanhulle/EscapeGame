@@ -16,14 +16,13 @@ var validate = function(decoded, request, callback) {
     if (err)
       console.log(err);
     if (access && moment().isBefore(moment(parseFloat(decoded.expires_in)))) {
-      console.log('Key ok: ', decoded, access);
+      //console.log('Key ok: ', decoded, access);
       return callback(null, true);
     } else {
       console.log('Key expired: ', decoded, access);
       return callback(null, false);
     }
   });
-
 };
 
 module.exports.register = (server, options, next) => {

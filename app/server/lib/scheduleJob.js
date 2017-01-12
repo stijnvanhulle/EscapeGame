@@ -160,7 +160,6 @@ const addRule = (m, dataRule, f) => {
         hash
       };
 
-
       if (f && f instanceof Function) {
         f(result).then((result) => {
           result.isCanceled = schedule.cancelJob(job);
@@ -188,6 +187,8 @@ const addRule = (m, dataRule, f) => {
           console.log('New job is runned on ' + date + ', hash: ' + hash);
           job.cancel();
           log();
+        } else {
+          console.log('New job is NOT runned on ' + date + ', hash: ' + hash);
         }
       }).catch(err => {
         console.log(err);

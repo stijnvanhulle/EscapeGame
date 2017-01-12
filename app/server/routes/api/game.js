@@ -80,7 +80,6 @@ module.exports = [
     handler: function(request, reply) {
       const {gameController} = require('../../controllers');
       try {
-        console.log(request.headers);
         let gameId = request.params.id;
         const game = new Game();
         let eventType;
