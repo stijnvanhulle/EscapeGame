@@ -8,7 +8,7 @@
  */
 
 const url = require('./lib/url');
-const {io, client} = require('../../lib/global');
+const {io, client} = require('../../lib/app');
 const {mqttNames, socketNames} = require('../../lib/const');
 const moment = require('moment');
 const scheduleJob = require('../../lib/scheduleJob');

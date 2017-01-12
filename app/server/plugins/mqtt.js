@@ -9,7 +9,7 @@
 
 const mqtt = require('mqtt');
 const Message = require('../models/Message');
-const global = require('../lib/global');
+const app = require('../lib/app');
 const {mqttNames, socketNames} = require('../lib/const');
 const {filter} = require('../lib/functions');
 
@@ -72,7 +72,7 @@ const onMessage = (client, events, io) => {
 module.exports.register = (server, options, next) => {
   const client = mqtt.connect('mqtt://' + (process.env.MQTT || "localhost"));
   server.expose('client', client);
-  global.mqtt = client;
+  app.mqtt = client;
 
   let events = [];
   let io,

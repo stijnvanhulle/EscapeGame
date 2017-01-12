@@ -8,7 +8,7 @@
 */
 const DELAY = 2;
 
-const {io, client} = require('../lib/global');
+const {io, client} = require('../lib/app');
 const moment = require('moment');
 
 const {calculateId, random} = require('./lib/functions');

@@ -6,7 +6,7 @@
 * @Last modified time: 2017-01-05T16:26:33+01:00
 * @License: stijnvanhulle.be
 */
-const global = require('../lib/global');
+const app = require('../lib/app');
 const {mqttNames, socketNames, paths} = require('../lib/const');
 const beacons = require('../lib/beacons');
 const {convertToCsv} = require('../lib/functions')
@@ -16,9 +16,6 @@ const c = new Chance();
 
 const scheduleJob = require('../lib/scheduleJob');
 const fileController = require('../controllers/fileController');
-
-let users = [];
-let onlineDevice = [];
 
 const cancelJobs = (hash) => {
   if (hash) {
@@ -42,10 +39,11 @@ const onMessageSocket = (io, socket, client) => {
   });
 
   socket.on(socketNames.ONLINE, obj => {
-    const contains = onlineDevice.filter(item => item.device == obj.device).length > 0;
+    let app = require('../lib/app');
+    const contains = app.onlineDevice.filter(item => item.device == obj.device).length > 0;
 
     if (contains) {
-      onlineDevice = onlineDevice.map(item => {
+      app.onlineDevice = app.onlineDevice.map(item => {
         if (item.device) {
           if (item.device == obj.device) {
             return obj;
@@ -54,16 +52,24 @@ const onMessageSocket = (io, socket, client) => {
 
       });
     } else {
-      onlineDevice.push(obj);
+      app.onlineDevice.push(obj);
     }
 
-    console.log('ONLINE DEVICES: ', onlineDevice);
+    app.users = app.users.map(item => {
+      if (item.socketId = socket.id) {
+        item.device = obj.device;
+      }
+      return item;
+    });
+
+    console.log('Users:', app.users);
   });
 
   socket.on(socketNames.DISCONNECT, () => {
+    let app = require('../lib/app');
     const {id: socketId} = socket;
-    users = users.filter(c => c.socketId !== socketId);
-    console.log('Users:', users);
+    app.users = app.users.filter(c => c.socketId !== socketId);
+    console.log('Users:', app.users);
   });
   socket.on(socketNames.INPUT, (obj) => {
     const {input, jobHash, finishDate} = obj;
@@ -163,14 +169,15 @@ const onMessageSocket = (io, socket, client) => {
 };
 
 module.exports.register = (server, options, next) => {
-  users = [];
+  let app = require('../lib/app');
+  app.users = [];
   const io = require(`socket.io`)(server.listener);
   server.expose('io', io);
   if (!io) {
     next('No io made');
     return;
   }
-  global.io = io;
+  app.io = io;
 
   let client,
     plugins;
@@ -185,8 +192,8 @@ module.exports.register = (server, options, next) => {
     const me = {
       socketId
     };
-    users.push(me);
-    console.log('Users:', users);
+    app.users.push(me);
+    console.log('Users:', app.users);
     onMessageSocket(io, socket, client);
   });
 

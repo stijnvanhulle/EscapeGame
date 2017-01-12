@@ -12,7 +12,7 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 const base64Img = require('base64-img');
 
-const {paths} = require('../lib/const');
+const paths = require('../lib/paths');
 
 
 module.exports.save = (fileName, data) => {
