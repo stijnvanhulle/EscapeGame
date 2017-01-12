@@ -7,11 +7,12 @@
 * @License: stijnvanhulle.be
 */
 const app = require('../lib/app');
-const {mqttNames, socketNames, paths} = require('../lib/const');
+const {mqttNames, socketNames} = require('../lib/const');
 const beacons = require('../lib/beacons');
 const {convertToCsv} = require('../lib/functions')
 const Chance = require('chance');
 const path = require('path');
+const paths = require('../lib/paths');
 const c = new Chance();
 
 const scheduleJob = require('../lib/scheduleJob');
@@ -88,7 +89,7 @@ const onMessageSocket = (io, socket, client) => {
         console.log(result);
         if (result) {
           let obj = {
-            image1: path.resolve(path.IMAGES, image1),
+            image1: path.resolve(paths.FIXED, image1),
             image2: result,
             read: true
           }

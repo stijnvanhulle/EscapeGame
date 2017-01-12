@@ -36,6 +36,13 @@ const copy = new CopyWebpackPlugin([
   }
 ], {ignore: ['.DS_Store']});
 
+const copyFixedImages = new CopyWebpackPlugin([
+  {
+    from: './private/images',
+    to: 'uploads/fixed'
+  }
+], {ignore: ['.DS_Store']});
+
 const copyCompatibility = new CopyWebpackPlugin([
   {
     from: './src/js/compatibility',
@@ -70,7 +77,7 @@ const config = {
   },
 
   devtool: 'source-map', // or "inline-source-map"
-  watch:true,
+  watch: true,
   module: {
     rules: [
       {
@@ -123,9 +130,7 @@ const config = {
   },
 
   plugins: [
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    copy,
+    new webpack.optimize.OccurrenceOrderPlugin(), new webpack.HotModuleReplacementPlugin(), copy, copyFixedImages,
     //new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"})
   ]
 

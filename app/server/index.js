@@ -32,8 +32,9 @@ const mongodb = {
   uri: 'mongodb://' + mongo + ':' + mongo_port + '/app'
 };
 //TODO: check of is working
-paths.IMAGES = path.resolve(__dirname, './private/images/');
+paths.FIXED = path.resolve(__dirname, './public/uploads/fixed');
 paths.UPLOADS = path.resolve(__dirname, './public/uploads/');
+paths.VOLUME_PYTHON = '/var/uploads';
 
 const server = new Server({
   connections: {

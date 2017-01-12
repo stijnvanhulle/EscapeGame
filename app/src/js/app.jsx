@@ -117,16 +117,21 @@ class App extends Component {
   // WS
 
   handleWSDetectionFound = obj => {
-    let {percent} = obj;
-    percent = parseFloat(percent);
+    let {value} = obj;
+    let percent = parseFloat(value);
     console.log('percent detected', percent);
     if (percent > 0) {
-      this.socket.emit(socketNames.INPUT, {
-        input: true,
-        letters: game.letters,
-        jobHash: game.currentGameEvent.jobHashEnd,
-        finishDate: moment().valueOf()
-      });
+      if(game.currentGameEvent){
+        this.socket.emit(socketNames.INPUT, {
+          input: true,
+          letters: game.letters,
+          jobHash: game.currentGameEvent.jobHashEnd,
+          finishDate: moment().valueOf()
+        });
+      }else{
+        console.log('no gamevent');
+      }
+
     }
 
   }

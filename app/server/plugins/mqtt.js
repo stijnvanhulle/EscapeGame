@@ -72,7 +72,7 @@ const onMessage = (client, events, io) => {
 module.exports.register = (server, options, next) => {
   const client = mqtt.connect('mqtt://' + (process.env.MQTT || "localhost"));
   server.expose('client', client);
-  app.mqtt = client;
+  app.client = client;
 
   let events = [];
   let io,

@@ -35,7 +35,7 @@ services:
       context: .
       dockerfile: .docker/facedetection.dockfile
     container_name: escapePlan_facedetection
-    volumes: ["../python:/var/python"]
+    volumes: ["../python:/var/python","./server/public/uploads:/var/uploads"]
     working_dir: "/var/python"
     tty: true
     networks: ["nodeApp"]

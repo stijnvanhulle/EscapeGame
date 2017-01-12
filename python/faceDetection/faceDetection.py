@@ -7,6 +7,7 @@ import numpy as np
 def getDifference(image1,image2):
 	if image1 is not None and image2 is not None:
 		print('Loading detection')
+		print(image1,image2)
 		sift= cv2.xfeatures2d.SIFT_create()
 		surf= cv2.xfeatures2d.SURF_create()
 		orb = cv2.ORB_create()
