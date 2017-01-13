@@ -109,6 +109,7 @@ class GameStart extends Component {
       if (game.currentGameEvent.isActive) {
         this.socket.emit(socketNames.INPUT, {
           input,
+          answerData:null,
           letters:game.letters,
           jobHash: game.currentGameEvent.jobHashEnd,
           finishDate: moment().valueOf()

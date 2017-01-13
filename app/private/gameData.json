@@ -1,7 +1,7 @@
 [{
   "type": "description",
   "hide": false,
-  "sendToDevice": null,
+  "fromData": false,
   "data": {
     "name": "",
     "description": "Welkom, de bedoeling van het spel is om de aliennaam te ontvangen door opdrachten goed te volbrengen",
@@ -18,7 +18,7 @@
 }, {
   "type": "start",
   "hide": false,
-  "sendToDevice": null,
+  "fromData": false,
   "data": {
     "name": "",
     "description": "Zoek de juiste president",
@@ -34,7 +34,8 @@
       "data": {
         "location": "kortrijk",
         "date": "sdfs",
-        "book": 1
+        "book": 1,
+        "beaconId": "paars"
       }
     }
   }
@@ -42,7 +43,7 @@
 }, {
   "type": "sound",
   "hide": false,
-  "sendToDevice": null,
+  "fromData": false,
   "data": {
     "name": "",
     "description": "NUMMER speelt af",
@@ -60,7 +61,7 @@
 }, {
   "type": "bom",
   "hide": false,
-  "sendToDevice": null,
+  "fromData": false,
   "data": {
     "name": "",
     "description": "",
@@ -79,7 +80,7 @@
 }, {
   "type": "light",
   "hide": false,
-  "sendToDevice": "pi",
+  "fromData": true,
   "data": {
     "name": "",
     "description": "Scan het juiste schilderij",
@@ -90,7 +91,7 @@
       ""
     ],
     "answer": {
-      "value": "President x",
+      "value": true,
       "data": null
     }
   }
@@ -98,7 +99,7 @@
 }, {
   "type": "anthem",
   "hide": false,
-  "sendToDevice": null,
+  "fromData": false,
   "data": {
     "name": "",
     "description": "",
@@ -115,7 +116,7 @@
 }, {
   "type": "scan",
   "hide": false,
-  "sendToDevice": true,
+  "fromData": false,
   "data": {
     "name": "",
     "description": "Zoek het juiste schilderij",
@@ -132,7 +133,7 @@
 }, {
   "type": "find",
   "hide": false,
-  "sendToDevice": null,
+  "fromData": false,
   "data": {
     "name": "",
     "description": "",
@@ -149,7 +150,7 @@
 }, {
   "type": "book",
   "hide": false,
-  "sendToDevice": null,
+  "fromData": false,
   "data": {
     "name": "",
     "description": "Zoek het juiste woord",
@@ -171,12 +172,12 @@
 }, {
   "type": "finish",
   "hide": false,
-  "sendToDevice": null,
+  "fromData": false,
   "data": {
     "name": "",
     "description": "Wat is de naam van de alien?",
     "file": null,
-    "maxTries": 2,
+    "maxTries": 5,
     "maxTime": 300,
     "hints": [
       "Probeer de letters die je gekregen hebt de combineren",

@@ -8,8 +8,7 @@
 */
 const app = require('../lib/app');
 const {mqttNames, socketNames} = require('../lib/const');
-const beacons = require('../lib/beacons');
-const {convertToCsv} = require('../lib/functions')
+const {convertToCsv, convertToBool} = require('../lib/functions')
 const Chance = require('chance');
 const path = require('path');
 const paths = require('../lib/paths');
@@ -41,29 +40,25 @@ const onMessageSocket = (io, socket, client) => {
 
   socket.on(socketNames.ONLINE, obj => {
     let app = require('../lib/app');
-    const contains = app.onlineDevice.filter(item => item.device == obj.device).length > 0;
+    try {
+      if (typeof(obj) != 'object') {
+        obj = JSON.parse(obj);
+      }
 
-    if (contains) {
-      app.onlineDevice = app.onlineDevice.map(item => {
-        if (item.device) {
-          if (item.device == obj.device) {
-            return obj;
-          }
-        }
-
-      });
-    } else {
-      app.onlineDevice.push(obj);
+      console.log(obj);
+    } catch (e) {
+      console.log(obj, e);
     }
-
     app.users = app.users.map(item => {
-      if (item.socketId = socket.id) {
+      if (item.socketId == socket.id) {
         item.device = obj.device;
       }
       return item;
     });
 
-    console.log('Users:', app.users);
+
+    console.log('Users online:', app.users);
+    io.sockets.emit(socketNames.ONLINE, app.users);
   });
 
   socket.on(socketNames.DISCONNECT, () => {
@@ -82,60 +77,40 @@ const onMessageSocket = (io, socket, client) => {
   socket.on(socketNames.IMAGE, obj => {
     //TODO: change to {data: data, image1:gameData.gameData.data.file}
     try {
-      obj = JSON.parse(obj);
+      let isDocker = convertToBool(process.env.ISDOCKER);
+      try {
+        obj = JSON.parse(obj);
+        console.log(obj);
+      } catch (e) {
+        console.log(obj, e);
+      }
       let {data, image1} = obj;
 
-      fileController.saveBase64(c.hash({length: 15}) + '', data).then(result => {
-        console.log(result);
-        if (result) {
-          let obj = {
-            image1: path.resolve(paths.FIXED, image1),
-            image2: result,
-            read: true
+      fileController.saveBase64(c.hash({length: 15}) + '', data).then(image2 => {
+        if (image2) {
+          let obj;
+          if (isDocker) {
+            obj = {
+              image1: path.normalize(paths.VOLUME_PYTHON + '/fixed/' + image1),
+              image2: path.normalize(paths.VOLUME_PYTHON + '/' + image2),
+              read: true
+            };
+
+          } else {
+            obj = {
+              image1: path.resolve(paths.FIXED, image1),
+              image2: image2,
+              read: true
+            }
+
           }
           client.publish(mqttNames.DETECTION_FIND, JSON.stringify(obj));
+
         }
 
       }).catch(err => {
         console.log(err);
       });
-    } catch (e) {
-      console.log(e);
-    }
-
-  });
-  socket.on(socketNames.BEACON, (obj) => {
-    try {
-      let beacon = JSON.parse(obj);
-      let {beaconId, range} = obj;
-      beacon.beaconId = beacon.beaconId.toLowerCase();
-      beacon.range = parseInt(beacon.range);
-
-      const contains = beacons.items.find(item => {
-        if (item) {
-          if (item.beaconId == beacon.beaconId) {
-            return item;
-          };
-        }
-      });
-
-      if (contains) {
-        beacons.items = beacons.items.filter(item => {
-          if (item) {
-            if (item.beaconId == beacon.beaconId) {
-              return beacon;
-            }
-          }
-
-        });
-      } else {
-        if (beacon) {
-          beacons.items.push(beacon);
-        }
-
-      }
-
-      console.log(beacons);
     } catch (e) {
       console.log(e);
     }
@@ -169,7 +144,7 @@ const onMessageSocket = (io, socket, client) => {
 
   socket.on(socketNames.EVENT_FINISH, (obj) => {
     console.log(obj);
-    io.emit(socketNames.EVENT_FINISH, obj);
+    io.sockets.emit(socketNames.EVENT_FINISH, obj);
   });
 
   //back from client
@@ -178,6 +153,45 @@ const onMessageSocket = (io, socket, client) => {
   });
   socket.on(socketNames.DETECTION_FOUND, obj => {
     console.log(obj);
+  });
+  socket.on(socketNames.BEACON, (obj) => {
+    try {
+      let beacon = JSON.parse(obj);
+      let {beaconId, range} = obj;
+      beacon.beaconId = beacon.beaconId.toLowerCase();
+      beacon.range = parseInt(beacon.range);
+
+      const contains = app.beacons.find(item => {
+        if (item) {
+          if (item.beaconId == beacon.beaconId) {
+            return item;
+          };
+        }
+      });
+
+      if (contains) {
+        app.beacons = app.beacons.filter(item => {
+          if (item) {
+            if (item.beaconId == beacon.beaconId) {
+              return beacon;
+            }
+          }
+
+        });
+      } else {
+        if (beacon) {
+          app.beacons.push(beacon);
+        }
+
+      }
+
+      console.log('BEACONS:', app.beacons);
+      io.sockets.emit(socketNames.BEACONS, app.beacons);
+
+    } catch (e) {
+      console.log(e);
+    }
+
   });
 };
 
@@ -195,7 +209,7 @@ module.exports.register = (server, options, next) => {
   let client,
     plugins;
 
-  io.on(socketNames.CONNECT, socket => {
+  io.on(socketNames.CONNECT_SERVER, socket => {
     const {id: socketId} = socket;
 
     plugins = server.plugins;
@@ -206,7 +220,6 @@ module.exports.register = (server, options, next) => {
       socketId
     };
     app.users.push(me);
-    console.log('Users:', app.users);
     onMessageSocket(io, socket, client);
   });
 

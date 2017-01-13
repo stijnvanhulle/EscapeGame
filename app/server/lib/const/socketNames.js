@@ -9,7 +9,8 @@
 
 module.exports = {
   DISCONNECT: 'disconnect',
-  CONNECT: 'connection',
+  CONNECT_SERVER: 'connection',
+  CONNECT_CLIENT: 'connect',
   ONLINE: 'online',
   PI: 'sendToPi',
   PI_RESET: 'piReset',
@@ -24,5 +25,6 @@ module.exports = {
   DETECTION_FOUND: 'detection_found',
   RECALCULATE_START: 'recalculate_start',
   RECALCULATE_DONE: 'recalculate_done',
-  IMAGE:'image'
+  IMAGE: 'image',
+  BEACONS: 'beacons'
 };

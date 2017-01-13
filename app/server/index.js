@@ -13,7 +13,9 @@ const scheduleJob = require('./lib/scheduleJob');
 const path = require(`path`);
 const mongoose = require("mongoose");
 const Server = require('hapi').Server;
-//const WebpackPlugin = require('hapi-webpack-plugin');
+
+//convert from string to dateType
+
 const port = process.env.PORT || 3000;
 const mongo = process.env.MONGO || 'localhost';
 const mongo_port = process.env.MONGO_PORT || 3000;
@@ -32,6 +34,9 @@ const mongodb = {
   uri: 'mongodb://' + mongo + ':' + mongo_port + '/app'
 };
 //TODO: check of is working
+//TODO:
+paths.DEFAULT = path.resolve(__dirname, './');
+paths.DEFAULT = path.resolve(__dirname, './app.js');
 paths.FIXED = path.resolve(__dirname, './public/uploads/fixed');
 paths.UPLOADS = path.resolve(__dirname, './public/uploads/');
 paths.VOLUME_PYTHON = '/var/uploads';

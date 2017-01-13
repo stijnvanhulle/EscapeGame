@@ -14,7 +14,6 @@ const base64Img = require('base64-img');
 
 const paths = require('../lib/paths');
 
-
 module.exports.save = (fileName, data) => {
   return new Promise((resolve, reject) => {
     try {
@@ -28,7 +27,7 @@ module.exports.save = (fileName, data) => {
               reject(err);
             } else {
               console.log("File ", fileName, " was saved!");
-              resolve(pathFile);
+              resolve(fileName);
             }
 
           });
@@ -55,7 +54,7 @@ module.exports.saveBase64 = (fileName, data) => {
               reject(err);
             } else {
               console.log("File ", fileName + '.png', " was saved!");
-              resolve(path.resolve(pathFile, fileName + '.png'));
+              resolve(fileName + '.png');
             }
           });
 
@@ -89,7 +88,7 @@ module.exports.saveStream = (fileName, data) => {
 
             data.file.on('end', function(err) {
               console.log("File ", fileName, " was saved!");
-              resolve(pathFile);
+              resolve(fileName);
             })
           }
         }

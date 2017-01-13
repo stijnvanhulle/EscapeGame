@@ -43,9 +43,12 @@ game.reset = () => {
   game.currentGameData = null;
   game.currentGameEvent = null;
   game.events = new Emitter();
-  game.startTimeout=3000;
-  game.letters=[];
-  game.token=null;
+  game.startTimeout = 3000;
+  game.letters = [];
+  game.token = null;
+  game.beacons = [];
+  game.answerData = {};
+  game.device = 'screen';
 
   //game.events.setMaxListeners(2);
 };

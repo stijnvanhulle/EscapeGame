@@ -833,12 +833,13 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
       const data = gameData.data.data;
       const isLetter = data.isLetter;
       const answer = data.answer;
+      const isFinish = gameData.type == "finish";
 
       console.log('INPUTDATA', inputData);
 
       if (answer) {
         let {value, data: answerData} = answer;
-        inputData = inputData.input.toString().toLowerCase();
+        inputData.input = inputData.input.toString().toLowerCase();
         let letters = inputData.letters;
         let alienName;
         value = value.toString().toLowerCase();
@@ -851,7 +852,7 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
           }
         };
 
-        if (inputData == value || checkBool() || inputData.indexOf('value') != -1) {
+        if (inputData.input == value || checkBool() || inputData.input.indexOf(value) != -1) {
           if (isLetter) {
             getGameById(gameEvent.gameId).then(game => {
               alienName = game.alienName;
@@ -860,7 +861,7 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
               console.log('random letter', letter, alienName, letters);
               resolve({
                 data: {
-                  data: answerData,
+                  answerData,
                   letter
                 },
                 correct: true
@@ -878,8 +879,25 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
         }
 
       } else {
-        if (isBool(inputData.input) && convertToBool(inputData.input) === true) {
+        //old check for bom
+        /*if (isBool(inputData.input) && convertToBool(inputData.input) === true) {
           resolve({data: null, correct: true});
+        } else {
+          resolve({data: null, correct: false});
+        }*/
+        //TODO: check of it is working
+        if (isFinish) {
+          getGameById(gameEvent.gameId).then(game => {
+            let {alienName} = game;
+            if (inputData.input == value || inputData.input.indexOf(value) != -1) {
+              resolve({data: null, correct: true});
+            } else {
+              resolve({data: null, correct: false});
+            }
+          }).catch(err => {
+            reject(err);
+          });
+
         } else {
           resolve({data: null, correct: false});
         }

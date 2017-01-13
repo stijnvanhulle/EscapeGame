@@ -81,6 +81,10 @@ def calculate(data, file):
 			return obj
 		except Exception as e:
 			print(e)
+			obj={}
+			obj['data']=None
+			obj['score']=0
+			return obj
 		
 		
 		

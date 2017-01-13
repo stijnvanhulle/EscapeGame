@@ -9,6 +9,7 @@ ENV PORT=3000
 ENV MONGO=mongo
 ENV MQTT=mqtt
 ENV MONGO_PORT=27017
+ENV ISDOCKER=true
 
 WORKDIR /var/python
 VOLUME ["/var/python","/var/uploads"]

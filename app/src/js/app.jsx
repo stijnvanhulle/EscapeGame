@@ -58,19 +58,10 @@ class App extends Component {
       console.log(e);
     }
   }
-  loadToken = () => {
-    try {
-      const token = getCookie('token');
-      return token;
-    } catch (e) {
-      console.log(e);
-      return null;
-    }
-  }
   loadLogin = () => {
     let email = "stijn.vanhulle@outlook.com";
     let password = "stijn";
-    let token = this.loadToken();
+    const token = getCookie('token');
     if (!token) {
       axios.post(url.LOGIN, {email, password}).then((response) => {
         var {token, expires_in} = response.data;
@@ -89,7 +80,18 @@ class App extends Component {
   }
   loadSocket = () => {
     this.socket = this.props.socket;
-    this.socket.emit(socketNames.ONLINE, {device: 'screen'});
+    this.socket.on(socketNames.CONNECT_CLIENT, () => {
+      this.socket.emit(socketNames.ONLINE, {device: game.device});
+    });
+
+    this.socket.on(socketNames.DISCONNECT, (reconnect) => {
+      if (reconnect) {
+        location.reload();
+      } else {
+        socket.disconnect();
+      }
+    });
+
     this.socket.on(socketNames.ONLINE, this.handleWSOnline);
     this.socket.on(socketNames.EVENT_START, this.handleWSEventStart);
     this.socket.on(socketNames.EVENT_END, this.handleWSEventEnd);
@@ -97,6 +99,7 @@ class App extends Component {
     this.socket.on(socketNames.EVENT_DATA, this.handelWSEventData);
     this.socket.on(socketNames.DETECTION_FOUND, this.handleWSDetectionFound);
     this.socket.on(socketNames.RECALCULATE_DONE, this.handleWSRecalculateDone);
+    this.socket.on(socketNames.BEACONS, this.handleWSBeacons);
 
     piController.loadSocket(this.socket);
 
@@ -131,6 +134,7 @@ class App extends Component {
         if (game.currentGameEvent) {
           this.socket.emit(socketNames.INPUT, {
             input: true,
+            answerData: null,
             letters: game.letters,
             jobHash: game.currentGameEvent.jobHashEnd,
             finishDate: moment().valueOf()
@@ -145,14 +149,47 @@ class App extends Component {
     }
 
   }
+  handleWSBeacons = obj => {
+    //TODO testing with simon, beacons are correct
+    game.beacons = obj;
 
+    const gameData = game.currentGameData;
+    const currentData = gameData.data.data;
+
+    let nearestBeacon;
+    for (var i = 0; i < game.beacons.length; i++) {
+      let beacon = game.beacons[i];
+      if (beacon.range < nearestBeacon.range || !nearestBeacon) {
+        nearestBeacon = beacon;
+      }
+    }
+    if (currentData) {
+      if (game.currentGameEvent) {
+        let input = false;
+        //TODO: check of beacons are working
+        let beaconIdOfPresident;
+        if (game.answerData && game.answerData.beaconId) {
+          beaconIdOfPresident = game.answerData.beaconId;
+        }
+        if (nearestBeacon.beaconId == beaconIdOfPresident) {
+          input = true;
+        }
+        this.socket.emit(socketNames.INPUT, {
+          input,
+          letters: game.letters,
+          jobHash: game.currentGameEvent.jobHashEnd,
+          finishDate: moment().valueOf()
+        });
+      }
+    }
+  }
   handleWSOnline = obj => {
     console.log(obj);
   }
 
   handelWSEventData = obj => {
     console.log('Event data:', obj, moment().format());
-    const {correct, triesOver, data} = obj;
+    const {correct, triesOver, answerData} = obj;
     const gameData = game.currentGameData;
     const currentData = gameData.data.data;
     const type = gameData.data.type.toLowerCase();
@@ -166,8 +203,16 @@ class App extends Component {
     }
 
     if (correct) {
-      if (data && data.letter) {
-        game.letters.push(data.letter);
+      if (answerData && answerData.letter) {
+        game.letters.push(answerData.letter);
+      }
+      //TODO: check of working
+      if (data.answerData) {
+        let answerDataArr = Object.keys(data.answerData);
+        for (var i = 0; i < answerDataArr.length; i++) {
+          let answerDataItem = answerDataArr[i];
+          game.answerData[answerDataItem] = data.answerData[answerDataItem];
+        }
       }
 
     }

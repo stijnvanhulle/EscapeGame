@@ -36,8 +36,11 @@ def getDifference(image1,image2):
 			#plt.imshow(img3)
 			#plt.show()
 			val=float(percent * 100)
+			
+			#ROUND
 			return val
 		except Exception as e:
 			print(e)
+			return None
 
 	return None

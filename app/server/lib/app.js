@@ -7,15 +7,19 @@
 * @License: stijnvanhulle.be
 */
 let {socketNames, mqttNames} = require('./const');
+const {convertToBool} = require('../lib/functions');
+const {removeDataFromModel} = require('../controllers/lib/functions');
 const path = require('path');
 const paths = require('./paths');
 
+const {Game: GameModel, GameEvent: GameEventModel} = require('../models/mongo');
 let app = {
   io: null,
   client: null,
   sockets: {},
   onlineDevice: [],
-  users: []
+  users: [],
+  beacons: []
 };
 
 //TODO: examen stuff test
@@ -28,33 +32,32 @@ app.testImage = (image1 = 'cola.png', image2 = 'cola.png') => {
     });
     if (screen) {
       let socket = app.io.to(screen.socketId);
+      let isDocker = convertToBool(process.env.ISDOCKER);
 
-      console.log(process.env.ISDOCKER);
-      //for python on same server:
-      /*
-      let obj = {
-        image1: path.resolve(paths.FIXED, image1),
-        image2: path.resolve(paths.FIXED, image2),
-        read: true
-      };
-      */
-      let obj = {
-        image1: path.normalize(paths.VOLUME_PYTHON + '/fixed/' + image1),
-        image2: path.normalize(paths.VOLUME_PYTHON + '/' + image2),
-        read: true
-      };
+      let obj;;
+      if (isDocker) {
+        obj = {
+          image1: path.normalize(paths.VOLUME_PYTHON + '/fixed/' + image1),
+          image2: path.normalize(paths.VOLUME_PYTHON + '/' + image2),
+          read: true
+        };
+
+      } else {
+        obj = {
+          image1: path.resolve(paths.FIXED, image1),
+          image2: path.resolve(paths.FIXED, image2),
+          read: true
+        };
+      }
       console.log(obj);
       app.client.publish(mqttNames.DETECTION_FIND, JSON.stringify(obj));
       //socket.emit(socketNames.IMAGE, obj);
-
-      return true;
     } else {
-      return null;
+      console.log('No screen attached');
     }
 
   } catch (e) {
     console.log(e);
-    return null;
   }
 };
 
@@ -65,7 +68,7 @@ app.testData = (data = [
   }
 ], image = 'games.csv') => {
   try {
-    console.log(process.env.ISDOCKER);
+    let isDocker = convertToBool(process.env.ISDOCKER);
 
     let screen = app.users.find(item => {
       if (item.device == 'screen') {
@@ -74,21 +77,24 @@ app.testData = (data = [
     });
     if (screen) {
       let socket = app.io.to(screen.socketId);
-
-      let obj = {
-        data,
-        file: path.normalize(paths.VOLUME_PYTHON + '/' + image)
+      let obj;
+      if (isDocker) {
+        let obj = {
+          data,
+          file: path.normalize(paths.VOLUME_PYTHON + '/' + image)
+        }
+      } else {
+        //TODO; chage
       }
 
       app.client.publish(mqttNames.RECALCULATE_START, JSON.stringify(obj));
       //socket.emit(socketNames.IMAGE, obj);
-      return true;
+
     } else {
-      return null;
+      console.log('No screen attached');
     }
   } catch (e) {
     console.log(e);
-    return null;
   }
 
 };
@@ -108,10 +114,57 @@ app.sendFromSocket = (socketIdOrDevice, emitSub, emitData) => {
   }
   if (socket) {
     socket.emit(emitSub, emitData);
-    return true;
   } else {
-    return false;
+    console.log('No socket attached');
   }
+
+};
+app.endSocketConnection = (deviceName) => {
+  try {
+    let devices = app.users.filter(item => {
+      if (item.device == deviceName) {
+        return item;
+      }
+    });
+    if (devices && devices.length > 0) {
+      for (var i = 0; i < devices.length; i++) {
+        let device = devices[i];
+        let socket = app.io.to(device.socketId);
+        socket.emit(socketNames.DISCONNECT, reconnect = false);
+      }
+
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+app.reset = () => {
+  var restartGame = () => {
+    return new Promise((resolve, reject) => {
+      GameModel.update({}, {
+        isFinished: false,
+        isPlaying: false,
+        duration: 0
+      }, {
+        multi: true
+      }, function(err, raw) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve("Reset all games to start state");
+        }
+      });
+    });
+  }
+  removeDataFromModel(GameEventModel).then(ok => {
+    console.log("removed gamevents");
+    return restartGame();
+  }).then(log => {
+    console.log(log);
+    //process.exit(0);
+  }).catch(err => {
+    console.log(err);
+  });
 
 };
 module.exports = app;

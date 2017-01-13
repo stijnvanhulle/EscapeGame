@@ -18,6 +18,7 @@ const {UglifyJsPlugin} = webpack.optimize;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 const {entry, plugins} = require(`webpack-config-htmls`)();
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const extractCSS = new ExtractTextWebpackPlugin(`css/style.css`);
 
@@ -28,7 +29,13 @@ const publicPath = '/';
 // - srcset images (not loaded through html-loader )
 // - json files (through fetch)
 // - fonts via WebFontLoader
-
+//TODO: TESTEN
+const removePublic = new CleanWebpackPlugin(['public'], {
+  root: __dirname,
+  verbose: true,
+  dry: false,
+  exclude: ['uploads']
+});
 const copy = new CopyWebpackPlugin([
   {
     from: './src/assets',

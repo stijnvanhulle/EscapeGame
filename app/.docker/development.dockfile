@@ -9,6 +9,7 @@ ENV PORT=3000
 ENV MONGO=mongo
 ENV MQTT=mqtt
 ENV MONGO_PORT=27017
+ENV ISDOCKER=true
 
 WORKDIR /var/www
 VOLUME /var/www
@@ -22,6 +23,7 @@ RUN npm install -g yarn
 RUN npm install -g webpack
 RUN npm install -g rimraf
 RUN npm install -g eslint
+RUN npm install -g modclean
 
 
 
