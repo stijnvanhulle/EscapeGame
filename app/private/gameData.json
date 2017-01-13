@@ -30,8 +30,8 @@
     "maxTime": 300,
     "isLetter": true,
     "answer": {
-      "name": "President x",
-      "value": {
+      "value": "President x",
+      "data": {
         "location": "kortrijk",
         "date": "sdfs",
         "book": 1
@@ -54,7 +54,7 @@
     ],
     "isLetter": true,
     "answer": {
-      "name": "2012"
+      "value": "2012"
     }
   }
 }, {
@@ -71,7 +71,10 @@
       ""
     ],
     "isLetter": true,
-    "answer": null
+    "answer": {
+      "value": true,
+      "data": null
+    }
   }
 }, {
   "type": "light",
@@ -87,8 +90,8 @@
       ""
     ],
     "answer": {
-      "name": "President x",
-      "value": null
+      "value": "President x",
+      "data": null
     }
   }
 
@@ -160,8 +163,8 @@
     ],
     "isLetter": true,
     "answer": {
-      "name": "patat",
-      "value": null
+      "value": "patat",
+      "data": null
     }
   }
 

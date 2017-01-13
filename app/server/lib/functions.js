@@ -43,7 +43,36 @@ functions.filter = (items, ...filterOn) => {
   })
 
 };
-functions.randomLetterFrom = (name, letters = null) => {
+functions.sort = (arr = null, how = 'asc') => {
+  const ascSort = (a, b) => {
+    if (a.id && b.id) {
+      return a.id - b.id
+    } else {
+      return a - b;
+    }
+  };
+  const descSort = (a, b) => {
+    if (a.id && b.id) {
+      return b.id - a.id
+    } else {
+      return b - a;
+    }
+  };
+
+  if (arr) {
+    arr = arr.sort((a, b) => {
+      if (how == 'desc') {
+        descSort(a, b);
+      } else {
+        ascSort(a, b);
+      }
+    });
+    return arr;
+  } else {
+    return null;
+  }
+};
+functions.randomLetterFrom = (name, letters = []) => {
   try {
     let letter;
     name = name.toString();
@@ -98,7 +127,7 @@ functions.randomLetterFrom = (name, letters = null) => {
       let random = newRandom();
       letter = name.charAt(random);
     }
-    console.log(letter);
+    console.log('LETTER: ', letter);
     return letter;
   } catch (e) {
     console.log(e);

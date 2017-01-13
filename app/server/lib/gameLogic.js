@@ -59,6 +59,11 @@ gameLogic.createData = ({
 }) => {
   try {
     let now = moment();
+    if (level <= 0) {
+      level = 1;
+    } else if (level > levels.length) {
+      level = levels.length;
+    }
     if (parseInt(level) > 15) {
       throw new Error('Level is to big');
     }

@@ -175,9 +175,14 @@ module.exports = [
         }
 
         gameController.getGameEvents(find, canSort = true).then(gameEvents => {
-          return fileController.save(c.hash({length: 15}) + '.csv', convertToCsv(gameEvents, fields = null));
+          if (gameEvents && gameEvents.length > 0) {
+            return fileController.save(c.hash({length: 15}) + '.csv', convertToCsv(gameEvents, fields = null));
+          } else {
+            return null;
+          }
+
         }).then(fileName => {
-          reply({fileName});
+          reply({fileName: fileName});
         }).catch(err => {
           console.log(err);
           throw new Error(err);
@@ -333,7 +338,7 @@ module.exports = [
         gameController.getGameEvents({
           gameId
         }, canSort = true).then(gameEvents => {
-          io.emit(socketNames.RECALCULATE_START, gameEvents);
+          io.sockets.emit(socketNames.RECALCULATE_START, gameEvents);
           reply(gameEvents);
         }).catch(err => {
           throw new Error(err);

@@ -147,16 +147,20 @@ const onMessageSocket = (io, socket, client) => {
     gameController.getGameEvents({
       isActive: false
     }, canSort = true).then(gameEvents => {
-      return fileController.save(c.hash({length: 15}) + '.csv', convertToCsv(gameEvents, fields = null));
+      if (gameEvents && gameEvents.length > 0) {
+        return fileController.save(c.hash({length: 15}) + '.csv', convertToCsv(gameEvents, fields = null));
+      } else {
+        return null;
+      }
+
     }).then(fileName => {
-      client.publish(mqttNames.RECALCULATE_START, JSON.stringify(fileName));
+      if (fileName) {
+        client.publish(mqttNames.RECALCULATE_START, JSON.stringify(fileName));
+      }
     }).catch(err => {
       console.log(err);
     });
 
-  });
-  socket.on(socketNames.RECALCULATE_DONE, (obj) => {
-    //update gameEvents
   });
 
   socket.on(socketNames.DETECTION_FIND, (obj) => {
@@ -166,6 +170,14 @@ const onMessageSocket = (io, socket, client) => {
   socket.on(socketNames.EVENT_FINISH, (obj) => {
     console.log(obj);
     io.emit(socketNames.EVENT_FINISH, obj);
+  });
+
+  //back from client
+  socket.on(socketNames.RECALCULATE_DONE, (obj) => {
+    console.log(obj);
+  });
+  socket.on(socketNames.DETECTION_FOUND, obj => {
+    console.log(obj);
   });
 };
 

@@ -4,9 +4,10 @@
   "scripts": {
     "start": "npm run server",
     "development": "npm run clean && nodemon -L . & NODE_ENV=development webpack --watch",
+    "debug": "npm run clean && nodemon --inspect & NODE_ENV=development webpack --watch",
+    "docker": "docker-compose rm -f && docker-compose up",
     "production": "yarn run clean && NODE_ENV=production webpack -p",
     "upgrade": "npm version patch --sign-git-tag=true",
-    "debug": "npm run clean && nodemon --inspect & NODE_ENV=development webpack --watch",
     "build": "webpack",
     "server": "forever .",
     "test": "npm clean",
@@ -15,10 +16,7 @@
     "mongodb": "sudo mongod --dbpath server/mongodb --port 3001",
     "clean_modules": "rimraf ./node_modules/",
     "clean": "rimraf ./server/public/",
-    "webpack": "npm run clean && webpack-dev-server --progress --inline --hot --port 3000",
-    "preversion": "npm test",
-    "version": "npm run build && git add --all ./",
-    "postversion": "git push && git push --tags"
+    "webpack": "npm run clean && webpack-dev-server --progress --inline --hot --port 3000"
   },
   "main": "server/index.js",
   "repository": {

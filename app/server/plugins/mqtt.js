@@ -36,7 +36,7 @@ const onMessage = (client, events, io) => {
       case mqttNames.ONLINE:
         if (obj.device)
           obj.device = obj.device.toLowerCase();
-        io.emit(socketNames.ONLINE, obj);
+        io.sockets.emit(socketNames.ONLINE, obj);
 
         lcd.writeDisplay("WELKOM");
         /*soundSensor.reading(realtime = false, timeout = 10);
@@ -57,10 +57,10 @@ const onMessage = (client, events, io) => {
         soundSensor.checkData(obj);
         break;
       case mqttNames.DETECTION_FOUND:
-        io.emit(socketNames.DETECTION_FOUND, obj);
+        io.sockets.emit(socketNames.DETECTION_FOUND, obj);
         break;
       case mqttNames.RECALCULATE_DONE:
-        io.emit(socketNames.RECALCULATE_DONE, obj);
+        io.sockets.emit(socketNames.RECALCULATE_DONE, obj);
         break;
       default:
 

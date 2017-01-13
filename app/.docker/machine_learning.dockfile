@@ -13,5 +13,6 @@ ENV MONGO_PORT=27017
 WORKDIR /var/python
 VOLUME /var/python
 
+RUN pip3 install paho-mqtt trollius
 
-ENTRYPOINT ["python3","./faceDetection/index.py","mqtt"]
+ENTRYPOINT ["python3","./index.py","mqtt"]

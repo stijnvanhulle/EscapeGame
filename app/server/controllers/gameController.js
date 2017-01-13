@@ -22,7 +22,14 @@ const {
   GamePlayer,
   Player
 } = require('../models');
-const {promiseFor, setToMoment, isBool, convertToBool, randomLetterFrom} = require('../lib/functions');
+const {
+  promiseFor,
+  setToMoment,
+  isBool,
+  convertToBool,
+  randomLetterFrom,
+  sort
+} = require('../lib/functions');
 const {
   Game: GameModel,
   Player: PlayerModel,
@@ -62,8 +69,10 @@ const addGame = (game) => {
 const getGameById = (id) => {
   return new Promise((resolve, reject) => {
     try {
-      if (!id)
+      if (!id) {
         reject('No id for game');
+        return;
+      }
 
       GameModel.findOne({id: id}).exec(function(err, doc) {
         if (err) {
@@ -546,9 +555,27 @@ const updateGameEvent = (obj, extra = {}) => {
   });
 };
 
-const getGameEvents = (find, canSort = false) => {
+const getGameEvents = (find, canSort = false, calcDuration = false) => {
   return new Promise((resolve, reject) => {
     try {
+      let gameDuration;
+      const promise = (item, i, amount) => {
+        return new Promise((resolve, reject) => {
+          if (item.gameId) {
+            getGameById(item.gameId).then(game => {
+              console.log(game);
+              item.gameDuration = game.duration;
+              resolve(item);
+            }).catch(err => {
+              reject(err);
+            });
+          } else {
+            resolve(item);
+          }
+
+        });
+      };
+
       GameEventModel.find(find).exec(function(err, docs) {
         if (err) {
           reject(err);
@@ -564,7 +591,12 @@ const getGameEvents = (find, canSort = false) => {
             }
 
           });
-          resolve(gameEvents);
+
+          promiseFor(promise, gameEvents).then(gameEvents => {
+            resolve(gameEvents);
+          }).catch(err => {
+            reject(err);
+          });
 
         }
       });
@@ -805,22 +837,34 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
       console.log('INPUTDATA', inputData);
 
       if (answer) {
-        let {value, name} = answer;
+        let {value, data: answerData} = answer;
         inputData = inputData.input.toString().toLowerCase();
         let letters = inputData.letters;
         let alienName;
-        name = name.toString().toLowerCase();
+        value = value.toString().toLowerCase();
 
-        if (inputData == name || inputData.indexOf('name') != -1) {
+        let checkBool = () => {
+          if (isBool(inputData.input) && isBool(inputData.input)) {
+            return convertToBool(inputData.input) == convertToBool(value);
+          } else {
+            return false;
+          }
+        };
+
+        if (inputData == value || checkBool() || inputData.indexOf('value') != -1) {
           if (isLetter) {
             getGameById(gameEvent.gameId).then(game => {
               alienName = game.alienName;
               return randomLetterFrom(alienName, letters);
             }).then(letter => {
               console.log('random letter', letter, alienName, letters);
-              resolve({data: {
+              resolve({
+                data: {
+                  data: answerData,
                   letter
-                }, correct: true});
+                },
+                correct: true
+              });
 
             }).catch(err => {
               reject(err);
@@ -882,9 +926,9 @@ const finishGameEventFromHash = (inputData) => {
           triesOver = currentData.maxTries - gameEvent.tries;
         }
 
-        console.log('answer correct: ', correct, triesOver);
+        console.log('answer correct: ', data, correct, triesOver);
 
-        io.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct, triesOver});
+        io.sockets.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct, triesOver});
 
         if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || gameEvent.isCorrect || triesOver == 0) {
           gameEvent.setFinish(parseFloat(inputData.finishDate));
@@ -928,7 +972,7 @@ const startGameEvent = (gameData, gameEvent, recalculate = false) => {
         return getGameEventByIsActive(true, gameEvent.gameId);
       }).then(data => {
         const amount = data.length;
-        io.emit(socketNames.EVENT_START, {
+        io.sockets.emit(socketNames.EVENT_START, {
           gameData: gameData.json(false, true, false),
           gameEvent: gameEvent.json(false, true, false),
           activeEvents: amount
@@ -963,7 +1007,7 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
         return getGameEventByIsActive(true, gameEvent.gameId);
       }).then(data => {
         const amount = data.length;
-        io.emit(socketNames.EVENT_END, {
+        io.sockets.emit(socketNames.EVENT_END, {
           gameData: gameData.json(false, true, false),
           gameEvent: gameEvent.json(false, true, false),
           activeEvents: amount
@@ -1088,9 +1132,6 @@ const createGameEvents = ({
         'description': {
           amount: 0
         },
-        'finish': {
-          amount: 1
-        },
         'anthem': {
           amount: 0
         },
@@ -1111,13 +1152,20 @@ const createGameEvents = ({
         },
         'sound': {
           amount: 0
+        },
+        'finish': {
+          amount: 1
         }
       };
 
       getGameById(gameId).then(item => {
         game = item;
+        let alienName = game.alienName;
+        //TODO: change amount for length alienName where letter is true
         return getGameDataFromGameName(gameName, types);
       }).then(gameDatas => {
+        gameDatas = sort(gameDatas, 'asc');
+        console.log('gamedatas', gameDatas);
         return promiseFor(promise, gameDatas);
       }).then((items) => {
         gameEvents = items;

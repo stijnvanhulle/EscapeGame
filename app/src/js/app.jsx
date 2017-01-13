@@ -70,7 +70,7 @@ class App extends Component {
   loadLogin = () => {
     let email = "stijn.vanhulle@outlook.com";
     let password = "stijn";
-    let token = this.loadToken(token);
+    let token = this.loadToken();
     if (!token) {
       axios.post(url.LOGIN, {email, password}).then((response) => {
         var {token, expires_in} = response.data;
@@ -96,6 +96,7 @@ class App extends Component {
     this.socket.on(socketNames.EVENT_FINISH, this.handleWSEventFinish);
     this.socket.on(socketNames.EVENT_DATA, this.handelWSEventData);
     this.socket.on(socketNames.DETECTION_FOUND, this.handleWSDetectionFound);
+    this.socket.on(socketNames.RECALCULATE_DONE, this.handleWSRecalculateDone);
 
     piController.loadSocket(this.socket);
 
@@ -115,23 +116,32 @@ class App extends Component {
   }
 
   // WS
-
+  handleWSRecalculateDone = obj => {
+    this.socket.emit(socketNames.RECALCULATE_DONE, obj); //send back to server
+  }
   handleWSDetectionFound = obj => {
+    this.socket.emit(socketNames.DETECTION_FOUND, obj); //send back to server
+
     let {value} = obj;
     let percent = parseFloat(value);
-    console.log('percent detected', percent);
-    if (percent > 0) {
-      if(game.currentGameEvent){
-        this.socket.emit(socketNames.INPUT, {
-          input: true,
-          letters: game.letters,
-          jobHash: game.currentGameEvent.jobHashEnd,
-          finishDate: moment().valueOf()
-        });
-      }else{
-        console.log('no gamevent');
-      }
+    if (percent) {
+      console.log('percent detected', percent);
+      vm.showMessage('Percent detected :' + percent);
+      if (percent > 0) {
+        if (game.currentGameEvent) {
+          this.socket.emit(socketNames.INPUT, {
+            input: true,
+            letters: game.letters,
+            jobHash: game.currentGameEvent.jobHashEnd,
+            finishDate: moment().valueOf()
+          });
+        } else {
+          console.log('no gamevent');
+        }
 
+      }
+    } else {
+      console.log('bad percent', percent);
     }
 
   }
@@ -181,7 +191,8 @@ class App extends Component {
     game.currentGameData = gameData;
     game.currentGameEvent = gameEvent;
 
-    this.socket.emit(socketNames.RECALCULATE_START, game.id);
+    //TODO: change for aut calc to pyton script
+    //this.socket.emit(socketNames.RECALCULATE_START, game.id);
 
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       const currentData = gameData.data.data;

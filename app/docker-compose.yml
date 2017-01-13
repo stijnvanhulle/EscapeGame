@@ -30,11 +30,11 @@ services:
     container_name: escapePlan_mqtt
     networks: ["nodeApp"]
     ports: ["1883:1883"]
-  facedetection:
+  machine_learning:
     build:
       context: .
-      dockerfile: .docker/facedetection.dockfile
-    container_name: escapePlan_facedetection
+      dockerfile: .docker/machine_learning.dockfile
+    container_name: escapePlan_machine_learning
     volumes: ["../python:/var/python","./server/public/uploads:/var/uploads"]
     working_dir: "/var/python"
     tty: true
