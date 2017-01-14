@@ -8,6 +8,7 @@
 */
 let {socketNames, mqttNames} = require('./const');
 const {convertToBool} = require('../lib/functions');
+const scheduleJob = require('../lib/scheduleJob');
 const {removeDataFromModel} = require('../controllers/lib/functions');
 const path = require('path');
 const paths = require('./paths');
@@ -159,6 +160,9 @@ app.reset = () => {
   removeDataFromModel(GameEventModel).then(ok => {
     console.log("removed gamevents");
     return restartGame();
+  }).then(log => {
+    console.log(log);
+    return scheduleJob.cancelAll();
   }).then(log => {
     console.log(log);
     //process.exit(0);

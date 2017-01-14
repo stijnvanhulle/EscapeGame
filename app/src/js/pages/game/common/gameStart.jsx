@@ -35,7 +35,6 @@ class GameStart extends Component {
       startTime: moment().add(this.countdown, 'seconds').valueOf(),
       input: '',
       error: '',
-      audioSrc: '',
       imageSrc: '',
       audioRepeat: true,
       data: {},
@@ -54,14 +53,17 @@ class GameStart extends Component {
 
   loadEvents = () => {
     game.events.on('audio', (src) => {
-      this.setState({imageSrc: '', audioSrc: src});
+      this.setState({imageSrc: ''});
       if (src) {
+        let audioRepeat = true;
         if (game.currentGameData.data.type.toLowerCase() == 'bom') {
-          this.setState({audioRepeat: false});
-        } else {
-          this.setState({audioRepeat: true});
+          audioRepeat = false;
         }
-        this.refs.audio.play();
+        
+        this.refs.audio.play(src, audioRepeat);
+
+      } else {
+        this.refs.audio.pause();
       }
 
     });
@@ -109,8 +111,8 @@ class GameStart extends Component {
       if (game.currentGameEvent.isActive) {
         this.socket.emit(socketNames.INPUT, {
           input,
-          answerData:null,
-          letters:game.letters,
+          answerData: null,
+          letters: game.letters,
           jobHash: game.currentGameEvent.jobHashEnd,
           finishDate: moment().valueOf()
         });
@@ -162,7 +164,7 @@ class GameStart extends Component {
               <h1>{this.state.showDescription && game.currentGameData.data.data.description}</h1>
               <TextInput name="input" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
               <Button onClick={this.sendInput}>Send Input</Button>
-              <Audio ref="audio" className="audio" src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
+              <Audio ref="audio" className="audio"/>
               <Image ref="image" className="image" src={this.state.imageSrc}/>
             </div>
           </div>

@@ -270,7 +270,7 @@ class App extends Component {
 
       const hints = gameData.data.data.hints;
       if (hints) {
-        timer.startHints(hints, gameData.data.data.maxTime);
+        timer.startHints(hints, gameEvent.timeBetween);
       }
 
       console.log('UPDATED gameEvent');
@@ -293,6 +293,8 @@ class App extends Component {
       }, 1000);
 
       vm.hideMessage();
+      game.events.emit('audio', null);
+      game.events.emit('image', null);
       game.events.emit('eventEnd');
       game.events.emit('letters', game.letters);
 

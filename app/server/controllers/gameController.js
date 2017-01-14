@@ -1175,7 +1175,7 @@ const createGameEvents = ({
           amount: 0
         },
         'sound': {
-          amount: 0
+          amount: 1
         },
         'finish': {
           amount: 1

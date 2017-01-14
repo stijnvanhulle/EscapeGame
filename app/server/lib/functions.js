@@ -75,7 +75,7 @@ functions.sort = (arr = null, how = 'asc') => {
 functions.randomLetterFrom = (name, letters = []) => {
   try {
     let letter;
-    name = name.toString();
+    name = name.toString().replace(' ','');
 
     const newRandom = () => {
       return Math.floor((Math.random() * name.length) + 1);
