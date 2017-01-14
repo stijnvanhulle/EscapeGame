@@ -14,6 +14,11 @@ ENV ISDOCKER=true
 WORKDIR /var/python
 VOLUME /var/python
 
+
+RUN pip3 install numpy
+RUN pip3 install pandas
+RUN pip3 install scipy
+RUN pip3 install -U scikit-learn
 RUN pip3 install paho-mqtt trollius
 
 ENTRYPOINT ["python3","./index.py","mqtt"]

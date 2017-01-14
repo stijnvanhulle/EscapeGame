@@ -26,5 +26,6 @@ module.exports = {
   RECALCULATE_START: 'recalculate_start',
   RECALCULATE_DONE: 'recalculate_done',
   IMAGE: 'image',
-  BEACONS: 'beacons'
+  BEACONS: 'beacons',
+  ADD_ANSWERDATA:'add_answerData'
 };

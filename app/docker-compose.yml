@@ -38,6 +38,7 @@ services:
     volumes: ["../python:/var/python","./server/public/uploads:/var/uploads"]
     working_dir: "/var/python"
     tty: true
+    restart: always
     networks: ["nodeApp"]
     links: ["mqtt"]
 

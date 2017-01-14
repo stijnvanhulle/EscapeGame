@@ -56,7 +56,6 @@ const onMessageSocket = (io, socket, client) => {
       return item;
     });
 
-
     console.log('Users online:', app.users);
     io.sockets.emit(socketNames.ONLINE, app.users);
   });
@@ -74,6 +73,24 @@ const onMessageSocket = (io, socket, client) => {
       console.log('job fail', obj);
     }
   });
+  socket.on(socketNames.ADD_ANSWERDATA, obj => {
+    console.log(obj);
+    let {answerData, gameId} = obj;
+    let game;
+    const gameController = require('../controllers/gameController');
+    if (answerData) {
+      gameController.getGameById(gameId).then(item => {
+        game=item;
+        game.addAnswerData(answerData);
+        return gameController.updateGame(game);
+      }).then(ok => {
+        console.log('add anserdata to game', game);
+      }).catch(err => {
+        console.log(err);
+      });
+    }
+
+  });
   socket.on(socketNames.IMAGE, obj => {
     //TODO: change to {data: data, image1:gameData.gameData.data.file}
     try {
@@ -85,6 +102,9 @@ const onMessageSocket = (io, socket, client) => {
         console.log(obj, e);
       }
       let {data, image1} = obj;
+
+      //TODO: for simon: from gamedata, if fromAnswerData==true=> game.answerdata.image in image1 steken:
+      //TODO: gamedata.data.data.file="answerData.image" => "answerData.image" omzetten naar game.answerData.image
 
       fileController.saveBase64(c.hash({length: 15}) + '', data).then(image2 => {
         if (image2) {

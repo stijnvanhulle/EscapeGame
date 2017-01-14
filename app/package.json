@@ -14,7 +14,7 @@
     "mqtt": "bash ../mqtt/bin/run.sh",
     "mongo": "mkdir server/mongodb && npm run mongodb",
     "mongodb": "sudo mongod --dbpath server/mongodb --port 3001",
-    "clean_modules": "rimraf ./node_modules/",
+    "clean_modules": "modclean -r",
     "clean": "rimraf ./server/public/",
     "webpack": "npm run clean && webpack-dev-server --progress --inline --hot --port 3000"
   },

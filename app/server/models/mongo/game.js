@@ -27,7 +27,8 @@ module.exports.load = () => {
     gameName: String,
     isFinished: Boolean,
     isPlaying:Boolean,
-    duration:Number
+    duration:Number,
+    answerData:String
   });
 
   schema.pre('save', function(next) {

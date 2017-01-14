@@ -73,7 +73,7 @@ class Prison extends Component {
 
     });
     game.events.on('letters', (letters) => {
-      this.state.letter = letters;
+      this.state.letters = letters;
       this.forceUpdate();
     });
     game.events.on('bomStart', (howLong) => {
@@ -194,6 +194,13 @@ class Prison extends Component {
     this.props.isDoneCounting();
 
   }
+  lettersTransform = (letters) => {
+    let val = '';
+    for (var i = 0; i < letters.length; i++) {
+      val += letters[i] + ' - ';
+    }
+    return val;
+  }
   render() {
     return (
       <div className="prison">
@@ -201,7 +208,7 @@ class Prison extends Component {
         <Countdown className={!this.props.canStart
           ? 'hide'
           : ''} ref='countdown' sendToPi={true} className="countdown" howLong={this.state.countdown} isDone={this.isDoneCounting}/>
-        <div className="letters">{this.state.letters}</div>
+        <div className="letters">{this.lettersTransform(this.state.letters)} < /div>
         <div className="hint">{this.state.hint}</div>
         <Isvg src="/assets/images/plan.svg" uniquifyIDs={false} onLoad={this.onLoad}/>
       </div>

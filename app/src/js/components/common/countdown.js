@@ -42,7 +42,7 @@ class Countdown extends Component {
           piController.tickBom(timeFormat);
         }
 
-        this.setState({time: newTime});
+        this.setState({time: newTime, isStopped: false});
         console.log(newTime);
       } else {
 

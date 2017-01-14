@@ -6,7 +6,7 @@
 * @Last modified time: 2017-01-10T10:49:31+01:00
 * @License: stijnvanhulle.be
 */
-const DELAY = 2;
+const DELAY = 5; //delay needed for delay of api calls clien<=>server
 
 const {io, client} = require('../lib/app');
 const moment = require('moment');
@@ -444,7 +444,7 @@ const updateGame = (obj) => {
     if (!obj instanceof Game) {
       reject('No instance of game');
     }
-    obj = obj.json(stringify = false);
+    obj = obj.json(stringify = false, removeEmpty = false, subDataJson = true);
     //
     console.log(obj);
     GameModel.update({
@@ -455,7 +455,8 @@ const updateGame = (obj) => {
       alienName: obj.alienName,
       isFinished: obj.isFinished,
       isPlaying: obj.isPlaying,
-      duration: obj.duration
+      duration: obj.duration,
+      answerData: obj.answerData
     }, {
       multi: true
     }, function(err, raw) {
@@ -833,29 +834,33 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
       const data = gameData.data.data;
       const isLetter = data.isLetter;
       const answer = data.answer;
-      const isFinish = gameData.type == "finish";
+      const isFinish = gameData.data.type == "finish";
+      const fromAnswerData = gameData.data.fromAnswerData;
 
       console.log('INPUTDATA', inputData);
+      if (inputData.input) {
+        inputData.input = inputData.input.toString().toLowerCase();
+      }
 
       if (answer) {
         let {value, data: answerData} = answer;
-        inputData.input = inputData.input.toString().toLowerCase();
+
         let letters = inputData.letters;
         let alienName;
         value = value.toString().toLowerCase();
 
-        let checkBool = () => {
-          if (isBool(inputData.input) && isBool(inputData.input)) {
-            return convertToBool(inputData.input) == convertToBool(value);
+        let checkBool = (inputData, value) => {
+          if (isBool(inputData) && isBool(inputData)) {
+            return convertToBool(inputData) == convertToBool(value);
           } else {
             return false;
           }
         };
 
-        if (inputData.input == value || checkBool() || inputData.input.indexOf(value) != -1) {
+        if (inputData.input == value || checkBool(inputData.input, value) || inputData.input.indexOf(value) != -1) {
           if (isLetter) {
             getGameById(gameEvent.gameId).then(game => {
-              alienName = game.alienName;
+              alienName = game.alienName.toLowerCase();
               return randomLetterFrom(alienName, letters);
             }).then(letter => {
               console.log('random letter', letter, alienName, letters);
@@ -889,7 +894,8 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
         if (isFinish) {
           getGameById(gameEvent.gameId).then(game => {
             let {alienName} = game;
-            if (inputData.input == value || inputData.input.indexOf(value) != -1) {
+            alienName = alienName.toLowerCase();
+            if (inputData.input == alienName || inputData.input.indexOf(alienName) != -1) {
               resolve({data: null, correct: true});
             } else {
               resolve({data: null, correct: false});
@@ -937,7 +943,7 @@ const finishGameEventFromHash = (inputData) => {
 
       }).then(({data, correct}) => {
         gameEvent.addTry();
-        gameEvent.isCorrect = correct;
+        //gameEvent.isCorrect = correct;
 
         let triesOver = null;
         if (currentData.maxTries != null) {
@@ -948,7 +954,7 @@ const finishGameEventFromHash = (inputData) => {
 
         io.sockets.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct, triesOver});
 
-        if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || gameEvent.isCorrect || triesOver == 0) {
+        if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || correct || triesOver == 0) {
           gameEvent.setFinish(parseFloat(inputData.finishDate));
           console.log(gameEvent);
           return endGameEvent(gameData, gameEvent, recalculate = true);

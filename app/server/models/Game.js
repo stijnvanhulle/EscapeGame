@@ -32,10 +32,23 @@ class Game {
     this.isFinished = false;
     this.isPlaying = false;
     this.duration = null;
+    this.answerData = null;
     this.events = new Emitter();
   }
   generateAlienName() {
     this.alienName = c.name({nationality: "it"});
+  }
+  addAnswerData(answerData) {
+    try {
+      if (typeof(answerData) == 'object') {
+        this.answerData = JSON.stringify(answerData);
+      } else {
+        throw new Error('no object');
+      }
+
+    } catch (e) {
+      console.log('Canno stringify answerdata');
+    } finally {}
   }
   setDescription(description) {
     this.description = description;
@@ -79,7 +92,8 @@ class Game {
     gameName,
     isFinished,
     isPlaying,
-    duration
+    duration,
+    answerData
   }) {
     try {
       this.alienName = alienName
@@ -110,6 +124,15 @@ class Game {
         ? parseFloat(duration)
         : this.duration;
 
+      if (typeof(answerData) != 'object') {
+        this.answerData = answerData
+          ? JSON.parse(answerData)
+          : this.answerData;
+      } else {
+        this.answerData = answerData;
+      }
+
+
     } catch (e) {
       console.log(e);
       throw e;
@@ -137,7 +160,7 @@ class Game {
     });
   }
 
-  json(stringify = true, removeEmpty = false) {
+  json(stringify = true, removeEmpty = false, subDataJson = false) {
     var json;
     try {
       var obj = this;
@@ -149,6 +172,12 @@ class Game {
         json = JSON.stringify(copy);
       } else {
         json = copy;
+      }
+      if (subDataJson) {
+        if (typeof(copy.answerData) == 'object') {
+          copy.answerData = JSON.stringify(copy.answerData);
+        }
+
       }
 
       if (removeEmpty) {

@@ -87,11 +87,11 @@ module.exports = [
       try {
         let gameId = request.params.id;
         gameId = parseFloat(gameId);
-        const game = new Game();
+        let game;
         let eventType;
 
-        gameController.getGameById(gameId).then((doc) => {
-          game.load(doc);
+        gameController.getGameById(gameId).then((item) => {
+          game = item;
           return gameController.getEventType('description');
         }).then(item => {
           eventType = item;

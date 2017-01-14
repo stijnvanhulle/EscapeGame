@@ -17,6 +17,7 @@ import Header from 'components/header';
 import moment from 'moment';
 import $ from 'jquery';
 
+
 import {bindActionCreators} from 'redux';
 
 import {connect} from 'react-redux';
@@ -134,7 +135,6 @@ class App extends Component {
         if (game.currentGameEvent) {
           this.socket.emit(socketNames.INPUT, {
             input: true,
-            answerData: null,
             letters: game.letters,
             jobHash: game.currentGameEvent.jobHashEnd,
             finishDate: moment().valueOf()
@@ -189,7 +189,7 @@ class App extends Component {
 
   handelWSEventData = obj => {
     console.log('Event data:', obj, moment().format());
-    const {correct, triesOver, answerData} = obj;
+    const {correct, triesOver, data} = obj;
     const gameData = game.currentGameData;
     const currentData = gameData.data.data;
     const type = gameData.data.type.toLowerCase();
@@ -203,16 +203,20 @@ class App extends Component {
     }
 
     if (correct) {
-      if (answerData && answerData.letter) {
-        game.letters.push(answerData.letter);
+      if (data && data.letter) {
+        game.letters.push(data.letter);
       }
       //TODO: check of working
-      if (data.answerData) {
+      if (data && data.answerData) {
         let answerDataArr = Object.keys(data.answerData);
         for (var i = 0; i < answerDataArr.length; i++) {
           let answerDataItem = answerDataArr[i];
           game.answerData[answerDataItem] = data.answerData[answerDataItem];
         }
+        this.socket.emit(socketNames.ADD_ANSWERDATA, {
+          answerData: game.answerData,
+          gameId: this.props.game.id
+        });
       }
 
     }

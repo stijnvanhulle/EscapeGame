@@ -64,9 +64,7 @@ class GameMember {
       var copy = Object.assign({}, obj);
       copy.events = null;
       copy.model = null;
-      if (subDataJson) {
-        copy.data = JSON.stringify(copy.data);
-      }
+      
 
       if (stringify) {
         json = JSON.stringify(copy);

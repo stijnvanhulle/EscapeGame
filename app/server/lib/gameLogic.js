@@ -8,6 +8,8 @@
 */
 const moment = require('moment');
 const {setToMoment} = require('../lib/functions');
+const MIN_TIMEBETWEEN = 20;
+const MAX_TIMEBETWEEN = 30 * 60;
 const levels = {
   //duration 60 minutes
   level1: {
@@ -127,6 +129,14 @@ gameLogic.calculateTimeBetween = (level, gameDuration, amount) => { //duration i
   //timeBetween=
   let itemDuration = gameDuration / (amount); //in seconds
   let timeBetween = parseFloat(itemDuration) * levelObj.duration;
+
+  if (timeBetween < MIN_TIMEBETWEEN) {
+    timeBetween = MIN_TIMEBETWEEN;
+  }
+  if (timeBetween > MAX_TIMEBETWEEN) {
+    timeBetween = MAX_TIMEBETWEEN;
+  }
+
   console.log('time', timeBetween, levelObj);
 
   return parseFloat(Math.floor(Math.abs(timeBetween)));

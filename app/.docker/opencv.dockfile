@@ -40,7 +40,7 @@ RUN apt-get update && \
     gfortran \
     && apt-get -y clean all \
     && rm -rf /var/lib/apt/lists/*
-
+    
 
 RUN cd / \
     && cv_version='3.2.0' \
@@ -58,8 +58,3 @@ RUN cd / \
     && rm /opencv_contrib.zip \
     && rm -r /opencv-"$cv_version" \
     && rm -r /opencv_contrib-"$cv_version"
-
-  RUN pip3 install numpy
-  RUN pip3 install pandas
-  RUN pip3 install scipy
-  RUN pip3 install -U scikit-learn
