@@ -194,14 +194,19 @@ const addRule = (m, dataRule, f) => {
     job.on('end', (data) => {
       //job.emit('run', true);
       const gameController = require('../controllers/gameController');
-      gameController.finishGameEventFromHash(data).then(({runned}) => {
-        if (runned) {
-          console.log('New job is runned on ' + date + ', hash: ' + hash);
-          job.cancel();
-          log();
-        } else {
-          console.log('New job is NOT runned on ' + date + ', hash: ' + hash);
+      gameController.finishGameEventFromHash(data).then((obj) => {
+        //TODO: check wy not working
+        if(obj){
+          let {runned}=obj;
+          if (runned) {
+            console.log('New job is runned on ' + date + ', hash: ' + hash);
+            job.cancel();
+            log();
+          } else {
+            console.log('New job is NOT runned on ' + date + ', hash: ' + hash);
+          }
         }
+
       }).catch(err => {
         console.log(err);
       });

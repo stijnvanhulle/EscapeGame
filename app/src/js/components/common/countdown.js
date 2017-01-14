@@ -67,7 +67,7 @@ class Countdown extends Component {
 
   }
   start = (howLong) => {
-
+    let intervalObj;
     this.pause();
     this.setState({isStopped: false});
 
@@ -75,9 +75,12 @@ class Countdown extends Component {
       this.setState({
         time: howLong * 1000
       });
-      let intervalObj = setInterval(this.timer, this.state.interval);
+      intervalObj = setInterval(this.timer, this.state.interval);
       this.setState({intervalObj});
-    } else {}
+    } else {
+      intervalObj = setInterval(this.timer, this.state.interval);
+      this.setState({intervalObj, isStopped: false});
+    }
 
   }
 

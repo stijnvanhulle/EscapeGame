@@ -958,23 +958,23 @@ const finishGameEventFromHash = (inputData) => {
         if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || correct || triesOver == 0) {
           //gameEvent.setFinish(parseFloat(inputData.finishDate) || moment().valueOf());
           gameEvent.setFinish(moment().valueOf());
-          console.log(gameEvent);
+          console.log('Gameevent finish', gameEvent);
           return endGameEvent(gameData, gameEvent, recalculate = true);
         } else {
-          updateGameEvent(gameEvent, {ignore: ['level']}).then(() => {
-            return {runned: false};
-          }).catch(() => {
-            reject('Cannot update gameevent');
-          });
-
+          return updateGameEvent(gameEvent, {ignore: ['level']});
         }
-
       }).then(data => {
+        if (data.runned != null) {
+          return data;
+        } else {
+          return {runned: false};
+        }
+      }).then(data => {
+        console.log('data', data);
         resolve(data);
       }).catch(err => {
         reject(err);
       });
-
     } catch (e) {
       console.log(e);
       reject(e);

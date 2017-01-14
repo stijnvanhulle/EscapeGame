@@ -49,10 +49,8 @@ class Prison extends Component {
       console.log('countdown', timeBetween);
       if (timeBetween) {
         this.state.countdown = timeBetween;
-        this.refs.countdown.start(timeBetween);
-      } else {
-        this.refs.countdown.start();
       }
+      this.refs.countdown.start(timeBetween);
 
       this.forceUpdate();
     });

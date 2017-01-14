@@ -124,7 +124,7 @@
   "data": {
     "name": "",
     "description": "Zoek het juiste schilderij",
-    "file": "fixed/cola.png",
+    "file": "fixed/schilderij_1.jpg",
     "maxTries": null,
     "maxTime": 300,
     "hints": [
@@ -167,7 +167,7 @@
     "hints": [
       "Kijk in de woordenboeken",
       "KIjk naar de juiste pagina's",
-      "Combineer deze en vindt het jusiste woord"
+      "Combineer deze en vindt het juiste woord"
     ],
     "isLetter": true,
     "answer": {
@@ -188,9 +188,9 @@
     "maxTime": 300,
     "hints": [
       "Probeer de letters die je gekregen hebt de combineren",
-      "Locatie zit verboregn in de boeken",
+      "Locatie zit verborgen in de boeken",
       "Kijk naar het juiste boek",
-      "De prsedident heeft een pagina met de locatie van de bunker"
+      "De aliennaam is Asia Migliorini"
     ],
     "isLetter": false,
     "answer": null
