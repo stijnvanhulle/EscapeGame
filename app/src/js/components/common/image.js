@@ -21,7 +21,10 @@ class Image extends Component {
   }
   render() {
     if (this.props.src) {
-      let source = '/images/' + this.props.src.replace('/', '');
+      let src = this.props.src.indexOf('/') == 0
+        ? this.props.src.substring(1)
+        : this.props.src;
+      let source = '/uploads/' + src;
       return (
         <div className={this.props.className}>
           <img id={this.state.id} src={source}/>

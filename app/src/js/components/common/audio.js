@@ -49,7 +49,10 @@ class Audio extends Component {
   }
   render() {
     if (this.state.source) {
-      let source = '/assets/audio/' + this.state.source.replace('/', '');
+      let src = this.state.source.indexOf('/') == 0
+        ? this.state.source.substring(1)
+        : this.state.source;
+      let source = '/assets/audio/' + src;
       return (
         <div className={this.props.className || 'audio'}>
           <video id={this.state.id} loop={this.state.repeat}>

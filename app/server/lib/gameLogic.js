@@ -78,10 +78,7 @@ gameLogic.createData = ({
     if (!startTime)
       throw new Error('Time to start not a utc timestamp');
 
-    //delay of 5 seconds for push data
-    if (!startTime.isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', 5).isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', startIn).isSameOrAfter(now, 'second')) {
-      throw new Error('Time is not in the future ' + startTime.format().toString() + ' now: ' + now.format().toString());
-    }
+
 
     if (!timeBetween) {
       timeBetween = gameLogic.calculateTimeBetween(level, gameDuration, amount);
@@ -96,6 +93,9 @@ gameLogic.createData = ({
         timeBetween = maxTime;
       }
     }
+    if(startIn<0){
+      throw new Error('Startin not correct');
+    }
 
     let activateDate = setToMoment(startTime).add('seconds', parseInt(startIn));
     let activateDate_temp = setToMoment(activateDate.valueOf());
@@ -104,6 +104,10 @@ gameLogic.createData = ({
 
     if (!setToMoment(endDate).isAfter(setToMoment(activateDate))) {
       throw new Error('endDate not after activatedate');
+    }
+    //delay of 5 seconds for push data
+    if (!startTime.isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', 5).isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', startIn).isSameOrAfter(now, 'second')) {
+      throw new Error('Time is not in the future ' + startTime.format().toString() + ' now: ' + now.format().toString());
     }
 
     return {

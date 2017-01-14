@@ -52,18 +52,21 @@ class GameStart extends Component {
   }
 
   loadEvents = () => {
-    game.events.on('audio', (src) => {
-      this.setState({imageSrc: ''});
-      if (src) {
-        let audioRepeat = true;
-        if (game.currentGameData.data.type.toLowerCase() == 'bom') {
-          audioRepeat = false;
-        }
-        
-        this.refs.audio.play(src, audioRepeat);
+    game.events.on('audio', (obj) => {
+      if (obj) {
+        let {src, repeat} = obj;
+        this.setState({imageSrc: ''});
+        if (src) {
+          this.refs.audio.play(src, repeat);
 
+        } else {
+          this.refs.audio.pause();
+        }
       } else {
-        this.refs.audio.pause();
+        if (this.refs.audio) {
+          this.refs.audio.pause();
+        }
+
       }
 
     });
@@ -75,7 +78,7 @@ class GameStart extends Component {
     });
 
     game.events.on('image', (src) => {
-      this.setState({audioSrc: '', imageSrc: src});
+      this.setState({imageSrc: src});
     });
   }
   startGame = () => {
@@ -88,10 +91,6 @@ class GameStart extends Component {
       _game.isPlaying = true;
       this.props.actions.updateGame(_game).then(() => {
         return this.props.actions.createGameEvents({game: _game, startTime, startIn, level: 5, gameDuration: 2 *60});
-      }).then(() => {
-        const gameEvents = this.props.gameEvents;
-        console.log('GameEvents v1', gameEvents);
-        return this.props.actions.addGameEvent({data: gameEvents, game: _game});
       }).then(() => {
         const gameEvents = this.props.gameEvents;
         console.log('GameEvents v2', gameEvents);
@@ -145,7 +144,10 @@ class GameStart extends Component {
     const type = game.currentGameData.data.type.toLowerCase();
     const currentData = game.currentGameData.data.data;
     if (type == 'bom') {
-      game.events.emit('audio', currentData.file);
+      game.events.emit('audio', {
+        src: currentData.file,
+        repeat: false
+      });
     }
   }
 

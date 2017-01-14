@@ -494,14 +494,13 @@ const updateGameEventsAfterGameEvent = (gameEvent, newLevel) => {
 const updateGameEvent = (obj, extra = {}) => {
   return new Promise((resolve, reject) => {
     let {ignore, isActive, only} = extra;
-    if (!obj && obj.id)
+    if (!obj || !obj.id)
       reject('No id for gameEvent');
 
     if (!obj instanceof GameEvent) {
       reject('No instance of gameEvent');
     }
 
-    console.log('update gameEvent', obj, extra);
     obj = obj.json(stringify = false);
     let find = {
       id: obj.id
@@ -539,19 +538,21 @@ const updateGameEvent = (obj, extra = {}) => {
         }
       }
     }
-
-    console.log(find, change);
-
-    GameEventModel.update(find, change || obj, {
-      multi: true
-    }, function(err, raw) {
-      if (err) {
-        reject(err);
-      } else {
-        console.log(raw);
-        resolve(raw);
-      }
-    });
+    if (find) {
+      console.log('update gameEvent', change, extra);
+      GameEventModel.update(find, change || obj, {
+        multi: true
+      }, function(err, raw) {
+        if (err) {
+          reject(err);
+        } else {
+          console.log(raw);
+          resolve(raw);
+        }
+      });
+    } else {
+      reject('no gamevetn found', obj);
+    }
 
   });
 };
@@ -848,10 +849,10 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
         let letters = inputData.letters;
         let alienName;
         value = value.toString().toLowerCase();
-
-        let checkBool = (inputData, value) => {
-          if (isBool(inputData) && isBool(inputData)) {
-            return convertToBool(inputData) == convertToBool(value);
+        //TODO: CHECK OF WORKING BECAUSE END==FINISHDATE
+        let checkBool = (d, v) => {
+          if (isBool(d) && isBool(d)) {
+            return convertToBool(d) == convertToBool(v);
           } else {
             return false;
           }
@@ -876,7 +877,7 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
               reject(err);
             });
           } else {
-            resolve({data: null, correct: false});
+            resolve({data: null, correct: true});
           }
 
         } else {
@@ -955,7 +956,8 @@ const finishGameEventFromHash = (inputData) => {
         io.sockets.emit(socketNames.EVENT_DATA, {data, inputData, gameEvent, correct, triesOver});
 
         if ((currentData.retries != null && currentData.maxTries <= gameEvent.tries) || correct || triesOver == 0) {
-          gameEvent.setFinish(parseFloat(inputData.finishDate));
+          //gameEvent.setFinish(parseFloat(inputData.finishDate) || moment().valueOf());
+          gameEvent.setFinish(moment().valueOf());
           console.log(gameEvent);
           return endGameEvent(gameData, gameEvent, recalculate = true);
         } else {
@@ -968,7 +970,6 @@ const finishGameEventFromHash = (inputData) => {
         }
 
       }).then(data => {
-        console.log('resolve', data);
         resolve(data);
       }).catch(err => {
         reject(err);
@@ -1053,7 +1054,7 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
           recalculate = true;
           return updateGameEventsAfterGameEvent(gameEvent, newLevel);
         } else {
-          return Promise.resolve(true);
+          return true;
         }
 
         //return Promise.resolve(true);
@@ -1146,7 +1147,18 @@ const createGameEvents = ({
             });
             gameEvent.setData(data);
             _previousGameEvent = gameEvent;
-            resolve(gameEvent);
+
+            //start gameventADD
+            addEvent(gameEvent, i).then(doc => {
+              console.log('GAMEVENT', gameEvent);
+              gameEvent.load(doc);
+              resolve(gameEvent);
+            }).catch(err => {
+              console.log(err);
+              reject(err);
+            });
+            //end gameventADD
+            //resovle(gameEvent);
           } else {
             reject('No item');
           }
@@ -1166,16 +1178,16 @@ const createGameEvents = ({
           amount: 0
         },
         'bom': {
-          amount: 3
+          amount: 1
         },
         'light': {
           amount: 0
         },
         'scan': {
-          amount: 0
+          amount: 1
         },
         'sound': {
-          amount: 1
+          amount: 0
         },
         'finish': {
           amount: 1
@@ -1226,23 +1238,17 @@ const addEvent = (gameEvent, i) => {
       let gameData;
       getGameDataFromId(gameEvent.gameDataId).then(_gameData => {
         gameData = _gameData;
-
-        calculateId(GameEventModel).then(id => {
-          gameEvent.id = id + i;
-          gameEvent.save().then((doc) => {
-            return doc;
-          }).catch(err => {
-            reject(err);
-          });
-        });
-      }).then(value => {
+        return calculateId(GameEventModel);
+      }).then(id => {
+        gameEvent.id = id + i;
+        return gameEvent.save();
+      }).then(doc => {
         return addEventScheduleRule(gameData, gameEvent);
       }).then(data => {
         resolve(data);
       }).catch(err => {
         reject(err);
       });
-
     } catch (e) {
       console.log(e);
       reject(e);

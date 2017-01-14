@@ -71,6 +71,18 @@ module.exports = [
         path: `./audio`
       }
     }
+  },
+  {
+    method: `GET`,
+    path: `/uploads/{param*}`,
+    config: {
+      auth: false
+    },
+    handler: {
+      directory: {
+        path: `./uploads`
+      }
+    }
   }
 
 ];

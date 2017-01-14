@@ -36,7 +36,8 @@
         "date": "sdfs",
         "book": 1,
         "image": "cola.png",
-        "beaconId": "paars"
+        "beaconId": "paars",
+        "finishSound": "finish_minions.mp3"
       }
     }
   }
@@ -87,7 +88,7 @@
   "data": {
     "name": "",
     "description": "Scan het juiste schilderij",
-    "file": "answerData.image",
+    "file": "answerData.light",
     "maxTries": null,
     "maxTime": 300,
     "hints": [
@@ -123,14 +124,17 @@
   "data": {
     "name": "",
     "description": "Zoek het juiste schilderij",
-    "file": "cola.png",
+    "file": "fixed/cola.png",
     "maxTries": null,
     "maxTime": 300,
     "hints": [
       "Scan met de app"
     ],
     "isLetter": true,
-    "answer": null
+    "answer": {
+      "value": true,
+      "data": null
+    }
   }
 
 }, {

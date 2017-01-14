@@ -223,6 +223,7 @@ class GameEvent {
 
         if (setToMoment(this.activateDate).isAfter(finish)) {
           console.log(moment(this.activateDate).format(), finish.format());
+          console.log(moment().format(), 'now');
           throw new Error('finishdate not after activatendate', this);
           return;
         }

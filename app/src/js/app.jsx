@@ -17,7 +17,6 @@ import Header from 'components/header';
 import moment from 'moment';
 import $ from 'jquery';
 
-
 import {bindActionCreators} from 'redux';
 
 import {connect} from 'react-redux';
@@ -197,7 +196,10 @@ class App extends Component {
     if (type == "bom") {
       if (!correct) {
         piController.sendText('BOEM');
-        game.events.emit('audio', currentData.file);
+        game.events.emit('audio', {
+          src: currentData.file,
+          repeat: false
+        });
       }
       game.events.emit('bomStop', correct);
     }
@@ -231,6 +233,12 @@ class App extends Component {
   handleWSEventFinish = obj => {
     console.log('Event finish:', obj);
     game.events.emit('eventFinish');
+    if (game.answerData && game.answerData.finishSound) {
+      game.events.emit('audio', {
+        scr: game.answerData.finishSound,
+        repeat: false
+      });
+    }
 
   }
 
@@ -251,7 +259,10 @@ class App extends Component {
       game.events.emit('eventStart');
 
       if (type == 'sound' || type == 'anthem') {
-        game.events.emit('audio', currentData.file);
+        game.events.emit('audio', {
+          src: currentData.file,
+          repeat: true
+        });
       } else if (type == "scan") {
         game.events.emit('image', currentData.file);
       } else if (type == 'bom') {

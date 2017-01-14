@@ -259,12 +259,18 @@ module.exports = [
         let {data} = request.payload;
         let gameId = request.params.id;
         gameId = parseFloat(gameId);
+
+        if (!gameId) {
+          reply('No gamid filled in');
+          return;
+        }
         //data = JSON.parse(data);
 
         const promise = (item, i) => {
           return new Promise((resolve, reject) => {
             if (item) {
               const gameEvent = new GameEvent({gameId});
+              gameEvent.load(item);
               gameController.getGameDataById(item.gameDataId, i).then(gameData => {
                 gameEvent.setData({gameDataId: gameData.id, isActive: item.isActive, activateDate: item.activateDate, endDate: item.endDate, level: item.level});
                 return gameController.addEvent(gameEvent, i);

@@ -53,6 +53,17 @@ main {
 	}
 }
 
+.interface.game .image {
+	width: 200px;
+	height: auto;
+
+	img {
+		width: 200px;
+		height: auto;
+		margin: 0 auto;
+	}
+}
+
 .startGame {
 	margin-top: -10px !important;
 }
@@ -66,18 +77,18 @@ main {
 	overflow: hidden;
 
 	.countdown {
-    color: white;
-    font-size: 1.5rem;
-    position: absolute;
-    width: 80px;
-    left: calc((100% - 80px)/2);
-    text-align: center;
-    top: 25px;
-    background: $lightBlue;
-    border-radius: 0.2em;
-    padding: 8px;
-    box-sizing: border-box;
-}
+		color: white;
+		font-size: 1.5rem;
+		position: absolute;
+		width: 80px;
+		left: calc((100% - 80px)/2);
+		text-align: center;
+		top: 25px;
+		background: $lightBlue;
+		border-radius: 0.2em;
+		padding: 8px;
+		box-sizing: border-box;
+	}
 
 	svg {
 		#sun {
