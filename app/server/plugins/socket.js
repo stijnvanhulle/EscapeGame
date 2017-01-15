@@ -94,6 +94,7 @@ const onMessageSocket = (io, socket, client) => {
   socket.on(socketNames.IMAGE, obj => {
     //TODO: change to {data: data, image1:gameData.gameData.data.file}
     try {
+      console.log(obj);
       let isDocker = convertToBool(process.env.ISDOCKER);
       try {
         obj = JSON.parse(obj);
@@ -111,6 +112,7 @@ const onMessageSocket = (io, socket, client) => {
           let obj;
           if (isDocker) {
             obj = {
+              //check of file is in fixes or not in fidex //TODO:
               image1: path.normalize(paths.VOLUME_PYTHON + '/fixed/' + image1),
               image2: path.normalize(paths.VOLUME_PYTHON + '/' + image2),
               read: true

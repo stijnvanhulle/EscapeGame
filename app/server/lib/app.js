@@ -24,7 +24,7 @@ let app = {
 };
 
 //TODO: examen stuff test
-app.testImage = (image1 = 'cola.png', image2 = 'cola.png') => {
+app.testImage = (image1 = 'schilderij_1.jpg', image2 = 'schilderij_1_small.jpg') => {
   try {
     let screen = app.users.find(item => {
       if (item.device == 'screen') {
@@ -67,7 +67,7 @@ app.testData = (data = [
     duration: null,
     gameDataId: null
   }
-], image = 'games.csv') => {
+], file = 'games.csv') => {
   try {
     let isDocker = convertToBool(process.env.ISDOCKER);
 
@@ -80,12 +80,16 @@ app.testData = (data = [
       let socket = app.io.to(screen.socketId);
       let obj;
       if (isDocker) {
-        let obj = {
+        obj = {
           data,
-          file: path.normalize(paths.VOLUME_PYTHON + '/' + image)
+          file: path.normalize(paths.VOLUME_PYTHON + '/' + file)
         }
       } else {
         //TODO; chage
+        obj = {
+          data,
+          file: path.resolve(paths.FIXED, file),
+        };
       }
 
       app.client.publish(mqttNames.RECALCULATE_START, JSON.stringify(obj));

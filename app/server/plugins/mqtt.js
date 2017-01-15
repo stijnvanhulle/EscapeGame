@@ -22,7 +22,12 @@ const subscribe = client => {
 
 const onMessage = (client, events, io) => {
   client.on('message', function(topic, message) {
-    var obj = JSON.parse(message.toString());
+    let obj=message.toString();
+    try {
+      obj = JSON.parse(obj);
+    } catch (e) {
+      console.log(obj, e);
+    }
     //console.log(topic, obj);
     //read: { "port": 5, "type": "INPUT", "read":true,"realtime":false,timeout: null }
     //write { "port": 4, "type": "OUTPUT", "read":false, value:true,"realtime":false,timeout: null }
