@@ -88,7 +88,7 @@ app.testData = (data = [
         //TODO; chage
         obj = {
           data,
-          file: path.resolve(paths.FIXED, file),
+          file: path.resolve(paths.FIXED, file)
         };
       }
 
@@ -144,7 +144,7 @@ app.endSocketConnection = (deviceName) => {
   }
 };
 app.reset = () => {
-  var restartGame = () => {
+  const restartGame = () => {
     return new Promise((resolve, reject) => {
       GameModel.update({}, {
         isFinished: false,
@@ -160,12 +160,13 @@ app.reset = () => {
         }
       });
     });
-  }
-  removeDataFromModel(GameEventModel).then(ok => {
-    console.log("removed gamevents");
-    return restartGame();
-  }).then(log => {
+  };
+
+  restartGame().then(log => {
     console.log(log);
+    return removeDataFromModel(GameEventModel);
+  }).then(log => {
+    console.log("removed gamevents");
     return scheduleJob.cancelAll();
   }).then(log => {
     console.log(log);

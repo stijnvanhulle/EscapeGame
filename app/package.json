@@ -1,6 +1,6 @@
 {
   "name": "template",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "scripts": {
     "start": "npm run server",
     "development": "nodemon -L . & NODE_ENV=development webpack --watch",

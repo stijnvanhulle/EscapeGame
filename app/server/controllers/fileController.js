@@ -14,7 +14,7 @@ const base64Img = require('base64-img');
 
 const paths = require('../lib/paths');
 
-module.exports.save = (fileName, data) => {
+const save = (fileName, data) => {
   return new Promise((resolve, reject) => {
     try {
       mkdirp(paths.UPLOADS, function(err) {
@@ -41,7 +41,7 @@ module.exports.save = (fileName, data) => {
 
   });
 };
-module.exports.saveBase64 = (fileName, data) => {
+const saveBase64 = (fileName, data) => {
   return new Promise((resolve, reject) => {
     try {
       mkdirp(paths.UPLOADS, function(err) {
@@ -69,7 +69,7 @@ module.exports.saveBase64 = (fileName, data) => {
   });
 };
 
-module.exports.saveStream = (fileName, data) => {
+const saveStream = (fileName, data) => {
   return new Promise((resolve, reject) => {
     try {
       mkdirp(uploads, function(err) {
@@ -100,4 +100,10 @@ module.exports.saveStream = (fileName, data) => {
     }
 
   });
+};
+
+module.exports = {
+  save,
+  saveStream,
+  saveBase64
 };

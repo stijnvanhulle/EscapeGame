@@ -36,6 +36,8 @@ module.exports.load = () => {
 
   schema.pre('save', function(next) {
     //schedule job
+    //
+    //TODO: check why not updating
     this.date = moment().valueOf();
     next();
   });

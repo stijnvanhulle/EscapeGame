@@ -147,4 +147,7 @@ gameLogic.calculateTimeBetween = (level, gameDuration, amount) => { //duration i
 
 };
 gameLogic.levels = levels;
+
+
+
 module.exports = gameLogic;

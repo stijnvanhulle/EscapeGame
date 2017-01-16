@@ -14,9 +14,14 @@ const {GameEvent: Model} = require('./mongo');
 class Emitter extends EventEmitter {}
 
 class GameEvent {
-  constructor({gameId}) {
+  constructor(obj) {
     try {
-      this.gameId = parseFloat(gameId) || null;
+      if(obj){
+        this.gameId = parseFloat(obj.gameId);
+      }else{
+        this.gameId=null
+      }
+
     } catch (e) {
       console.log(e);
     }

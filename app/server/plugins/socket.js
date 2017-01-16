@@ -17,13 +17,6 @@ const c = new Chance();
 const scheduleJob = require('../lib/scheduleJob');
 const fileController = require('../controllers/fileController');
 
-const cancelJobs = (hash) => {
-  if (hash) {
-    return scheduleJob.cancel(hash);
-  } else {
-    return scheduleJob.cancelAll();
-  }
-};
 
 const onMessageSocket = (io, socket, client) => {
 
@@ -34,8 +27,8 @@ const onMessageSocket = (io, socket, client) => {
     client.publish(mqttNames.RESET, JSON.stringify(true));
   });
   socket.on(socketNames.GAME_CANCEL, ok => {
-    const gameController = require('../controllers/gameController');
-    gameController.cancelJobs();
+    const scheduleController = require('../controllers/scheduleController');
+    scheduleController.cancelJobs();
   });
 
   socket.on(socketNames.ONLINE, obj => {
@@ -79,10 +72,12 @@ const onMessageSocket = (io, socket, client) => {
     let game;
     const gameController = require('../controllers/gameController');
     if (answerData) {
-      gameController.getGameById(gameId).then(item => {
-        game=item;
+      gameController.getGame({id: gameId}).then(item => {
+        game = item;
         game.addAnswerData(answerData);
-        return gameController.updateGame(game);
+        return gameController.updateGame({
+          id: game.id
+        },game);
       }).then(ok => {
         console.log('add anserdata to game', game);
       }).catch(err => {
