@@ -14,7 +14,8 @@ let piController = {
   PORTS: {
     lights: 6,
     text: "I2C-1",
-    bom: 3
+    bom: 3,
+    relay: 5
   },
   socket: null,
   type: null
@@ -26,7 +27,7 @@ piController.loadSocket = (_socket) => {
 };
 
 piController.tickBom = (time) => {
-  let socket=piController.socket;
+  let socket = piController.socket;
 
   socket.emit(socketNames.PI, {
     port: piController.PORTS.text,
@@ -40,7 +41,7 @@ piController.tickBom = (time) => {
 };
 
 piController.sendText = (text) => {
-  let socket=piController.socket;
+  let socket = piController.socket;
 
   socket.emit(socketNames.PI, {
     port: piController.PORTS.text,
@@ -52,10 +53,25 @@ piController.sendText = (text) => {
     timeout: 0
   });
 };
+piController.openChest = (open = true) => {
+  return new Promise((resolve, reject) => {
+    let socket = piController.socket;
 
+    socket.emit(socketNames.PI, {
+      port: piController.PORTS.relay,
+      type: 'OUTPUT',
+      connectorType: connectorTypes.DIGITAL,
+      value: true,
+      read: false,
+      realtime: false,
+      timeout: 0
+    });
+
+  });
+};
 piController.start = (gameEvent, gameData) => {
   return new Promise((resolve, reject) => {
-    let socket=piController.socket;
+    let socket = piController.socket;
 
     const data = gameData.data;
     const _data = data.data;
@@ -94,7 +110,7 @@ piController.start = (gameEvent, gameData) => {
 };
 piController.end = (gameEvent, gameData) => {
   return new Promise((resolve, reject) => {
-    let socket=piController.socket;
+    let socket = piController.socket;
     try {
       const data = gameData.data;
       const _data = data.data;
@@ -106,7 +122,7 @@ piController.end = (gameEvent, gameData) => {
 };
 piController.finish = (gameEvent, gameData) => {
   return new Promise((resolve, reject) => {
-    let socket=piController.socket;
+    let socket = piController.socket;
     try {
       const data = gameData.data;
       const _data = data.data;

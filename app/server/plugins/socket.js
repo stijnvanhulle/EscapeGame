@@ -21,6 +21,7 @@ const fileController = require('../controllers/fileController');
 const onMessageSocket = (io, socket, client) => {
 
   socket.on(socketNames.PI, data => {
+    console.log(data);
     client.publish(mqttNames.MESSAGE, JSON.stringify(data));
   });
   socket.on(socketNames.PI_RESET, data => {

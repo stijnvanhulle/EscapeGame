@@ -187,7 +187,7 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
       gameController.updateGameEvent({
         id: gameEvent.id
       }, gameEvent, {ignore: ['level']}).then(obj => {
-        return gameController.getGameEvent({isActive: true, gameId: gameEvent.gameId});
+        return gameController.getGameEvents({isActive: true, gameId: gameEvent.gameId});
       }).then(data => {
         const amount = data.length;
         io.sockets.emit(socketNames.EVENT_END, {
@@ -293,6 +293,7 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
               level: gameEvent.level,
               startTime,
               startIn: DELAY,
+              timeBetween: null,
               amount: gameEvents_amount,
               gameDuration
             });
@@ -488,7 +489,7 @@ const finishGameEventFromHash = (inputData) => {
 
       }).then(({data, correct}) => {
         gameEvent.addTry();
-        //gameEvent.isCorrect = correct;
+        gameEvent.isCorrect = correct;
 
         let triesOver = null;
         if (currentData.maxTries != null) {
@@ -562,6 +563,7 @@ const createGameEvents = ({
               level,
               startTime,
               startIn,
+              timeBetween: null,
               maxTime: gameData.data.maxTime,
               amount,
               gameDuration
@@ -665,6 +667,7 @@ const addGameEvent = (gameEvent, i) => {
         gameEvent.id = id + i;
         return gameEvent.save();
       }).then(doc => {
+        gameEvent.load(doc);
         return addEventScheduleRule(gameData, gameEvent);
       }).then(data => {
         resolve(data);

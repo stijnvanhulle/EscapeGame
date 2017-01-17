@@ -31,13 +31,11 @@ module.exports.load = () => {
     jobHashStart: String,
     jobHashEnd: String,
     level: Number,
+    isCorrect: Boolean,
     tries: Number
   });
 
   schema.pre('save', function(next) {
-    //schedule job
-    //
-    //TODO: check why not updating
     this.date = moment().valueOf();
     next();
   });

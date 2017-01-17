@@ -55,6 +55,7 @@ class GameEvent {
 
   load(data) {
     try {
+      console.log(data);
       const {
         gameId,
         gameDataId,
@@ -81,13 +82,13 @@ class GameEvent {
         ? parseFloat(gameDataId)
         : this.gameDataId;
       this.date = date
-        ? parseFloat(date)
+        ? date
         : this.date;
       this.isActive = isActive
         ? Boolean(isActive)
         : this.isActive;
       this.isCorrect = isCorrect
-        ? Boolean(isCorrect)
+        ? isCorrect
         : this.isCorrect;
       this.activateDate = activateDate
         ? parseFloat(activateDate)
@@ -244,15 +245,12 @@ class GameEvent {
     return new Promise((resolve, reject) => {
       try {
         const item = this.json(false);
-        const obj = new Model(item);
-        //console.log('Will save: ', obj);
 
-        obj.save(function(err, item) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(item);
-          }
+        const obj = new Model(item);
+        obj.save().then(item => {
+          resolve(item);
+        }).catch(e => {
+          throw new Error(e);
         });
       } catch (e) {
         reject(e);

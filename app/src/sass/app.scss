@@ -53,6 +53,10 @@ main {
 	}
 }
 
+.startGame {
+	margin-top: -10px !important;
+}
+
 .interface.game .image {
 	width: 200px;
 	height: auto;
@@ -64,10 +68,6 @@ main {
 	}
 }
 
-.startGame {
-	margin-top: -10px !important;
-}
-
 .prison {
 	position: absolute;
 	width: 100%;
@@ -76,18 +76,34 @@ main {
 	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
 	overflow: hidden;
 
+	.letters {
+		padding: 8px;
+		box-sizing: border-box;
+		color: white;
+		position: absolute;
+		width: calc(100% - (5.8% *2));
+		margin-top: 53.5%;
+		z-index: 99999999;
+		text-align: center;
+		left: 5.8%;
+		font-size: 1.4rem;
+		font-weight: 300;
+	}
+
 	.countdown {
 		color: white;
 		font-size: 1.5rem;
 		position: absolute;
-		width: 80px;
-		left: calc((100% - 80px)/2);
+		width: 130px;
+		left: calc((100% - 130px)/2);
 		text-align: center;
 		top: 25px;
 		background: $lightBlue;
 		border-radius: 0.2em;
 		padding: 8px;
 		box-sizing: border-box;
+		z-index: 99;
+		font-weight: 300;
 	}
 
 	svg {
@@ -165,5 +181,11 @@ main {
 .horizon {
 	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
 	animation: horizon 60s linear infinite;
+}
+
+span.isvg.loaded {
+	position: relative;
+	float: left;
+	width: 100%;
 }
 //prison svg elements

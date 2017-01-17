@@ -59,15 +59,12 @@ class Player {
     return new Promise((resolve, reject) => {
       try {
         const item = this.json(false);
-        const obj = new Model(item);
-        //console.log('Will save: ', obj);
 
-        obj.save(function(err, item) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(item);
-          }
+        const obj = new Model(item);
+        obj.save().then(item => {
+          resolve(item);
+        }).catch(e => {
+          throw new Error(e);
         });
       } catch (e) {
         reject(e);

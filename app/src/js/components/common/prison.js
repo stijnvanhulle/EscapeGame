@@ -16,6 +16,7 @@ import game from 'lib/game';
 import Bomb from 'lib/bomb';
 import vm from 'lib/vm';
 
+
 class Prison extends Component {
   state = {
     prison: {},
@@ -63,6 +64,8 @@ class Prison extends Component {
       this.refs.countdown.stop();
       this.forceUpdate();
     });
+
+
     game.events.on('hint', (hint) => {
       //this.state.hint = hint;
       //  this.forceUpdate();
@@ -206,17 +209,19 @@ class Prison extends Component {
         <Countdown className={!this.props.canStart
           ? 'hide'
           : ''} ref='countdown' sendToPi={true} className="countdown" howLong={this.state.countdown} isDone={this.isDoneCounting}/>
-        <div className="letters">{this.lettersTransform(this.state.letters)} < /div>
+        <div className="letters">{this.lettersTransform(this.state.letters)}
+        </div>
         <div className="hint">{this.state.hint}</div>
+
         <Isvg src="/assets/images/plan.svg" uniquifyIDs={false} onLoad={this.onLoad}/>
       </div>
     );
-
   }
-
 }
+
 Prison.propTypes = {
   canStart: PropTypes.bool,
   isDoneCounting: PropTypes.func
-}
+};
+
 export default Prison;

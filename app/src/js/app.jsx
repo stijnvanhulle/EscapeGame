@@ -208,7 +208,7 @@ class App extends Component {
       if (data && data.letter) {
         game.letters.push(data.letter);
       }
-      //TODO: check of working
+
       if (data && data.answerData) {
         let answerDataArr = Object.keys(data.answerData);
         for (var i = 0; i < answerDataArr.length; i++) {
@@ -232,14 +232,21 @@ class App extends Component {
   }
   handleWSEventFinish = obj => {
     console.log('Event finish:', obj);
-    game.events.emit('eventFinish');
-    if (game.answerData && game.answerData.finishSound) {
-      game.events.emit('audio', {
-        scr: game.answerData.finishSound,
-        repeat: false
-      });
+    let {finish, isCorrect} = obj;
+    let data={};
+    if (finish && isCorrect) {
+      if (game.answerData && game.answerData.finishSound) {
+        data = {
+          audio: {
+            src: game.answerData.finishSound,
+            repeat: false
+          }
+        };
+        piController.openChest();
+      }
     }
 
+    game.events.emit('eventFinish', data);
   }
 
   handleWSEventStart = obj => {
@@ -299,9 +306,7 @@ class App extends Component {
 
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       console.log('UPDATED gameEvent');
-      setTimeout(() => {
-        game.events.emit('stopCountdown');
-      }, 1000);
+      game.events.emit('stopCountdown');
 
       vm.hideMessage();
       game.events.emit('audio', null);
@@ -310,7 +315,10 @@ class App extends Component {
       game.events.emit('letters', game.letters);
 
       if (activeEvents == 0) {
-        this.socket.emit(socketNames.EVENT_FINISH, {finish: true});
+        this.socket.emit(socketNames.EVENT_FINISH, {
+          finish: true,
+          isCorrect: game.currentGameEvent.isCorrect || false
+        });
       }
 
       timer.stop();

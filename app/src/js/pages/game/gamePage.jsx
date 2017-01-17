@@ -16,6 +16,7 @@ import TextInput from '../../components/common/textInput';
 
 import GameNew from './common/gameNew';
 import GameStart from './common/gameStart';
+import Audio from 'components/common/audio';
 
 import * as gameActions from '../../actions/gameActions';
 import game from '../../lib/game';
@@ -36,9 +37,27 @@ class GamePage extends Component {
   }
 
   loadEvents = () => {
-    game.events.on('eventFinish', () => {
+    game.events.on('eventFinish', (data) => {
+      let {audio}=data;
       $('body').removeClass('horizon');
       $('.prison svg #background').removeClass('horizon');
+
+      if (this.refs.audio) {
+        if (audio) {
+          let {src, repeat} = audio;
+          if (src) {
+            this.refs.audio.play(src, repeat);
+
+          } else {
+            this.refs.audio.pause();
+          }
+        } else {
+          if (this.refs.audio) {
+            this.refs.audio.pause();
+          }
+        }
+      }
+
 
       let _game = Object.assign({}, this.props.game);
       this.props.actions.stopGame(_game).then(() => {
@@ -89,7 +108,9 @@ class GamePage extends Component {
       if (this.props.game.isFinished) {
         return (
           <div className="box">
+            <Audio ref="audio" className="audio"/>
             <h1>FINISHED</h1>
+
             <Button size='medium' primary onClick={this.onNewGame}>New Game</Button>
           </div>
 

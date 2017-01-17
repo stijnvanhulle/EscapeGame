@@ -25,6 +25,7 @@ const {
 const {
   promiseFor,
   setToMoment
+
 } = require('../lib/functions');
 const {
   Game: GameModel,
@@ -138,9 +139,10 @@ const getGameEvent = (find) => {
           if (e) {
             throw new Error(e);
           } else {
-            let gameEvent = new GameEvent({gameId: null});
+            let gameEvent = new GameEvent();
             gameEvent.load(doc);
             resolve(gameEvent);
+
           }
         });
       }
@@ -466,9 +468,9 @@ const updateGameEvent = (find, gameEvent, extra = {}) => {
         gameEvent = change;
       }
 
-      console.log('update gameEvent', change, extra);
+      console.log('update gameEvent', find, gameEvent, extra);
       GameEventModel.findOneAndUpdate(find, gameEvent, {
-        new: true
+
       }, function(e, doc) {
         if (e) {
           throw new Error(e);
@@ -485,6 +487,7 @@ const updateGameEvent = (find, gameEvent, extra = {}) => {
 };
 
 module.exports = {
+  addGame,
   getGame,
   updateGame,
   getGameData,
