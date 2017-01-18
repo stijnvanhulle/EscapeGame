@@ -331,7 +331,6 @@ const getGameDataFromGameName = (gameName, types) => {
                       return item;
                     }
                   }
-
                 });
 
                 resolve(gameDatas);

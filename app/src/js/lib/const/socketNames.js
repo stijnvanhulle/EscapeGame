@@ -16,7 +16,7 @@ module.exports = {
   PI_RESET: 'piReset',
   GAME_CANCEL: 'game_cancel',
   BEACON: 'beacon',
-  INPUT: 'sendInput',
+  INPUT: 'input',
   EVENT_START: 'event_start',
   EVENT_END: 'event_end',
   EVENT_DATA: 'event_data',

@@ -1,199 +1,265 @@
 [{
-  "type": "description",
-  "hide": false,
-  "fromAnswerData": false,
-  "data": {
-    "name": "",
-    "description": "Welkom, de bedoeling van het spel is om de aliennaam te ontvangen door opdrachten goed te volbrengen",
-    "file": null,
-    "hints": [
-      ""
-    ],
-    "maxTries": null,
-    "maxTime": 300,
-    "isLetter": false,
-    "answer": null
-  }
+    "type": "description",
+    "hide": false,
+    "beaconId": "groen",
+    "data": {
+      "name": "",
+      "description": "Welkom, de bedoeling van het spel is om de aliennaam te ontvangen door opdrachten goed te volbrengen",
+      "file": null,
+      "hints": [
+        ""
+      ],
+      "maxTries": null,
+      "maxTime": 300,
+      "isLetter": false,
+      "answer": null
+    }
 
-}, {
-  "type": "start",
-  "hide": false,
-  "fromAnswerData": false,
-  "data": {
-    "name": "",
-    "description": "Zoek de juiste president",
-    "file": null,
-    "hints": [
-      ""
-    ],
-    "maxTries": null,
-    "maxTime": 300,
-    "isLetter": true,
-    "answer": {
-      "value": "President x",
-      "data": {
-        "location": "kortrijk",
-        "date": "sdfs",
-        "book": 1,
-        "image": "cola.png",
-        "beaconId": "paars",
-        "finishSound": "finish_minions.mp3"
+  }, {
+    "type": "start",
+    "hide": false,
+    "beaconId": "groen",
+    "data": {
+      "name": "",
+      "description": "Zoek de juiste president",
+      "file": null,
+      "hints": [
+        ""
+      ],
+      "maxTries": null,
+      "maxTime": 300,
+      "isLetter": true,
+      "answer": {
+        "value": "President x",
+        "data": {
+          "location": "kortrijk",
+          "date": "sdfs",
+          "book": 1,
+          "image": "cola.png",
+          "beaconId": "paars",
+          "light": "president x",
+          "finishSound": "finish_minions.mp3"
+        }
       }
     }
-  }
 
-}, {
-  "type": "sound",
-  "hide": false,
-  "fromAnswerData": false,
-  "data": {
-    "name": "",
-    "description": "NUMMER speelt af",
-    "file": "nummer.mp3",
-    "maxTries": 3,
-    "maxTime": 300,
-    "hints": [
-      "Vul het juiste jaargetal in"
-    ],
-    "isLetter": true,
-    "answer": {
-      "value": "2012"
+  }, {
+    "type": "sound",
+    "hide": false,
+    "beaconId": "groen",
+    "data": {
+      "name": "",
+      "description": "NUMMER speelt af",
+      "file": "nummer.mp3",
+      "maxTries": 3,
+      "maxTime": 300,
+      "hints": [
+        "Vul het juiste jaargetal in"
+      ],
+      "isLetter": true,
+      "answer": {
+        "value": "2012"
+      }
     }
-  }
-}, {
-  "type": "bom",
-  "hide": false,
-  "fromAnswerData": false,
-  "data": {
-    "name": "",
-    "description": "",
-    "file": "bom.mp3",
-    "maxTries": 1,
-    "maxTime": 300,
-    "hints": [
-      "Probeer eens azo",
-      "of azzzo",
-      "NOOB"
-    ],
-    "isLetter": true,
-    "answer": {
-      "value": true,
-      "data": null
+  }, {
+    "type": "bom",
+    "hide": false,
+    "beaconId": "groen",
+    "data": {
+      "name": "",
+      "description": "",
+      "file": "bom.mp3",
+      "maxTries": 1,
+      "maxTime": 60,
+      "hints": [
+        "Probeer eens azo",
+        "of azzzo",
+        "NOOB"
+      ],
+      "isLetter": true,
+      "answer": {
+        "value": true,
+        "data": null
+      }
     }
-  }
-}, {
-  "type": "light",
-  "hide": false,
-  "fromAnswerData": true,
-  "data": {
-    "name": "",
-    "description": "Scan het juiste schilderij",
-    "file": "answerData.light",
-    "maxTries": null,
-    "maxTime": 300,
-    "hints": [
-      ""
-    ],
-    "answer": {
-      "value": true,
-      "data": null
+  }, {
+    "type": "light",
+    "hide": false,
+    "beaconId": null,
+    "data": {
+      "name": "",
+      "description": "Scan het juiste schilderij",
+      "file": "answerData.light",
+      "maxTries": null,
+      "maxTime": 300,
+      "hints": [
+        ""
+      ],
+      "answer": {
+        "value": true,
+        "data": null
+      }
     }
-  }
 
-}, {
-  "type": "anthem",
-  "hide": false,
-  "fromAnswerData": false,
-  "data": {
-    "name": "",
-    "description": "",
-    "file": "volkslied.mp3",
-    "maxTries": null,
-    "maxTime": 300,
-    "hints": [
-      "Ga naar het juiste schilderij"
-    ],
-    "isLetter": false,
-    "answer": null
-  }
-
-}, {
-  "type": "scan",
-  "hide": false,
-  "fromAnswerData": false,
-  "data": {
-    "name": "",
-    "description": "Zoek het juiste schilderij",
-    "file": "fixed/schilderij_1.jpg",
-    "maxTries": null,
-    "maxTime": 300,
-    "hints": [
-      "Scan met de app"
-    ],
-    "isLetter": true,
-    "answer": {
-      "value": true,
-      "data": null
+  }, {
+    "type": "anthem",
+    "hide": false,
+    "beaconId": "groen",
+    "data": {
+      "name": "",
+      "description": "",
+      "file": "volkslied.mp3",
+      "maxTries": null,
+      "maxTime": 300,
+      "hints": [
+        "Ga naar het juiste schilderij"
+      ],
+      "isLetter": true,
+      "answer": {
+        "value": true,
+        "data": null
+      }
     }
-  }
 
-}, {
-  "type": "find",
-  "hide": false,
-  "fromAnswerData": false,
-  "data": {
-    "name": "",
-    "description": "",
-    "file": null,
-    "maxTries": null,
-    "maxTime": 300,
-    "hints": [
-      "Zoek de juiste key"
-    ],
-    "isLetter": true,
-    "answer": null
-  }
-
-}, {
-  "type": "book",
-  "hide": false,
-  "fromAnswerData": false,
-  "data": {
-    "name": "",
-    "description": "Zoek het juiste woord",
-    "file": null,
-    "maxTries": null,
-    "maxTime": 300,
-    "hints": [
-      "Kijk in de woordenboeken",
-      "KIjk naar de juiste pagina's",
-      "Combineer deze en vindt het juiste woord"
-    ],
-    "isLetter": true,
-    "answer": {
-      "value": "patat",
-      "data": null
+  }, {
+    "type": "scan",
+    "hide": false,
+    "beaconId": "groen",
+    "data": {
+      "name": "",
+      "description": "Zoek het juiste schilderij",
+      "file": "fixed/schilderij_1.jpg",
+      "maxTries": null,
+      "maxTime": 300,
+      "hints": [
+        "Scan met de app"
+      ],
+      "isLetter": true,
+      "answer": {
+        "value": true,
+        "data": null
+      }
     }
-  }
 
-}, {
-  "type": "finish",
-  "hide": false,
-  "fromAnswerData": false,
-  "data": {
-    "name": "",
-    "description": "Wat is de naam van de alien?",
-    "file": null,
-    "maxTries": 5,
-    "maxTime": 300,
-    "hints": [
-      "Probeer de letters die je gekregen hebt de combineren",
-      "Locatie zit verborgen in de boeken",
-      "Kijk naar het juiste boek",
-      "De aliennaam is Asia Migliorini"
-    ],
-    "isLetter": false,
-    "answer": null
-  }
+  },
+  {
+    "type": "beacon",
+    "hide": false,
+    "beaconId": "groen",
+    "data": {
+      "name": "",
+      "description": "Ga naar het object groen",
+      "file": "",
+      "maxTries": null,
+      "maxTime": 300,
+      "hints": [
+        "Scan met de app"
+      ],
+      "isLetter": true,
+      "answer": {
+        "value": true,
+        "data": null
+      }
+    }
 
-}]
+  }, {
+    "type": "beacon",
+    "hide": false,
+    "beaconId": "paars",
+    "data": {
+      "name": "",
+      "description": "Ga naar het object paars",
+      "file": "",
+      "maxTries": null,
+      "maxTime": 300,
+      "hints": [
+        "Scan met de app"
+      ],
+      "isLetter": true,
+      "answer": {
+        "value": true,
+        "data": null
+      }
+    }
+
+  }, {
+    "type": "beacon",
+    "hide": false,
+    "beaconId": "blauw",
+    "data": {
+      "name": "",
+      "description": "Ga naar het object blaus",
+      "file": "",
+      "maxTries": null,
+      "maxTime": 300,
+      "hints": [
+        "Scan met de app"
+      ],
+      "isLetter": true,
+      "answer": {
+        "value": true,
+        "data": null
+      }
+    }
+
+  }, {
+    "type": "find",
+    "hide": false,
+    "beaconId": "groen",
+    "data": {
+      "name": "",
+      "description": "",
+      "file": null,
+      "maxTries": null,
+      "maxTime": 300,
+      "hints": [
+        "Zoek de juiste key"
+      ],
+      "isLetter": true,
+      "answer": null
+    }
+
+  }, {
+    "type": "book",
+    "hide": false,
+    "beaconId": "groen",
+    "data": {
+      "name": "",
+      "description": "Zoek het juiste woord",
+      "file": null,
+      "maxTries": null,
+      "maxTime": 300,
+      "hints": [
+        "Kijk in de woordenboeken",
+        "KIjk naar de juiste pagina's",
+        "Combineer deze en vindt het juiste woord"
+      ],
+      "isLetter": true,
+      "answer": {
+        "value": "patat",
+        "data": null
+      }
+    }
+
+  }, {
+    "type": "finish",
+    "hide": false,
+    "beaconId": "groen",
+    "data": {
+      "name": "",
+      "description": "Wat is de naam van de alien?",
+      "file": null,
+      "maxTries": 5,
+      "maxTime": 300,
+      "hints": [
+        "Probeer de letters die je gekregen hebt de combineren",
+        "Locatie zit verborgen in de boeken",
+        "Kijk naar het juiste boek",
+        "De aliennaam is Asia Migliorini"
+      ],
+      "isLetter": false,
+      "answer": null
+    }
+
+  }
+]

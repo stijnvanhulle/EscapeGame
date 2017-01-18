@@ -8,6 +8,7 @@
 */
 
 require(`dotenv`).load();
+require('pretty-error').start();
 const pluginHandler = require(`./lib/pluginHandler`);
 const scheduleJob = require('./lib/scheduleJob');
 const path = require(`path`);
@@ -56,6 +57,7 @@ server.register(require(`inert`), pluginHandler);
 server.register(require('hapi-auth-jwt2'), pluginHandler);
 server.register(require(`./plugins/`), pluginHandler);
 server.register(require(`./routes/`), pluginHandler);
+server.log(['error', 'database', 'read']);
 
 const startServer = () => {
   scheduleJob.cancelAll();

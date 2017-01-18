@@ -1,6 +1,6 @@
 {
-  "name": "template",
-  "version": "0.2.4",
+  "name": "EscapeGame",
+  "version": "0.3.0",
   "scripts": {
     "start": "npm run server",
     "development": "nodemon -L . & NODE_ENV=development webpack --watch",
@@ -48,6 +48,7 @@
     "mqtt": "^2.1.1",
     "node-schedule": "^1.2.0",
     "pad": "^1.0.2",
+    "pretty-error": "^2.0.2",
     "react": "^15.3.2",
     "react-datepicker": "^0.39.0",
     "react-dom": "^15.3.2",

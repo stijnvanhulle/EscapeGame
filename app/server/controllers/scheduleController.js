@@ -277,33 +277,35 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
 
       const promise = (item, i, amount) => {
         return new Promise((resolve, reject) => {
-          let gameEvent;
+
           if (item) {
-            gameEvent = new GameEvent({gameId});
-            gameEvent.load(item);
+            let gameEvent = new GameEvent();
 
-            if (_previousGameEvent) {
-              if (!isFirstTime) {
-                startTime = _previousGameEvent.endDate;
+            gameController.getGameData({id: item.gameDataId}).then(gameData => {
+              gameEvent.load(item);
+              if (_previousGameEvent) {
+                if (!isFirstTime) {
+                  startTime = _previousGameEvent.endDate;
+                }
+
               }
+              console.log('max', gameData.data.data.maxTime, startTime, _previousGameEvent);
+              let data = gameLogic.createData({
+                gameDataId: gameEvent.gameDataId,
+                level: gameEvent.level,
+                startTime,
+                maxTime: gameData.data.data.maxTime,
+                startIn: DELAY,
+                timeBetween: null,
+                amount: gameEvents_amount,
+                gameDuration
+              });
+              gameEvent.setData(data);
+              gameEvent.calculateTimes();
+              _previousGameEvent = gameEvent;
+              isFirstTime = false;
+              console.log('max event', gameEvent);
 
-            }
-            let data = gameLogic.createData({
-              gameDataId: gameEvent.gameDataId,
-              level: gameEvent.level,
-              startTime,
-              startIn: DELAY,
-              timeBetween: null,
-              amount: gameEvents_amount,
-              gameDuration
-            });
-            gameEvent.setData(data);
-            gameEvent.calculateTimes()
-            _previousGameEvent = gameEvent;
-            isFirstTime = false;
-            console.log(gameEvent);
-
-            gameController.getGameData({id: gameEvent.gameDataId}).then(gameData => {
               let ok = updateEventScheduleRule(gameEvent);
               if (ok) {
                 return gameController.updateGameEvent({
@@ -464,7 +466,7 @@ const finishGameEventFromHash = (inputData) => {
         reject('Not all data filled in');
       }
 
-      console.log('finish form hash', inputData, gameEvent);
+      console.log('finish form hash', inputData);
 
       gameController.getGameEvent({
         $or: [
@@ -557,14 +559,13 @@ const createGameEvents = ({
             if (_previousGameEvent) {
               startTime = _previousGameEvent.endDate;
             }
-
             let data = gameLogic.createData({
               gameDataId: gameData.id,
               level,
               startTime,
               startIn,
               timeBetween: null,
-              maxTime: gameData.data.maxTime,
+              maxTime: gameData.data.data.maxTime,
               amount,
               gameDuration
             });
@@ -587,6 +588,8 @@ const createGameEvents = ({
           }
         });
       };
+
+      //TODO: CAHNGE TYPES TO NAME SO more types of beacon can be used.
       types = {
         'description': {
           amount: 0
@@ -609,21 +612,36 @@ const createGameEvents = ({
         'scan': {
           amount: 1
         },
+        'beacon': {
+          amount: 2
+        },
         'sound': {
           amount: 0
         },
         'finish': {
           amount: 1
+        },
+        'anthem': {
+          amount: 0
         }
       };
+      let eventTypeFinish;
 
       gameController.getGame({id: gameId}).then(item => {
         game = item;
         let alienName = game.alienName;
         //TODO: change amount for length alienName where letter is true
+        //types = calculateTypesFromName(alienName,types);
+
+        return gameController.getEventType({name: 'finish'});
+      }).then((item) => {
+        eventTypeFinish = item;
         return gameController.getGameDataFromGameName(gameName, types);
       }).then(gameDatas => {
-        gameDatas = sort(gameDatas, 'asc');
+
+        gameDatas = sort(gameDatas, 'custom', on = 'typeId', extra = {
+          where: eventTypeFinish.id
+        });
         console.log('gamedatas', gameDatas);
         return promiseFor(promise, gameDatas);
       }).then((items) => {

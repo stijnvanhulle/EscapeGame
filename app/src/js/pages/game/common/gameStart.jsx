@@ -92,7 +92,7 @@ class GameStart extends Component {
       let _game = Object.assign({}, this.props.game);
       _game.isPlaying = true;
       this.props.actions.updateGame(_game).then(() => {
-        return this.props.actions.createGameEvents({game: _game, startTime, startIn, level: 5, gameDuration: 2 *60});
+        return this.props.actions.createGameEvents({game: _game, startTime, startIn, level: 5, gameDuration: 5 *60});
       }).then(() => {
         const gameEvents = this.props.gameEvents;
         console.log('GameEvents v2', gameEvents);

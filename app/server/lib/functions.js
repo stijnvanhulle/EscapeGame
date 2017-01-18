@@ -43,17 +43,36 @@ functions.filter = (items, ...filterOn) => {
   })
 
 };
-functions.sort = (arr = null, how = 'asc') => {
+functions.sort = (arr = null, how = 'asc', on = 'id',extra={}) => {
+  let where=extra.where;
+
   const ascSort = (a, b) => {
-    if (a.id && b.id) {
-      return a.id - b.id
+    if (a[on] && b[on]) {
+      if (a[on] < b[on])
+        return -1;
+      if (a[on] > b[on])
+        return 1;
+      return 0;
     } else {
       return a - b;
     }
   };
   const descSort = (a, b) => {
-    if (a.id && b.id) {
-      return b.id - a.id
+    if (a[on] && b[on]) {
+      if (a[on] < b[on])
+        return 1;
+      if (a[on] > b[on])
+        return -1;
+      return 0;
+    } else {
+      return b - a;
+    }
+  };
+  const customSort = (a, b) => {
+    if (a[on] && b[on]) {
+      if (a[on] < where)
+        return 0;
+      return 1;
     } else {
       return b - a;
     }
@@ -62,9 +81,11 @@ functions.sort = (arr = null, how = 'asc') => {
   if (arr) {
     arr = arr.sort((a, b) => {
       if (how == 'desc') {
-        descSort(a, b);
+        return descSort(a, b);
+      }else if(how=='custom'){
+        return customSort(a,b);
       } else {
-        ascSort(a, b);
+        return ascSort(a, b);
       }
     });
     return arr;
@@ -75,7 +96,7 @@ functions.sort = (arr = null, how = 'asc') => {
 functions.randomLetterFrom = (name, letters = []) => {
   try {
     let letter;
-    name = name.toString().replace(' ','');
+    name = name.toString().replace(' ', '');
 
     const newRandom = () => {
       return Math.floor((Math.random() * name.length) + 1);

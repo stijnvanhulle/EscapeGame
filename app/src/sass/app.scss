@@ -178,6 +178,10 @@ main {
 	animation-fill-mode: forwards;
 }
 
+.hide {
+	display: none;
+}
+
 .horizon {
 	transition: all 0.3s cubic-bezier(0.02, 0.09, 0, 0.75);
 	animation: horizon 60s linear infinite;

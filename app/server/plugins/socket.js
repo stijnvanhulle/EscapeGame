@@ -17,7 +17,6 @@ const c = new Chance();
 const scheduleJob = require('../lib/scheduleJob');
 const fileController = require('../controllers/fileController');
 
-
 const onMessageSocket = (io, socket, client) => {
 
   socket.on(socketNames.PI, data => {
@@ -61,8 +60,16 @@ const onMessageSocket = (io, socket, client) => {
     console.log('Users:', app.users);
   });
   socket.on(socketNames.INPUT, (obj) => {
-    const {input, jobHash, finishDate} = obj;
-    let success = scheduleJob.finishJob(jobHash, {finishDate, input});
+    try {
+      obj = JSON.parse(obj);
+      console.log(obj);
+    } catch (e) {
+      console.log(obj, e);
+    }
+
+    console.log('input', obj);
+    const {input, jobHash, finishDate, letters} = obj;
+    let success = scheduleJob.finishJob(jobHash, obj);
     if (!success) {
       console.log('job fail', obj);
     }
@@ -78,7 +85,7 @@ const onMessageSocket = (io, socket, client) => {
         game.addAnswerData(answerData);
         return gameController.updateGame({
           id: game.id
-        },game);
+        }, game);
       }).then(ok => {
         console.log('add anserdata to game', game);
       }).catch(err => {
@@ -172,6 +179,8 @@ const onMessageSocket = (io, socket, client) => {
   socket.on(socketNames.DETECTION_FOUND, obj => {
     console.log(obj);
   });
+
+  let count = 0;
   socket.on(socketNames.BEACON, (obj) => {
     try {
       let beacon = JSON.parse(obj);
@@ -188,11 +197,12 @@ const onMessageSocket = (io, socket, client) => {
       });
 
       if (contains) {
-        app.beacons = app.beacons.filter(item => {
+        app.beacons = app.beacons.map(item => {
           if (item) {
             if (item.beaconId == beacon.beaconId) {
-              return beacon;
+              item = beacon;
             }
+            return item;
           }
 
         });
@@ -202,9 +212,12 @@ const onMessageSocket = (io, socket, client) => {
         }
 
       }
-
-      console.log('BEACONS:', app.beacons);
-      io.sockets.emit(socketNames.BEACONS, app.beacons);
+      if (count == 10) {
+        console.log('BEACONS:', JSON.stringify(app.beacons));
+        io.sockets.emit(socketNames.BEACONS, app.beacons);
+        count = 0;
+      }
+      count++;
 
     } catch (e) {
       console.log(e);

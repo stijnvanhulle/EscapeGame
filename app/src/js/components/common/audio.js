@@ -54,7 +54,7 @@ class Audio extends Component {
         : this.state.source;
       let source = '/assets/audio/' + src;
       return (
-        <div className={this.props.className || 'audio'}>
+        <div className={this.props.className || 'audio hide'}>
           <video id={this.state.id} loop={this.state.repeat}>
             <source src={source} type="audio/mpeg"/>
 
@@ -63,7 +63,7 @@ class Audio extends Component {
       );
     } else {
       return (
-        <div className={this.props.className || 'audio'}></div>
+        <div className={this.props.className || 'audio hide'}></div>
       );
     }
   }

@@ -87,7 +87,7 @@ gameLogic.createData = ({
         throw new Error('Timebetween not number');
       }
     }
-
+    console.log('MAX', maxTime,timeBetween);
     if (maxTime && timeBetween) {
       if (maxTime < timeBetween) {
         timeBetween = maxTime;

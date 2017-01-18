@@ -25,7 +25,32 @@ const promise_removeData = (item) => {
   });
 };
 
-const checkExtra = (gameEvent,extra) => {
+const calculateTypesFromName = (name, types) => {
+  if (name && types) {
+    const newRandom = (arr) => {
+      random = Math.floor((Math.random() * arr.length) + 1);
+    };
+
+    const nameLength = name.length;
+    const typeKeys = Object.keys(types);
+    let amount = 0;
+    for (var i = 0; i < typeKeys.length; i++) {
+      let typeKey = types[typeKeys[i]];
+      amount = amount + typeKey.amount;
+    }
+    while (nameLength > amount) {
+      let random = newRandom(typeKeys);
+      let amount = types[typeKeys[random]].amount;
+      types[typeKeys[random]].amount = amount + 1;
+    }
+    return types;
+
+  } else {
+    return null;
+  }
+};
+
+const checkExtra = (gameEvent, extra) => {
   try {
     let {ignore, isActive, only} = extra;
     let change = null;
@@ -172,5 +197,6 @@ module.exports = {
   calculateId,
   random,
   getRandomType,
-  checkExtra
+  checkExtra,
+  calculateTypesFromName
 };

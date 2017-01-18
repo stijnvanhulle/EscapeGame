@@ -39,7 +39,8 @@ class App extends Component {
   state = {
     username: ``,
     messages: [],
-    users: []
+    users: [],
+    canSendBeacon: false
   }
   loadOldGame = () => {
     try {
@@ -152,35 +153,50 @@ class App extends Component {
     //TODO testing with simon, beacons are correct
     game.beacons = obj;
 
-    const gameData = game.currentGameData;
-    const currentData = gameData.data.data;
-
     let nearestBeacon;
     for (var i = 0; i < game.beacons.length; i++) {
       let beacon = game.beacons[i];
-      if (beacon.range < nearestBeacon.range || !nearestBeacon) {
+      if (!nearestBeacon || beacon.range < nearestBeacon.range) {
         nearestBeacon = beacon;
       }
     }
-    if (currentData) {
-      if (game.currentGameEvent) {
-        let input = false;
-        //TODO: check of beacons are working
-        let beaconIdOfPresident;
-        if (game.answerData && game.answerData.beaconId) {
-          beaconIdOfPresident = game.answerData.beaconId;
+
+    const gameData = game.currentGameData;
+    if (gameData) {
+      const type = gameData.data.type.toLowerCase();
+      const currentData = gameData.data.data;
+
+      if (currentData && (type == 'anthem' || type=='beacon')) {
+        if (game.currentGameEvent) {
+          let input = false;
+          let beaconToFind;
+          if (game.answerData && game.answerData.beaconId) {
+            beaconToFind = game.answerData.beaconId;
+          }
+
+          if(type=='beacon'){
+            beaconToFind=gameData.data.beaconId;
+          }
+
+          if (nearestBeacon.beaconId == beaconToFind) {
+            input = true;
+          }
+          console.log(nearestBeacon.beaconId, beaconToFind);
+          if (this.state.canSendBeacon) {
+            this.socket.emit(socketNames.INPUT, {
+              input,
+              letters: game.letters,
+              jobHash: game.currentGameEvent.jobHashEnd,
+              finishDate: moment().valueOf()
+            });
+          }
+
         }
-        if (nearestBeacon.beaconId == beaconIdOfPresident) {
-          input = true;
-        }
-        this.socket.emit(socketNames.INPUT, {
-          input,
-          letters: game.letters,
-          jobHash: game.currentGameEvent.jobHashEnd,
-          finishDate: moment().valueOf()
-        });
       }
+    } else {
+      console.log('no game started');
     }
+
   }
   handleWSOnline = obj => {
     console.log(obj);
@@ -233,7 +249,7 @@ class App extends Component {
   handleWSEventFinish = obj => {
     console.log('Event finish:', obj);
     let {finish, isCorrect} = obj;
-    let data={};
+    let data = {};
     if (finish && isCorrect) {
       if (game.answerData && game.answerData.finishSound) {
         data = {
@@ -291,6 +307,10 @@ class App extends Component {
         timer.startHints(hints, gameEvent.timeBetween);
       }
 
+      setTimeout(() => {
+        this.state.canSendBeacon = true;
+      }, 2000);
+
       console.log('UPDATED gameEvent');
     }).catch((e) => {
       console.log(e);
@@ -322,6 +342,7 @@ class App extends Component {
       }
 
       timer.stop();
+      this.state.canSendBeacon = false;
       this.props.actions.getGame(this.props.game.id);
     }).catch((e) => {
       console.log(e);
