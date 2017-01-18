@@ -22,6 +22,7 @@ class Audio extends Component {
     this.state.id = id;
   }
   play(source, repeat) {
+    this.pause();
     this.setState({source, repeat});
 
     var obj = document.getElementById(this.state.id);

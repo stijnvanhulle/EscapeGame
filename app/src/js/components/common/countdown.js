@@ -45,9 +45,9 @@ class Countdown extends Component {
         this.setState({time: newTime, isStopped: false});
         console.log(newTime);
       } else {
-
-        this.stop();
         this.props.isDone(true);
+        this.stop();
+
       }
     } else {
       console.log('cannot count', this.state);

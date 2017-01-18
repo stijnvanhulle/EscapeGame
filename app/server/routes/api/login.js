@@ -28,7 +28,7 @@ module.exports = [
       try {
         Member.findOne({email, password}).exec(function(err, member) {
           if (err) {
-            throw new Error('Not found');
+            reply('Not found');
           }
           if (member) {
             let newAccess = new Access({
@@ -37,7 +37,7 @@ module.exports = [
             });
             newAccess.save(function(err, item) {
               if (err)
-                throw new Error('Not found');
+                reply('Not found');
               var token = JWT.sign({
                 access_token: newAccess.access_token,
                 expires_in: newAccess.expires_in
@@ -46,7 +46,7 @@ module.exports = [
             });
 
           } else {
-            throw new Error('Not found');
+            reply('Not found');
           }
         });
       } catch (e) {

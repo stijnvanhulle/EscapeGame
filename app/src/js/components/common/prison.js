@@ -16,7 +16,6 @@ import game from 'lib/game';
 import Bomb from 'lib/bomb';
 import vm from 'lib/vm';
 
-
 class Prison extends Component {
   state = {
     prison: {},
@@ -56,15 +55,20 @@ class Prison extends Component {
       this.forceUpdate();
     });
     game.events.on('pauseCountdown', (correct) => {
+
       this.refs.countdown.pause();
       this.forceUpdate();
     });
-    game.events.on('stopCountdown', () => {
+    game.events.on('stopCountdown', (correct) => {
+      console.log('Stop coutndown correct', correct);
+      if (!correct) {
+        this.isDoneCounting();
+      }
+
       this.state.countdown = 0;
       this.refs.countdown.stop();
       this.forceUpdate();
     });
-
 
     game.events.on('hint', (hint) => {
       //this.state.hint = hint;

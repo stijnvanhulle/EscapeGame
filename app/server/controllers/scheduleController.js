@@ -3,7 +3,7 @@ const DELAY = 5; //delay needed for delay of api calls clien<=>server
 const {io, client} = require('../lib/app');
 const moment = require('moment');
 
-const {calculateId, random} = require('./lib/functions');
+const {calculateId, random, calculateTypesFromName,sortByStartFinish} = require('./lib/functions');
 const scheduleJob = require("../lib/scheduleJob");
 const gameLogic = require('../lib/gameLogic');
 const {
@@ -41,14 +41,14 @@ const addEventScheduleRule = (gameData, gameEvent) => {
       const {gameController} = require('../controllers');
 
       if (!gameEvent.isActive)
-        throw new Error('GameEvent not active');
+        reject('GameEvent not active');
 
       timeoutStartScheduleRule(gameData, gameEvent).then(job => {
         if (job && job.name) {
           gameEvent.setJobHashStart(job.name);
           return timeoutEndScheduleRule(gameData, gameEvent);
         } else {
-          throw new Error('no job or hash', job);
+          reject('no job or hash', job);
         }
 
       }).then(job => {
@@ -58,12 +58,12 @@ const addEventScheduleRule = (gameData, gameEvent) => {
             id: gameEvent.id
           }, gameEvent, {ignore: ['level']});
         } else {
-          throw new Error('no job or hash', job);
+          reject('no job or hash', job);
         }
       }).then(data => {
         resolve(data);
       }).catch(e => {
-        throw new Error(e);
+        reject(e);
       });
     } catch (e) {
       reject(e);
@@ -76,10 +76,10 @@ const timeoutStartScheduleRule = (gameData, gameEvent) => {
   return new Promise((resolve, reject) => {
     try {
       if (!gameEvent.activateDate)
-        throw new Error('No data seconds found in gameData');
+        reject('No data seconds found in gameData');
       const activateDate = setToMoment(gameEvent.activateDate);
       if (!activateDate)
-        throw new Error('Cannot convert activateDate to moment object');
+        reject('Cannot convert activateDate to moment object');
 
       let job = scheduleJob.addRule(activateDate, {
         gameData,
@@ -90,7 +90,7 @@ const timeoutStartScheduleRule = (gameData, gameEvent) => {
           startGameEvent(gameData, data.gameEvent).then(ok => {
             resolve(runned);
           }).catch(e => {
-            throw new Error(e);
+            reject(e);
           });
 
         });
@@ -108,10 +108,10 @@ const timeoutEndScheduleRule = (gameData, gameEvent) => {
   return new Promise((resolve, reject) => {
     try {
       if (!gameEvent.endDate)
-        throw new Error('No data seconds found in gameData');
+        reject('No data seconds found in gameData');
       const endDate = setToMoment(gameEvent.endDate);
       if (!endDate)
-        throw new Error('Cannot convert endDate to moment object');
+        reject('Cannot convert endDate to moment object');
 
       let job = scheduleJob.addRule(endDate, {
         gameData,
@@ -122,7 +122,7 @@ const timeoutEndScheduleRule = (gameData, gameEvent) => {
           endGameEvent(gameData, data.gameEvent).then(ok => {
             resolve(runned);
           }).catch(e => {
-            throw new Error(e);
+            reject(e);
           });
         });
       });
@@ -159,7 +159,7 @@ const startGameEvent = (gameData, gameEvent, recalculate = false) => {
         });
         resolve({runned: true});
       }).catch((e) => {
-        throw new Error(e);
+        reject(e);
       });
 
     } catch (e) {
@@ -227,7 +227,7 @@ const endGameEvent = (gameData, gameEvent, recalculate = false) => {
         console.log(obj);
         resolve({runned: true});
       }).catch((e) => {
-        throw new Error(e);
+        reject(e);
       });
 
     } catch (e) {
@@ -411,7 +411,7 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
               });
 
             }).catch(e => {
-              throw new Error(e);
+              reject(e);
             });
           } else {
             resolve({data: null, correct: true});
@@ -439,7 +439,7 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
               resolve({data: null, correct: false});
             }
           }).catch(e => {
-            throw new Error(e);
+            reject(e);
           });
 
         } else {
@@ -549,7 +549,7 @@ const createGameEvents = ({
         game,
         gameEvents;
       if (!gameId && !gameName) {
-        throw new Error('Gameid, gamename not filled in');
+        reject('Gameid, gamename not filled in');
       }
       let _previousGameEvent;
       promise = (gameData, i, amount) => {
@@ -592,63 +592,81 @@ const createGameEvents = ({
       //TODO: CAHNGE TYPES TO NAME SO more types of beacon can be used.
       types = {
         'description': {
+          canAdd: false,
           amount: 0
         },
         'anthem': {
+          canAdd: true,
           amount: 0
         },
         'find': {
+          canAdd: true,
           amount: 0
         },
         'book': {
+          canAdd: true,
           amount: 0
         },
         'bom': {
-          amount: 1
+          canAdd: true,
+          amount: 5
         },
         'light': {
+          canAdd: false,
           amount: 0
         },
         'scan': {
-          amount: 1
+          canAdd: true,
+          amount: 0
         },
         'beacon': {
-          amount: 2
+          canAdd: true,
+          amount: 0
         },
         'sound': {
+          canAdd: true,
           amount: 0
         },
         'finish': {
+          canAdd: false,
+          amount: 1
+        },
+        'start': {
+          canAdd: false,
           amount: 1
         },
         'anthem': {
+              canAdd: false,
           amount: 0
         }
       };
-      let eventTypeFinish;
+      let eventTypeFinish,
+        eventTypeStart;
 
       gameController.getGame({id: gameId}).then(item => {
         game = item;
         let alienName = game.alienName;
         //TODO: change amount for length alienName where letter is true
-        //types = calculateTypesFromName(alienName,types);
+        types = calculateTypesFromName(alienName, types);
 
         return gameController.getEventType({name: 'finish'});
       }).then((item) => {
         eventTypeFinish = item;
+        return gameController.getEventType({name: 'start'});
+      }).then((item) => {
+        eventTypeStart = item;
         return gameController.getGameDataFromGameName(gameName, types);
       }).then(gameDatas => {
 
-        gameDatas = sort(gameDatas, 'custom', on = 'typeId', extra = {
-          where: eventTypeFinish.id
-        });
+
+        gameDatas = sortByStartFinish(gameDatas,eventTypeStart,eventTypeFinish);
         console.log('gamedatas', gameDatas);
         return promiseFor(promise, gameDatas);
       }).then((items) => {
         gameEvents = items;
         game.duration = game.calcDuration(gameEvents, isTotal = true);
         if (!game.duration)
-          throw new Error('No duration');
+          reject('No duration');
         return gameController.updateGame({
           id: game.id
         }, game);
@@ -658,7 +676,7 @@ const createGameEvents = ({
         });
         resolve(gameEvents);
       }).catch(e => {
-        throw new Error(e);
+        reject(e);
       })
 
     } catch (e) {
@@ -675,7 +693,7 @@ const addGameEvent = (gameEvent, i) => {
       const {gameController} = require('../controllers');
 
       if (!gameEvent instanceof GameEvent) {
-        throw new Error('No instance of');
+        reject('No instance of');
       }
       let gameData;
       gameController.getGameData({id: gameEvent.gameDataId}).then(_gameData => {
@@ -690,7 +708,7 @@ const addGameEvent = (gameEvent, i) => {
       }).then(data => {
         resolve(data);
       }).catch(e => {
-        throw new Error(e);
+        reject(e);
       });
     } catch (e) {
       console.log(e);

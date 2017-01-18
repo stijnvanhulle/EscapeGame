@@ -43,8 +43,8 @@ functions.filter = (items, ...filterOn) => {
   })
 
 };
-functions.sort = (arr = null, how = 'asc', on = 'id',extra={}) => {
-  let where=extra.where;
+functions.sort = (arr = null, how = 'asc', on = 'id',customSort) => {
+
 
   const ascSort = (a, b) => {
     if (a[on] && b[on]) {
@@ -68,15 +68,7 @@ functions.sort = (arr = null, how = 'asc', on = 'id',extra={}) => {
       return b - a;
     }
   };
-  const customSort = (a, b) => {
-    if (a[on] && b[on]) {
-      if (a[on] < where)
-        return 0;
-      return 1;
-    } else {
-      return b - a;
-    }
-  };
+
 
   if (arr) {
     arr = arr.sort((a, b) => {

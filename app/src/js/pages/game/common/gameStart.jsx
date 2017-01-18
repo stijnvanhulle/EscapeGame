@@ -142,7 +142,7 @@ class GameStart extends Component {
   isDoneCounting = () => {
     this.setState({countdown: 0});
   }
-  isDoneCountingPrison = () => {
+  isDoneCountingPrison() {
     const type = game.currentGameData.data.type.toLowerCase();
     const currentData = game.currentGameData.data.data;
     if (type == 'bom') {
@@ -172,7 +172,7 @@ class GameStart extends Component {
                   : 0}>{game.currentGameData.data.data.description}</TypeWriter>
               </h1>
 
-              <Audio ref="audio" className="audio"/>
+              <Audio ref="audio" className="audio hide"/>
               <Image ref="image" className="image" src={this.state.imageSrc}/>
 
               <TextInput name="input" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>

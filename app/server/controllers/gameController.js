@@ -43,11 +43,11 @@ const getGame = (find) => {
   return new Promise((resolve, reject) => {
     try {
       if (!find) {
-        throw new Error('No find for game');
+        reject('No find for game');
       } else {
         GameModel.findOne(find).exec(function(e, doc) {
           if (e) {
-            throw new Error(e);
+            reject(e);
           } else {
             let game = new Game();
             game.load(doc);
@@ -66,11 +66,11 @@ const getGameData = (find) => {
   return new Promise((resolve, reject) => {
     try {
       if (!find) {
-        throw new Error('No find for gameData');
+        reject('No find for gameData');
       } else {
         GameDataModel.findOne(find).exec(function(e, doc) {
           if (e) {
-            throw new Error(e);
+            reject(e);
           } else {
             let gameData = new GameData();
             gameData.load(doc);
@@ -90,7 +90,7 @@ const getGameDatas = (find) => {
     try {
       GameDataModel.find(find).sort({'id': 1}).exec(function(e, docs) {
         if (e) {
-          throw new Error(e);
+          reject(e);
         } else {
           let gameDatas = docs.map((item) => {
             let gameData = new GameData();
@@ -113,12 +113,12 @@ const getRandomGameData = () => {
         if (random) {
           return getGameData({id: random});
         } else {
-          throw new Error("No random found");
+          reject("No random found");
         }
       }).then(gameDatas => {
         resovle(gameDatas)
       }).catch(e => {
-        throw new Error(e);
+        reject(e);
       });
 
     } catch (e) {
@@ -133,11 +133,11 @@ const getGameEvent = (find) => {
   return new Promise((resolve, reject) => {
     try {
       if (!find) {
-        throw new Error('No find for gameEvent');
+        reject('No find for gameEvent');
       } else {
         GameEventModel.findOne(find).exec(function(e, doc) {
           if (e) {
-            throw new Error(e);
+            reject(e);
           } else {
             let gameEvent = new GameEvent();
             gameEvent.load(doc);
@@ -171,11 +171,11 @@ const getGameEvents = (find, canSort = false, calcDuration = false) => {
       };
 
       if (!find) {
-        throw new Error('No find for gameEvents');
+        reject('No find for gameEvents');
       } else {
         GameEventModel.find(find).exec(function(e, docs) {
           if (e) {
-            throw new Error(e);
+            reject(e);
           } else {
             let gameEvents = docs.map((item) => {
               let gameEvent = new GameEvent({gameId: null});
@@ -192,7 +192,7 @@ const getGameEvents = (find, canSort = false, calcDuration = false) => {
             promiseFor(promise, gameEvents).then(gameEvents => {
               resolve(gameEvents);
             }).catch(e => {
-              throw new Error(e);
+              reject(e);
             });
 
           }
@@ -209,11 +209,11 @@ const getEventType = (find) => {
   return new Promise((resolve, reject) => {
     try {
       if (!find) {
-        throw new Error('No find for gameData');
+        reject('No find for gameData');
       } else {
         EventTypeModel.findOne(find).exec(function(e, doc) {
           if (e) {
-            throw new Error(e);
+            reject(e);
           } else {
             let eventType = new EventType();
             eventType.load(doc);
@@ -232,7 +232,7 @@ const getEventTypes = () => {
     try {
       EventTypeModel.find().sort({'id': 1}).exec(function(e, docs) {
         if (e) {
-          throw new Error(e);
+          reject(e);
         } else {
           let eventTypes = docs.map((item) => {
             let eventType = new EventType();
@@ -253,7 +253,7 @@ const addGame = (game) => {
   return new Promise((resolve, reject) => {
     try {
       if (!game instanceof Game) {
-        throw new Error('No instance of game');
+        reject('No instance of game');
       }
       calculateId(GameModel).then(id => {
         game.id = id;
@@ -263,7 +263,7 @@ const addGame = (game) => {
         game.load(doc);
         resolve(game);
       }).catch(e => {
-        throw new Error(e);
+        reject(e);
       });
     } catch (e) {
       reject(e);
@@ -308,7 +308,7 @@ const getGameDataFromGameName = (gameName, types) => {
             }
             GameDataModel.find({gameName: gameName, typeId: typeIdNotObject}).sort({'typeId': 1, 'id': 1}).exec(function(e, docs) {
               if (e) {
-                throw new Error(e);
+                reject(e);
               } else {
                 let gameDatas = docs.map((item) => {
                   let gameData = new GameData();
@@ -337,12 +337,12 @@ const getGameDataFromGameName = (gameName, types) => {
               }
             });
           }).catch((e) => {
-            throw new Error(e);
+            reject(e);
           });
         } else {
           GameDataModel.find({gameName: gameName}).sort({'typeId': 1, 'id': 1}).exec(function(e, docs) {
             if (e) {
-              throw new Error(e);
+              reject(e);
             } else {
               let gameDatas = docs.map((item) => {
                 let gameData = new GameData();
@@ -356,7 +356,7 @@ const getGameDataFromGameName = (gameName, types) => {
         }
 
       } else {
-        throw new Error('No gameName found');
+        reject('No gameName found');
       }
     } catch (e) {
       reject(e);
@@ -370,13 +370,13 @@ const updateGame = (find, game) => {
   return new Promise((resolve, reject) => {
     try {
       if (!game && game.id)
-        throw new Error('No id for game');
+        reject('No id for game');
 
       if (!game instanceof Game)
-        throw new Error('No instance of game');
+        reject('No instance of game');
 
       if (!find)
-        throw new Error('No find for updategame');
+        reject('No find for updategame');
 
       game = game.json(stringify = false, removeEmpty = false, subDataJson = true);
 
@@ -392,7 +392,7 @@ const updateGame = (find, game) => {
         new: true
       }, function(e, doc) {
         if (e) {
-          throw new Error(e);
+          reject(e);
         } else {
           let game = new Game();
           game.load(doc);
@@ -418,7 +418,7 @@ const updateGameEvents = (gameEvents) => {
       promiseFor(promise, gameEvents).then(gameEvents => {
         resolve(gameEvents);
       }).catch(e => {
-        throw new Error(e);
+        reject(e);
       });
     } catch (e) {
       reject(e);
@@ -438,7 +438,7 @@ const updateGameEventsAfterGameEvent = (gameEvent, newLevel) => {
       }).then(gameEvents => {
         resolve(gameEvents);
       }).catch(e => {
-        throw new Error(e);
+        reject(e);
       });
     } catch (e) {
       reject(e);
@@ -450,13 +450,13 @@ const updateGameEvent = (find, gameEvent, extra = {}) => {
   return new Promise((resolve, reject) => {
     try {
       if (!gameEvent || !gameEvent.id)
-        throw new Error('No id for gameEvent');
+        reject('No id for gameEvent');
 
       if (!gameEvent instanceof GameEvent) {
-        throw new Error('No instance of gameEvent');
+        reject('No instance of gameEvent');
       }
       if (!find)
-        throw new Error('No find for updategameEvent');
+        reject('No find for updategameEvent');
 
       gameEvent = gameEvent.json(stringify = false);
       if (extra.isActive) {
@@ -472,7 +472,7 @@ const updateGameEvent = (find, gameEvent, extra = {}) => {
 
       }, function(e, doc) {
         if (e) {
-          throw new Error(e);
+          reject(e);
         } else {
           let gameEvent = new GameEvent();
           gameEvent.load(doc);

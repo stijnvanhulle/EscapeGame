@@ -34,9 +34,35 @@ class GamePage extends Component {
   componentDidMount = () => {
     this.loadEvents();
 
+    this.playSound({src: 'alien.mp3', repeat: true});
+
+  }
+  playSound = (audio) => {
+    setTimeout(() => {
+      if (this.refs.audio) {
+        if (audio) {
+          let {src, repeat} = audio;
+          if (src) {
+            this.refs.audio.play(src, repeat);
+
+          } else {
+            this.refs.audio.pause();
+          }
+        } else {
+          if (this.refs.audio) {
+            this.refs.audio.pause();
+          }
+        }
+      }
+    }, 2000);
   }
 
   loadEvents = () => {
+    game.events.on('backgroundAudio', (obj) => {
+      this.playSound(obj);
+
+    });
+
     game.events.on('eventFinish', (data) => {
       let {audio} = data;
       $('body').removeClass('horizon');
@@ -47,21 +73,7 @@ class GamePage extends Component {
       this.props.actions.stopGame(_game).then(() => {
         console.log('Game finished', this.props.game);
 
-        if (this.refs.audio) {
-          if (audio) {
-            let {src, repeat} = audio;
-            if (src) {
-              this.refs.audio.play(src, repeat);
-
-            } else {
-              this.refs.audio.pause();
-            }
-          } else {
-            if (this.refs.audio) {
-              this.refs.audio.pause();
-            }
-          }
-        }
+        this.playSound(audio);
 
       }).catch(err => {
         console.log(err);
@@ -117,7 +129,7 @@ class GamePage extends Component {
         )
       } else {
         return (
-          <div className=''><GameStart/></div>
+          <div className=''><Audio ref="audio" className="audio hide"/><GameStart/></div>
         );
       }
 

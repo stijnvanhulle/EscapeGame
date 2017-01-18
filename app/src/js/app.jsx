@@ -216,11 +216,18 @@ class App extends Component {
           src: currentData.file,
           repeat: false
         });
+
+
       }
       game.events.emit('bomStop', correct);
     }
 
     if (correct) {
+      game.events.emit('audio', {
+        src: 'correct.mp3',
+        repeat: false
+      });
+
       if (data && data.letter) {
         game.letters.push(data.letter);
       }
@@ -237,12 +244,23 @@ class App extends Component {
         });
       }
 
+    }else{
+      game.events.emit('audio', {
+        src: 'incorrect.mp3',
+        repeat: false
+      });
+      setTimeout(()=>{
+        game.events.emit('audio', {
+          src: currentData.file,
+          repeat: true
+        });
+      },2000);
     }
 
     if (!triesOver || triesOver > 0) {
       game.events.emit('startCountdown');
     } else {
-      game.events.emit('pauseCountdown', correct);
+      //game.events.emit('pauseCountdown', correct);
     }
 
   }
@@ -289,8 +307,11 @@ class App extends Component {
       } else if (type == "scan") {
         game.events.emit('image', currentData.file);
       } else if (type == 'bom') {
-
         if (timeBetween) {
+          game.events.emit('audio', {
+            src: 'countdown.mp3',
+            repeat: true
+          });
           game.events.emit('bomStart', timeBetween);
         }
 
@@ -321,12 +342,13 @@ class App extends Component {
   handleWSEventEnd = obj => {
     console.log('End event:', obj, moment().format());
     let {gameEvent, gameData, activeEvents} = obj;
+    let correct= game.currentGameEvent.isCorrect;
     game.currentGameData = gameData;
     game.currentGameEvent = gameEvent;
 
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       console.log('UPDATED gameEvent');
-      game.events.emit('stopCountdown');
+      game.events.emit('stopCountdown',correct); //this or isdonecouting
 
       vm.hideMessage();
       game.events.emit('audio', null);

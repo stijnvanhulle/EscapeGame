@@ -15,7 +15,7 @@ const add = (player) => {
   return new Promise((resolve, reject) => {
     try {
       if (!player instanceof Player) {
-        throw new Error('No instance of');
+        reject('No instance of');
       }
 
       calculateId(PlayerModel).then(id => {
@@ -24,7 +24,7 @@ const add = (player) => {
       }).then((doc) => {
         resolve(doc);
       }).catch(e => {
-        throw new Error(e);
+        reject(e);
       });
     } catch (e) {
       console.log(e);
@@ -38,7 +38,7 @@ const getPlayers = (gameId) => {
   return new Promise((resolve, reject) => {
     try {
       if (!gameId) {
-        throw new Error('Gameid not set');
+        reject('Gameid not set');
       } else {
         const promise = (item) => {
           return new Promise((resolve, reject) => {
@@ -62,7 +62,7 @@ const getPlayers = (gameId) => {
 
         GamePlayerModel.find({gameId: gameId}).exec(function(e, docs) {
           if (e) {
-            throw new Error(e);
+            reject(e);
           } else {
             let gamePlayers = docs.map((item) => {
               let gamePlayer = new GamePlayer();
@@ -73,7 +73,7 @@ const getPlayers = (gameId) => {
             promiseFor(promise, gamePlayers).then((item) => {
               resolve(item);
             }).catch(e => {
-              throw new Error(e);
+              reject(e);
             });
 
           }
@@ -94,7 +94,7 @@ const addPlayers = ({players, id: gameId}) => {
   return new Promise((resolve, reject) => {
     try {
       if (!players instanceof Array) {
-        throw new Error('No instance of');
+        reject('No instance of');
       }
       const promise = (item) => {
         return new Promise((resolve, reject) => {
@@ -114,7 +114,7 @@ const addPlayers = ({players, id: gameId}) => {
       promiseFor(promise, players).then((item) => {
         resolve(item);
       }).catch(e => {
-        throw new Error(e);
+        reject(e);
       });
 
       //save players

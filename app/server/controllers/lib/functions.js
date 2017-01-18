@@ -28,10 +28,10 @@ const promise_removeData = (item) => {
 const calculateTypesFromName = (name, types) => {
   if (name && types) {
     const newRandom = (arr) => {
-      random = Math.floor((Math.random() * arr.length) + 1);
+      return Math.floor((Math.random() * arr.length - 1) + 1);
     };
 
-    const nameLength = name.length;
+    const nameLength = name.replace(' ', '').length;
     const typeKeys = Object.keys(types);
     let amount = 0;
     for (var i = 0; i < typeKeys.length; i++) {
@@ -40,8 +40,12 @@ const calculateTypesFromName = (name, types) => {
     }
     while (nameLength > amount) {
       let random = newRandom(typeKeys);
-      let amount = types[typeKeys[random]].amount;
-      types[typeKeys[random]].amount = amount + 1;
+      let amountType = types[typeKeys[random]].amount;
+      if (types[typeKeys[random]].canAdd && types[typeKeys[random]].amount>0) {
+        types[typeKeys[random]].amount = amountType + 1;
+        amount++;
+      }
+
     }
     return types;
 
@@ -148,7 +152,29 @@ const calculateId = (model) => {
     }
   });
 };
+const sortByStartFinish = (arr, eventTypeStart,eventTypeFinish) => {
+  let newGameDatas = [];
+  let lastItem;
+  for (var i = 0; i < arr.length; i++) {
+    let item = arr[i];
 
+    if (newGameDatas.length > 0) {
+      if (item.typeId == eventTypeFinish.id) {
+        lastItem = item;
+      } else {
+        newGameDatas.push(item);
+      }
+
+    } else {
+      if (item.typeId == eventTypeStart.id) {
+        newGameDatas.push(item);
+        i = 0;
+      }
+    }
+  }
+  newGameDatas.push(lastItem);
+  return newGameDatas
+};
 const random = (model) => {
   return new Promise((resolve, reject) => {
     try {
@@ -193,6 +219,7 @@ const random = (model) => {
 };
 
 module.exports = {
+  sortByStartFinish,
   removeDataFromModel,
   calculateId,
   random,

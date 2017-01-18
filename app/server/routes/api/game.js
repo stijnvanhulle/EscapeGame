@@ -38,7 +38,7 @@ module.exports = [
           game.players = players;
           reply(game.json(stringify = false, removeEmpty = true));
         }).catch(err => {
-          throw new Error(err);
+          reply(err);
         });
       } catch (e) {
         console.log(e);
@@ -69,7 +69,7 @@ module.exports = [
           reply(doc);
         }).catch(e => {
           console.log(e);
-          throw new Error(e);
+          reply(e);
         });
       } catch (e) {
         console.log(e);
@@ -111,7 +111,7 @@ module.exports = [
           reply(game);
         }).catch(e => {
           console.log(e);
-          throw new Error(e);
+          reply(e);
         });
       } catch (e) {
         console.log(e);
@@ -145,7 +145,7 @@ module.exports = [
         gameController.getGameEvents(find).then(gameEvents => {
           reply(gameEvents);
         }).catch(err => {
-          throw new Error(err);
+          reply(err);
         });
 
       } catch (e) {
@@ -188,7 +188,7 @@ module.exports = [
           reply({fileName: fileName});
         }).catch(err => {
           console.log(err);
-          throw new Error(err);
+          reply(err);
         });
 
       } catch (e) {
@@ -223,7 +223,7 @@ module.exports = [
         }).then(gameEvents => {
           reply(gameEvents);
         }).catch(err => {
-          throw new Error(err);
+          reply(err);
         });
 
       } catch (e) {
@@ -294,7 +294,7 @@ module.exports = [
           reply(item);
         }).catch(err => {
           console.log(err);
-          throw new Error(err);
+          reply(err);
         });
 
       } catch (e) {
@@ -325,7 +325,7 @@ module.exports = [
         }).then(doc => {
           reply(doc);
         }).catch(err => {
-          throw new Error(err);
+          reply(err);
         });
       } catch (e) {
         console.log(e);
@@ -353,7 +353,7 @@ module.exports = [
           io.sockets.emit(socketNames.RECALCULATE_START, gameEvents);
           reply(gameEvents);
         }).catch(err => {
-          throw new Error(err);
+          reply(err);
         });
       } catch (e) {
         console.log(e);
