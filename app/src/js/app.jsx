@@ -272,13 +272,13 @@ class App extends Component {
           repeat: false
         });
         //TODO: check
-        /*setTimeout(() => {
+        setTimeout(() => {
           game.events.emit('audio', {
             src: currentData.file,
             repeat: true
           });
-        }, 2000);
-        */
+        }, 1500);
+
 
       }
     }

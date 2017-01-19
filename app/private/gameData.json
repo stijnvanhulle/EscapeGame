@@ -67,6 +67,25 @@
       }
     }
   }, {
+    "type": "sound",
+    "hide": false,
+    "beaconId": null,
+    "data": {
+      "name": "",
+      "description": "Wat is de naam van het liedje?",
+      "file": "kryptonite.mp3",
+      "maxTries": 3,
+      "maxTime": 300,
+      "hints": [
+        "Het is van 3 doors down",
+        "Krypt..."
+      ],
+      "isLetter": true,
+      "answer": {
+        "value": "kryptonite"
+      }
+    }
+  }, {
     "type": "bom",
     "hide": false,
     "beaconId": null,

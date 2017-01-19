@@ -598,57 +598,7 @@ const createGameEvents = ({
         });
       };
 
-      //TODO: change .env PRODUCTION_GAME for not adding
-      types = {
-        'description': {
-          canAdd: false,
-          amount: 0
-        },
-        'find': {
-          canAdd: false,
-          amount: 0
-        },
-        'book': {
-          canAdd: true,
-          amount: 1
-        },
-        'bom': {
-          canAdd: true,
-          amount: 2
-        },
-        'light': {
-          canAdd: false,
-          amount: 0
-        },
-        'scan': {
-          canAdd: true,
-          amount: 1
-        },
-        'beacon': {
-          canAdd: true,
-          amount: 1
-        },
-        'sound': {
-          canAdd: false,
-          amount: 1
-        },
-        'finish': {
-          canAdd: false,
-          amount: 1
-        },
-        'start': {
-          canAdd: false,
-          amount: 1
-        },
-        'anthem': {
-          canAdd: false,
-          amount: 1
-        },
-        'other': {
-          canAdd: false,
-          amount: 1
-        }
-      };
+      types = require('../../private/types.json');
       let eventTypeFinish,
         eventTypeStart;
 

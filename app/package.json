@@ -1,6 +1,6 @@
 {
   "name": "EscapeGame",
-  "version": "0.3.1",
+  "version": "0.3.3",
   "scripts": {
     "start": "npm run server",
     "development": "nodemon -L . & NODE_ENV=development webpack --watch",
@@ -57,6 +57,7 @@
     "react-router": "^3.0.0",
     "react-typewriter": "^0.4.1",
     "redux": "^3.6.0",
+    "redux-devtools-extension": "^1.0.0",
     "redux-immutable-state-invariant": "^1.2.4",
     "redux-thunk": "^2.1.0",
     "remove": "^0.1.5",
@@ -97,7 +98,6 @@
     "postcss-import": "^9.0.0",
     "postcss-loader": "^1.0.0",
     "postcss-reporter": "^3.0.0",
-    "remote-redux-devtools": "^0.5.2",
     "rimraf": "^2.5.4",
     "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
