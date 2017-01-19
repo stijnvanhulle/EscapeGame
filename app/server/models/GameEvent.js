@@ -53,7 +53,7 @@ class GameEvent {
     this.events = new Emitter();
   }
 
-  load(data) {
+  load(obj) {
     try {
       if (!obj)
         return;
@@ -72,7 +72,7 @@ class GameEvent {
         isCorrect,
         letter,
         tries
-      } = data;
+      } = obj;
       this.gameId = gameId
         ? parseFloat(gameId)
         : this.gameId;

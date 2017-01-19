@@ -39,6 +39,18 @@ piController.tickBom = (time) => {
     timeout: 0
   });
 };
+piController.sendDigitalValueTo = (to, value = true) => {
+  let socket = piController.socket;
+  socket.emit(socketNames.PI, {
+    port: to,
+    type: 'OUTPUT',
+    connectorType: connectorTypes.DIGITAL,
+    value: value,
+    read: false,
+    realtime: true,
+    timeout: 0
+  });
+};
 
 piController.sendText = (text) => {
   let socket = piController.socket;

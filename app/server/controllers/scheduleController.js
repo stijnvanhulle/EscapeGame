@@ -262,6 +262,8 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
   return new Promise((resolve, reject) => {
     try {
       const {gameController} = require('../controllers');
+      let gameDatas,
+        _gameEvents;
 
       let game;
 
@@ -277,8 +279,14 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
 
       const promise = (item, i, amount) => {
         return new Promise((resolve, reject) => {
-          if (item) {
-            gameController.getGameData({id: item.gameDataId}).then(gameData => {
+          if (item && gameDatas) {
+            let gameData = gameDatas.find(t => {
+              if (t.id == item.gameDataId) {
+                return item;
+              }
+            });
+
+            Promise.resolve(true).then(() => {
               let gameEvent = new GameEvent();
               gameEvent.load(item);
               if (_previousGameEvent) {
@@ -287,7 +295,6 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
                 }
 
               }
-              console.log('max', gameData.data.data.maxTime, startTime, _previousGameEvent);
               let data = gameLogic.createData({
                 gameDataId: gameEvent.gameDataId,
                 level: gameEvent.level,
@@ -302,7 +309,6 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
               gameEvent.calculateTimes();
               _previousGameEvent = gameEvent;
               isFirstTime = false;
-              console.log('max event', gameEvent);
 
               let ok = updateEventScheduleRule(gameEvent);
               if (ok) {
@@ -341,9 +347,14 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
         } else {
           return gameController.getGameEvents({gameId: gameId, isActive: true, finishDate: null});
         }
-      }).then(_gameEvents => {
+      }).then(items => {
+        _gameEvents=items;
+        return gameController.getGameDatas();
+      }).then(items => {
+        gameDatas = items;
         return promiseFor(promise, _gameEvents);
       }).then(gameEvents => {
+        console.log('GameEvents v3', gameEvents);
         gameEvents = gameEvents.map(item => {
           return item.json(stringify = false, removeEmpty = true);
         });

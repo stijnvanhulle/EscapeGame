@@ -105,7 +105,6 @@ class App extends Component {
     this.socket.on(socketNames.RECALCULATE_DONE, this.handleWSRecalculateDone);
     this.socket.on(socketNames.BEACONS, this.handleWSBeacons);
 
-
     piController.loadSocket(this.socket);
 
     window.$ = $;
@@ -114,8 +113,7 @@ class App extends Component {
     window.moment = moment;
     window.game = game;
     window.vm = vm;
-    window.c=c;
-    
+    window.c = c;
 
   };
 
@@ -220,6 +218,12 @@ class App extends Component {
     if (type == "bom") {
       if (!correct) {
         piController.sendText('BOEM');
+        piController.sendDigitalValueTo(4, status = true);
+        piController.sendDigitalValueTo(3, status = true);
+        setTimeout(() => {
+          piController.sendDigitalValueTo(3, status = false);
+            piController.sendDigitalValueTo(4, status = false);
+        }, 2000);
         game.events.emit('audio', {
           src: currentData.file,
           repeat: false
@@ -282,6 +286,7 @@ class App extends Component {
     let {finish, isCorrect} = obj;
     let data = {};
     if (finish && isCorrect) {
+        piController.sendText('SUCCEED');
       if (game.answerData && game.answerData.finishSound) {
         data = {
           audio: {
@@ -291,6 +296,8 @@ class App extends Component {
         };
         piController.openChest();
       }
+    }else{
+        piController.sendText('FAILED');
     }
 
     game.events.emit('eventFinish', data);
