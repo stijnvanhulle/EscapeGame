@@ -4,7 +4,7 @@
     "beaconId": "groen",
     "data": {
       "name": "",
-      "description": "Welkom, de bedoeling van het spel is om de aliennaam te ontvangen door opdrachten goed te volbrengen",
+      "description": "Welkom, de bedoeling van het spel is om de aliennaam in te vullen door de verschillende opdrachten tot een goed einde te brengen.",
       "file": null,
       "hints": [
         ""
@@ -21,23 +21,27 @@
     "beaconId": "groen",
     "data": {
       "name": "",
-      "description": "Zoek de juiste president",
+      "description": "Wat is de naam van de president?",
       "file": null,
       "hints": [
-        ""
+        "Deze president kan je in een van de boekenvinden",
+        "De president is een oude bekende",
+        "Build a wall",
+        "Komt voor in boek 3"
+
       ],
       "maxTries": null,
       "maxTime": 300,
       "isLetter": true,
       "answer": {
-        "value": "President x",
+        "value": "Donald Trump",
         "data": {
           "location": "kortrijk",
           "date": "sdfs",
           "book": 1,
           "image": "cola.png",
           "beaconId": "paars",
-          "light": "president x",
+          "light": "donald trump",
           "finishSound": "finish_minions.mp3"
         }
       }
@@ -46,37 +50,38 @@
   }, {
     "type": "sound",
     "hide": false,
-    "beaconId": "groen",
+    "beaconId": null,
     "data": {
       "name": "",
-      "description": "NUMMER speelt af",
-      "file": "nummer.mp3",
+      "description": "Wat is de naam van het liedje?",
+      "file": "wake_me_up.mp3",
       "maxTries": 3,
       "maxTime": 300,
       "hints": [
-        "Vul het juiste jaargetal in"
+        "Er komt wake me invoor",
+        "Het is wake me up"
       ],
       "isLetter": true,
       "answer": {
-        "value": "2012"
+        "value": "wake me up"
       }
     }
   }, {
     "type": "bom",
     "hide": false,
-    "beaconId": "groen",
+    "beaconId": null,
     "data": {
       "name": "",
-      "description": "",
+      "description": "Ontmantel de bom!",
       "file": "bom.mp3",
       "maxTries": 1,
       "maxTime": 60,
       "hints": [
-        "Probeer eens azo",
-        "of azzzo",
-        "NOOB"
+        "Bekijk de app",
+        "Weest snel",
+        "Hij haat bijna af gaan"
       ],
-      "isLetter": true,
+      "isLetter": false,
       "answer": {
         "value": true,
         "data": null
@@ -104,15 +109,17 @@
   }, {
     "type": "anthem",
     "hide": false,
-    "beaconId": "groen",
+    "beaconId": "answerData.beaconId",
     "data": {
       "name": "",
       "description": "",
-      "file": "volkslied.mp3",
+      "file": "donald_trump.mp3",
       "maxTries": null,
       "maxTime": 300,
       "hints": [
-        "Ga naar het juiste schilderij"
+        "Ga naar het juiste schilderij",
+        "Ga naar het juiste schilderij",
+        "Ga naar het donald trump"
       ],
       "isLetter": true,
       "answer": {
@@ -124,15 +131,16 @@
   }, {
     "type": "scan",
     "hide": false,
-    "beaconId": "groen",
+    "beaconId": "",
     "data": {
       "name": "",
       "description": "Zoek het juiste schilderij",
       "file": "fixed/schilderij_1.jpg",
-      "maxTries": null,
+      "maxTries": 2,
       "maxTime": 300,
       "hints": [
-        "Scan met de app"
+        "Scan met de app",
+        "Kijk zeer goed"
       ],
       "isLetter": true,
       "answer": {
@@ -148,7 +156,7 @@
     "beaconId": "groen",
     "data": {
       "name": "",
-      "description": "Ga naar het object groen",
+      "description": "Ga naar beacon groen",
       "file": "",
       "maxTries": null,
       "maxTime": 300,
@@ -168,7 +176,7 @@
     "beaconId": "paars",
     "data": {
       "name": "",
-      "description": "Ga naar het object paars",
+      "description": "Ga naar beacon paars",
       "file": "",
       "maxTries": null,
       "maxTime": 300,
@@ -188,7 +196,7 @@
     "beaconId": "blauw",
     "data": {
       "name": "",
-      "description": "Ga naar het object blaus",
+      "description": "Ga naar beacon blauw",
       "file": "",
       "maxTries": null,
       "maxTime": 300,
@@ -205,7 +213,7 @@
   }, {
     "type": "find",
     "hide": false,
-    "beaconId": "groen",
+    "beaconId": null,
     "data": {
       "name": "",
       "description": "",
@@ -220,23 +228,67 @@
     }
 
   }, {
-    "type": "book",
+    "type": "other",
     "hide": false,
-    "beaconId": "groen",
+    "beaconId": null,
     "data": {
       "name": "",
-      "description": "Zoek het juiste woord",
+      "description": "Raadsel: Ik ben groot als ik jong ben, maar ik ben klein als ik oud ben. Wat ben ik?",
       "file": null,
       "maxTries": null,
       "maxTime": 300,
       "hints": [
-        "Kijk in de woordenboeken",
-        "KIjk naar de juiste pagina's",
-        "Combineer deze en vindt het juiste woord"
+        "-",
+        "Je kan het aansteken",
+        "-",
+        "Het is warm"
       ],
       "isLetter": true,
       "answer": {
-        "value": "patat",
+        "value": "kaars",
+        "data": null
+      }
+    }
+
+  }, {
+    "type": "other",
+    "hide": false,
+    "beaconId": null,
+    "data": {
+      "name": "",
+      "description": "Raadsel: Hoe vaak komt het getal 9 voor tussen 0 en 100?",
+      "file": null,
+      "maxTries": null,
+      "maxTime": 300,
+      "hints": [
+        ""
+      ],
+      "isLetter": true,
+      "answer": {
+        "value": "20",
+        "data": null
+      }
+    }
+
+  }, {
+    "type": "book",
+    "hide": false,
+    "beaconId": null,
+    "data": {
+      "name": "",
+      "description": "Zoek het juiste woord in het boek",
+      "file": null,
+      "maxTries": 2,
+      "maxTime": 300,
+      "hints": [
+        "Kijk in de woordenboeken",
+        "Kijk naar de juiste pagina's",
+        "Combineer deze en vindt het juiste woord",
+        "Het woord is stoel"
+      ],
+      "isLetter": true,
+      "answer": {
+        "value": "stoel",
         "data": null
       }
     }
@@ -244,7 +296,7 @@
   }, {
     "type": "finish",
     "hide": false,
-    "beaconId": "groen",
+    "beaconId": null,
     "data": {
       "name": "",
       "description": "Wat is de naam van de alien?",
@@ -254,8 +306,7 @@
       "hints": [
         "Probeer de letters die je gekregen hebt de combineren",
         "Locatie zit verborgen in de boeken",
-        "Kijk naar het juiste boek",
-        "De aliennaam is Asia Migliorini"
+        "Kijk naar het juiste boek"
       ],
       "isLetter": false,
       "answer": null

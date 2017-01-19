@@ -179,7 +179,14 @@ class App extends Component {
           }
 
           if (type == 'beacon') {
-            beaconToFind = gameData.data.beaconId;
+            //TODO: check of and then answerData.beaconId eval()
+            if (gameData.data.beaconId.indexOf('answerData') != -1) {
+              beaconToFind = eval('game.' + gameData.data.beaconId);
+            } else {
+              beaconToFind = gameData.data.beaconId;
+            }
+            console.log('beacontoFind', beaconToFind);
+
           }
 
           if (nearestBeacon.beaconId == beaconToFind) {
@@ -222,7 +229,7 @@ class App extends Component {
         piController.sendDigitalValueTo(3, status = true);
         setTimeout(() => {
           piController.sendDigitalValueTo(3, status = false);
-            piController.sendDigitalValueTo(4, status = false);
+          piController.sendDigitalValueTo(4, status = false);
         }, 2000);
         game.events.emit('audio', {
           src: currentData.file,
@@ -264,18 +271,20 @@ class App extends Component {
           src: 'incorrect.mp3',
           repeat: false
         });
-        setTimeout(() => {
+        //TODO: check
+        /*setTimeout(() => {
           game.events.emit('audio', {
             src: currentData.file,
             repeat: true
           });
         }, 2000);
+        */
 
       }
     }
 
     if (!triesOver || triesOver > 0) {
-      game.events.emit('startCountdown');
+      game.events.emit('startCountdown', {});
     } else {
       //game.events.emit('pauseCountdown', correct);
     }
@@ -286,7 +295,7 @@ class App extends Component {
     let {finish, isCorrect} = obj;
     let data = {};
     if (finish && isCorrect) {
-        piController.sendText('SUCCEED');
+      piController.sendText('SUCCEED');
       if (game.answerData && game.answerData.finishSound) {
         data = {
           audio: {
@@ -296,9 +305,11 @@ class App extends Component {
         };
         piController.openChest();
       }
-    }else{
-        piController.sendText('FAILED');
+    } else {
+      piController.sendText('FAILED');
     }
+
+    $('.logo').removeClass('hide');
 
     game.events.emit('eventFinish', data);
   }
@@ -311,6 +322,8 @@ class App extends Component {
 
     //TODO: change for aut calc to pyton script
     //this.socket.emit(socketNames.RECALCULATE_START, game.id);
+    //
+    $('.logo').addClass('hide');
 
     this.props.actions.updateGameEvent(gameEvent).then(() => {
       const currentData = gameData.data.data;
@@ -340,7 +353,10 @@ class App extends Component {
         game.events.emit('image', null);
       }
       if (timeBetween) {
-        game.events.emit('startCountdown', timeBetween);
+        game.events.emit('startCountdown', {
+          timeBetween,
+          isBom: type == 'bom'
+        });
       }
 
       const hints = gameData.data.data.hints;

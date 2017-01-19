@@ -17,7 +17,9 @@ class Countdown extends Component {
     intervalObj: null,
     interval: 1000,
     time: 0,
-    isStopped: false
+    isStopped: false,
+    isOn: false,
+    isBom: false
   }
   constructor(props, context) {
     super(props, context);
@@ -34,16 +36,27 @@ class Countdown extends Component {
     clearInterval(this.state.intervalObj);
   }
   timer = () => {
+    let isOn = this.state.isOn;
     if (this.state.time && this.state.interval) {
       var newTime = this.state.time - this.state.interval;
       if (newTime > 0) {
         if (this.props.sendToPi) {
+
           let timeFormat = calculateTimeFormat(newTime);
           piController.tickBom(timeFormat);
+
+          //TODO: change for bom, delay
+          /*if (this.state.isBom) {
+            isOn = isOn == false
+              ? true
+              : false;
+
+            piController.sendDigitalValueTo(piController.PORTS.lights, !isOn);
+          }*/
+
         }
 
-        this.setState({time: newTime, isStopped: false});
-        console.log(newTime);
+        this.setState({time: newTime, isStopped: false, isOn});
       } else {
         this.props.isDone(true);
         this.stop();
@@ -66,10 +79,10 @@ class Countdown extends Component {
     }, 1000)
 
   }
-  start = (howLong) => {
+  start = (howLong, isBom = false) => {
     let intervalObj;
     this.pause();
-    this.setState({isStopped: false});
+    this.setState({isStopped: false, isBom});
 
     if (howLong) {
       this.setState({

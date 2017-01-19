@@ -26,7 +26,7 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-        const {gameController,playerController, scheduleController} = require('../../controllers');
+      const {gameController, playerController, scheduleController} = require('../../controllers');
       try {
         let {players, teamName, duration} = request.payload;
         //players = JSON.parse(players);
@@ -54,7 +54,7 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-      const {gameController,playerController, scheduleController} = require('../../controllers');
+      const {gameController, playerController, scheduleController} = require('../../controllers');
       try {
         let gameId = request.params.id;
         gameId = parseFloat(gameId);
@@ -85,7 +85,7 @@ module.exports = [
       auth: 'token'
     },
     handler: function(request, reply) {
-    const {gameController,playerController, scheduleController} = require('../../controllers');
+      const {gameController, playerController, scheduleController} = require('../../controllers');
       try {
         let gameId = request.params.id;
         gameId = parseFloat(gameId);
@@ -128,7 +128,7 @@ module.exports = [
     },
     handler: function(request, reply) {
       try {
-        const {gameController,playerController, scheduleController} = require('../../controllers');
+        const {gameController, playerController, scheduleController} = require('../../controllers');
 
         let gameId = request.params.id;
         gameId = parseFloat(gameId);
@@ -162,7 +162,7 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-        const {gameController,playerController, scheduleController} = require('../../controllers');
+      const {gameController, playerController, scheduleController} = require('../../controllers');
       try {
         let gameId = request.params.id;
         gameId = parseFloat(gameId);
@@ -205,7 +205,7 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-    const {gameController,playerController, scheduleController} = require('../../controllers');
+      const {gameController, playerController, scheduleController} = require('../../controllers');
 
       try {
         let {gameName, level, startTime, startIn, gameDuration} = request.payload;
@@ -239,7 +239,7 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-      const {gameController,playerController, scheduleController} = require('../../controllers');
+      const {gameController, playerController, scheduleController} = require('../../controllers');
       try {
 
         reply({implemented: false});
@@ -260,7 +260,7 @@ module.exports = [
     handler: function(request, reply) {
 
       try {
-          const {gameController,playerController, scheduleController} = require('../../controllers');
+        const {gameController, playerController, scheduleController} = require('../../controllers');
         let {data} = request.payload;
         let gameId = request.params.id;
         gameId = parseFloat(gameId);
@@ -312,7 +312,7 @@ module.exports = [
     },
     handler: function(request, reply) {
       try {
-          const {gameController,playerController, scheduleController} = require('../../controllers');
+        const {gameController, playerController, scheduleController} = require('../../controllers');
 
         let gameId = request.params.id;
         gameId = parseFloat(gameId);
@@ -342,7 +342,7 @@ module.exports = [
     },
     handler: function(request, reply) {
       try {
-  const {gameController,playerController, scheduleController} = require('../../controllers');
+        const {gameController, playerController, scheduleController} = require('../../controllers');
 
         let gameId = request.params.id;
         gameId = parseFloat(gameId);
@@ -352,6 +352,33 @@ module.exports = [
         }, canSort = true).then(gameEvents => {
           io.sockets.emit(socketNames.RECALCULATE_START, gameEvents);
           reply(gameEvents);
+        }).catch(err => {
+          reply(err);
+        });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  },
+  {
+    method: `GET`,
+    path: url.GAME_STATS,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      try {
+        const {gameController} = require('../../controllers');
+
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
+
+        gameController.getStats(gameId).then(stats => {
+
+          reply(stats);
         }).catch(err => {
           reply(err);
         });

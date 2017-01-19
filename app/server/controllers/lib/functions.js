@@ -30,7 +30,7 @@ const calculateTypesFromName = (name, types) => {
     const newRandom = (arr) => {
       return Math.floor((Math.random() * arr.length - 1) + 1);
     };
-
+    //TODO: check for letter is true to add to one, gamedata.json
     const nameLength = name.replace(' ', '').length;
     const typeKeys = Object.keys(types);
     let amount = 0;

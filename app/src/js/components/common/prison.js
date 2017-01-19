@@ -38,6 +38,7 @@ class Prison extends Component {
   componentDidMount = () => {
     $('body').removeClass('horizon');
     $('.prison svg #background').removeClass('horizon');
+
     this.loadEvents();
   }
   componentWillUnmount() {
@@ -45,13 +46,13 @@ class Prison extends Component {
   }
 
   loadEvents = () => {
-    game.events.on('startCountdown', timeBetween => {
+    game.events.on('startCountdown', ({timeBetween, isBom}) => {
       console.log('countdown', timeBetween);
       if (timeBetween) {
         this.state.countdown = timeBetween;
       }
-      this.refs.countdown.start(timeBetween);
-
+      this.refs.countdown.start(timeBetween, isBom);
+    
       this.forceUpdate();
     });
     game.events.on('pauseCountdown', (correct) => {
@@ -67,6 +68,7 @@ class Prison extends Component {
 
       this.state.countdown = 0;
       this.refs.countdown.stop();
+
       this.forceUpdate();
     });
 

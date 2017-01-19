@@ -348,7 +348,7 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
           return gameController.getGameEvents({gameId: gameId, isActive: true, finishDate: null});
         }
       }).then(items => {
-        _gameEvents=items;
+        _gameEvents = items;
         return gameController.getGameDatas();
       }).then(items => {
         gameDatas = items;
@@ -404,7 +404,7 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
           }
         };
 
-        if (inputData.input == value || checkBool(inputData.input, value) || inputData.input.indexOf(value) != -1) {
+        if (inputData.input == value || checkBool(inputData.input, value) || (inputData.input && inputData.input.indexOf && inputData.input.indexOf(value) != -1)) {
           if (isLetter) {
             gameController.getGame({id: gameEvent.gameId}).then(game => {
               alienName = game.alienName.toLowerCase();
@@ -604,17 +604,13 @@ const createGameEvents = ({
           canAdd: false,
           amount: 0
         },
-        'anthem': {
-          canAdd: true,
-          amount: 0
-        },
         'find': {
-          canAdd: true,
+          canAdd: false,
           amount: 0
         },
         'book': {
           canAdd: true,
-          amount: 0
+          amount: 1
         },
         'bom': {
           canAdd: true,
@@ -626,15 +622,15 @@ const createGameEvents = ({
         },
         'scan': {
           canAdd: true,
-          amount: 0
+          amount: 1
         },
         'beacon': {
           canAdd: true,
-          amount: 0
+          amount: 1
         },
         'sound': {
-          canAdd: true,
-          amount: 0
+          canAdd: false,
+          amount: 1
         },
         'finish': {
           canAdd: false,
@@ -646,7 +642,11 @@ const createGameEvents = ({
         },
         'anthem': {
           canAdd: false,
-          amount: 0
+          amount: 1
+        },
+        'other': {
+          canAdd: false,
+          amount: 1
         }
       };
       let eventTypeFinish,

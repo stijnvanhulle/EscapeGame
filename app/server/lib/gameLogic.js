@@ -8,39 +8,39 @@
 */
 const moment = require('moment');
 const {setToMoment} = require('../lib/functions');
-const MIN_TIMEBETWEEN = 20;
+const MIN_TIMEBETWEEN = 30;
 const MAX_TIMEBETWEEN = 30 * 60;
 const levels = {
   //duration 60 minutes
   level1: {
-    duration: 1 + 0.9
+    duration: 1 + 0.4
   },
   level2: {
-    duration: 1 + 0.5
+    duration: 1 + 0.1
   },
   level3: {
-    duration: 1 + 0.2
+    duration: 1 + 0.05
   },
   level4: {
-    duration: 1 + 0.1
+    duration: 1 + 0.02
   },
   level5: {
     duration: 1
   },
   level6: {
-    duration: 1 - 0.1
+    duration: 1 - 0.01
   },
   level7: {
-    duration: 1 - 0.1
+    duration: 1 - 0.02
   },
   level8: {
-    duration: 1 - 0.2
+    duration: 1 - 0.05
   },
   level9: {
-    duration: 1 - 0.5
+    duration: 1 - 0.1
   },
   level10: {
-    duration: 1 - 0.9
+    duration: 1 - 0.4
   }
 };
 

@@ -24,7 +24,7 @@ import TypeWriter from 'react-typewriter';
 
 class GameStart extends Component {
   state = {}
-  countdown = 3;
+  countdown = 5;
   constructor(props, context) {
     super(props, context);
     this.socket = window.socket;
@@ -92,7 +92,7 @@ class GameStart extends Component {
       let _game = Object.assign({}, this.props.game);
       _game.isPlaying = true;
       this.props.actions.updateGame(_game).then(() => {
-        return this.props.actions.createGameEvents({game: _game, startTime, startIn, level: 5, gameDuration: 5 *60});
+        return this.props.actions.createGameEvents({game: _game, startTime, startIn, level: 5, gameDuration: game.GAMEDURATION});
       }).then(() => {
         const gameEvents = this.props.gameEvents;
         console.log('GameEvents v2', gameEvents);
@@ -175,9 +175,11 @@ class GameStart extends Component {
 
               <Audio ref="audio" className="audio hide"/>
               <Image ref="image" className="image" src={this.state.imageSrc}/>
+              <div className='input hide'>
+                <TextInput name="input" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
+                <Button onClick={this.sendInput}>Send Input</Button>
+              </div>
 
-              <TextInput name="input" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
-              <Button onClick={this.sendInput}>Send Input</Button>
 
             </div>
           </div>
@@ -203,7 +205,7 @@ class GameStart extends Component {
               <div className="center">
                 <span>starting in
                 </span>
-                <div>
+                <div className='center'>
                   <Countdown className="countdown" sendToPi={false} howLong={this.state.countdown} isDone={this.isDoneCounting}/>
                 </div>
 

@@ -43,8 +43,19 @@ functions.filter = (items, ...filterOn) => {
   })
 
 };
-functions.sort = (arr = null, how = 'asc', on = 'id',customSort) => {
+functions.avg = (arr, onItem) => {
+  if (arr && arr.length > 0 && onItem) {
+    let total=0;
+    for (var i = 0; i < arr.length; i++) {
+      total = total + arr[i][onItem];
+    }
+    return parseFloat(total / arr.length);
+  } else {
+    return 0;
+  }
 
+};
+functions.sort = (arr = null, how = 'asc', on = 'id', customSort) => {
 
   const ascSort = (a, b) => {
     if (a[on] && b[on]) {
@@ -69,13 +80,12 @@ functions.sort = (arr = null, how = 'asc', on = 'id',customSort) => {
     }
   };
 
-
   if (arr) {
     arr = arr.sort((a, b) => {
       if (how == 'desc') {
         return descSort(a, b);
-      }else if(how=='custom'){
-        return customSort(a,b);
+      } else if (how == 'custom') {
+        return customSort(a, b);
       } else {
         return ascSort(a, b);
       }
@@ -85,13 +95,15 @@ functions.sort = (arr = null, how = 'asc', on = 'id',customSort) => {
     return null;
   }
 };
+
+//TODO: recheck functions: not working correctly
 functions.randomLetterFrom = (name, letters = []) => {
   try {
     let letter;
     name = name.toString().replace(' ', '');
 
     const newRandom = () => {
-      return Math.floor((Math.random() * name.length-1) + 1);
+      return Math.floor((Math.random() * name.length - 1) + 1);
 
     };
     const enoughLettersOver = (letter, letters) => {
@@ -140,7 +152,7 @@ functions.randomLetterFrom = (name, letters = []) => {
       let random = newRandom();
       letter = name.charAt(random);
     }
-    console.log('LETTER: ', letter);
+      console.log('LETTER: ', letter,lettersCounts,nameCounts);
     return letter;
   } catch (e) {
     console.log(e);

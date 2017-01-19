@@ -12,11 +12,12 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Button} from 'semantic-ui-react';
 
-import TextInput from '../../components/common/textInput';
+import TextInput from 'components/common/textInput';
 
 import GameNew from './common/gameNew';
 import GameStart from './common/gameStart';
 import Audio from 'components/common/audio';
+import GameStats from 'components/game/gameStats';
 
 import * as gameActions from '../../actions/gameActions';
 import game from '../../lib/game';
@@ -25,7 +26,8 @@ class GamePage extends Component {
   state = {
     teamName: '',
     error: '',
-    data: {}
+    data: {},
+    stats: null
   }
   constructor(props, context) {
     super(props, context);
@@ -33,7 +35,6 @@ class GamePage extends Component {
 
   componentDidMount = () => {
     this.loadEvents();
-
     this.playSound({src: 'alien.mp3', repeat: true});
 
   }
@@ -67,12 +68,13 @@ class GamePage extends Component {
       let {audio} = data;
       $('body').removeClass('horizon');
       $('.prison svg #background').removeClass('horizon');
-      //TODO: test why not playing sound
+    
 
       let _game = Object.assign({}, this.props.game);
       this.props.actions.stopGame(_game).then(() => {
         console.log('Game finished', this.props.game);
 
+        this.refs.gameStats.loadStats();
         this.playSound(audio);
 
       }).catch(err => {
@@ -81,6 +83,7 @@ class GamePage extends Component {
 
     });
   }
+
   startGame = (e) => {
     const data = this.state.data;
     if (data.teamName) {
@@ -122,7 +125,7 @@ class GamePage extends Component {
           <div className="box">
             <Audio ref="audio" className="audio hide"/>
             <h1>FINISHED</h1>
-
+            <GameStats className='stats' ref="gameStats" game={this.props.game}/>
             <Button size='medium' primary onClick={this.onNewGame}>New Game</Button>
           </div>
 

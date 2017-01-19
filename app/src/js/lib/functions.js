@@ -87,6 +87,25 @@ export const calculateTimeFormat = (time) => {
   timeFormat = pad(minutes, 2) + ':' + pad(seconds, 2);
   return timeFormat;
 };
+export const calculateTimeFormatSeconds = (time) => {
+  let timeFormat = '00:00';
+  if (!time || time == 0) {
+    return timeFormat;
+  }
+  time = time * 1000;
+
+  function pad(num, size) {
+    var s = "0000" + num;
+    return s.substr(s.length - size);
+  }
+
+  var seconds = Math.floor(time / 1000);
+  var minutes = Math.floor(seconds / 60);
+  seconds = seconds - (minutes * 60);
+
+  timeFormat = pad(minutes, 2) + ':' + pad(seconds, 2);
+  return timeFormat;
+};
 
 export const setSuccessAndFail = (item) => {
   let keys = Object.keys(item);
@@ -104,6 +123,10 @@ export const setSuccessAndFail = (item) => {
 
   return item;
 };
+
+export const round = function(value, places) {
+  return + (Math.round(value + "e+" + places) + "e-" + places);
+}
 
 export const runAudio = (url) => {
   var audioElement = document.createElement('audio');

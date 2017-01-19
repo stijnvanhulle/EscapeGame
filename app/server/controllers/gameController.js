@@ -22,11 +22,7 @@ const {
   GamePlayer,
   Player
 } = require('../models');
-const {
-  promiseFor,
-  setToMoment
-
-} = require('../lib/functions');
+const {promiseFor, setToMoment, avg} = require('../lib/functions');
 const {
   Game: GameModel,
   GamePlayer: GamePlayerModel,
@@ -56,6 +52,27 @@ const getGame = (find) => {
         });
       }
 
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const getGames = (find) => {
+  return new Promise((resolve, reject) => {
+    try {
+      GameModel.find(find).sort({'id': 1}).exec(function(e, docs) {
+        if (e) {
+          reject(e);
+        } else {
+          let games = docs.map((item) => {
+            let game = new Game();
+            game.load(item);
+            return game;
+          });
+          resolve(games);
+        }
+      });
     } catch (e) {
       reject(e);
     }
@@ -462,15 +479,13 @@ const updateGameEvent = (find, gameEvent, extra = {}) => {
       if (extra.isActive) {
         find.isActive = extra.isActive;
       }
-      let change = checkExtra(gameEvent,extra);
+      let change = checkExtra(gameEvent, extra);
       if (change) {
         gameEvent = change;
       }
 
       console.log('update gameEvent', find, gameEvent, extra);
-      GameEventModel.findOneAndUpdate(find, gameEvent, {
-
-      }, function(e, doc) {
+      GameEventModel.findOneAndUpdate(find, gameEvent, {}, function(e, doc) {
         if (e) {
           reject(e);
         } else {
@@ -485,9 +500,51 @@ const updateGameEvent = (find, gameEvent, extra = {}) => {
   });
 };
 
+const getStats = (gameId) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let stats = {
+        gameEvents: {},
+        game: {},
+        other: {}
+      };
+      getGame({id: gameId}).then(item => {
+        stats.game.item = item;
+        stats.game.duration = item.duration;
+        return getGameEvents({gameId: gameId});
+      }).then(gameEvents => {
+        stats.gameEvents = gameEvents;
+
+        stats.game.timePlayedAvg = avg(gameEvents, 'timePlayed');
+        stats.game.percentSpeedAvg = avg(gameEvents, 'percentSpeed');
+
+        return getGames();
+      }).then(games => {
+        stats.other.duration = avg(games, 'duration');
+        return getGameEvents({
+          gameId: {
+            $ne: gameId
+          }
+        });
+      }).then(gameEvents => {
+        stats.other.timePlayedAvg = avg(gameEvents, 'timePlayed');
+        stats.other.percentSpeedAvg = avg(gameEvents, 'percentSpeed');
+
+        resolve(stats);
+      }).catch(e => {
+        console.log(e);
+        reject(e);
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   addGame,
   getGame,
+  getGames,
   updateGame,
   getGameData,
   getGameDatas,
@@ -496,5 +553,6 @@ module.exports = {
   getGameEvent,
   getEventType,
   getGameDataFromGameName,
-  updateGameEventsAfterGameEvent
+  updateGameEventsAfterGameEvent,
+  getStats
 };
