@@ -11,6 +11,7 @@ const {Game: Model} = require('./mongo');
 const moment = require('moment');
 const Chance = require('chance');
 const c = new Chance();
+const alienNames = require('../../private/alienNames.json');
 
 class Emitter extends EventEmitter {}
 
@@ -36,7 +37,10 @@ class Game {
     this.events = new Emitter();
   }
   generateAlienName() {
-    this.alienName = c.name({nationality: "it"});
+    const newRandom = () => {
+      return Math.floor((Math.random() * alienNames.length - 1) + 1);
+    };
+    this.alienName = alienNames[newRandom()];
   }
   addAnswerData(answerData) {
     try {
@@ -83,19 +87,22 @@ class Game {
 
   }
 
-  load({
-    players,
-    teamName,
-    date,
-    id,
-    alienName,
-    gameName,
-    isFinished,
-    isPlaying,
-    duration,
-    answerData
-  }) {
+  load(obj) {
     try {
+      if(!obj) return;
+      let {
+        players,
+        teamName,
+        date,
+        id,
+        alienName,
+        gameName,
+        isFinished,
+        isPlaying,
+        duration,
+        answerData
+      } = obj;
+
       this.alienName = alienName
         ? alienName
         : this.alienName;
@@ -131,7 +138,6 @@ class Game {
       } else {
         this.answerData = answerData;
       }
-
 
     } catch (e) {
       console.log(e);

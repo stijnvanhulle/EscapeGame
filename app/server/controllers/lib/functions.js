@@ -173,7 +173,7 @@ const sortByStartFinish = (arr, eventTypeStart,eventTypeFinish) => {
     }
   }
   newGameDatas.push(lastItem);
-  return newGameDatas
+  return newGameDatas;
 };
 const random = (model) => {
   return new Promise((resolve, reject) => {

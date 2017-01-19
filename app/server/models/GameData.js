@@ -27,8 +27,12 @@ class GameData {
     this.events = new Emitter();
   }
 
-  load({gameName, id, data, typeId, date}) {
+  load(obj) {
     try {
+      if (!obj)
+        return;
+      let {gameName, id, data, typeId, date} = obj;
+
       this.gameName = gameName;
       this.data = JSON.parse(data);
       this.id = id;

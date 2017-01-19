@@ -3,7 +3,7 @@ const DELAY = 5; //delay needed for delay of api calls clien<=>server
 const {io, client} = require('../lib/app');
 const moment = require('moment');
 
-const {calculateId, random, calculateTypesFromName,sortByStartFinish} = require('./lib/functions');
+const {calculateId, random, calculateTypesFromName, sortByStartFinish} = require('./lib/functions');
 const scheduleJob = require("../lib/scheduleJob");
 const gameLogic = require('../lib/gameLogic');
 const {
@@ -277,11 +277,9 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
 
       const promise = (item, i, amount) => {
         return new Promise((resolve, reject) => {
-
           if (item) {
-            let gameEvent = new GameEvent();
-
             gameController.getGameData({id: item.gameDataId}).then(gameData => {
+              let gameEvent = new GameEvent();
               gameEvent.load(item);
               if (_previousGameEvent) {
                 if (!isFirstTime) {
@@ -315,7 +313,7 @@ const updateGameEventsFrom = (previousGameEvent, gameEvents = null) => {
                 reject('update schedule not correct', gameEvent);
               }
 
-            }).then(doc => {
+            }).then(gameEvent => {
               resolve(gameEvent);
             }).catch(err => {
               reject(err);
@@ -589,7 +587,7 @@ const createGameEvents = ({
         });
       };
 
-      //TODO: CAHNGE TYPES TO NAME SO more types of beacon can be used.
+      //TODO: change .env PRODUCTION_GAME for not adding
       types = {
         'description': {
           canAdd: false,
@@ -609,7 +607,7 @@ const createGameEvents = ({
         },
         'bom': {
           canAdd: true,
-          amount: 5
+          amount: 2
         },
         'light': {
           canAdd: false,
@@ -636,7 +634,7 @@ const createGameEvents = ({
           amount: 1
         },
         'anthem': {
-              canAdd: false,
+          canAdd: false,
           amount: 0
         }
       };
@@ -646,8 +644,10 @@ const createGameEvents = ({
       gameController.getGame({id: gameId}).then(item => {
         game = item;
         let alienName = game.alienName;
-        //TODO: change amount for length alienName where letter is true
-        types = calculateTypesFromName(alienName, types);
+
+        if (convertToBool(process.env.PRODUCTION_GAME) == true) {
+          types = calculateTypesFromName(alienName, types);
+        }
 
         return gameController.getEventType({name: 'finish'});
       }).then((item) => {
@@ -658,8 +658,7 @@ const createGameEvents = ({
         return gameController.getGameDataFromGameName(gameName, types);
       }).then(gameDatas => {
 
-
-        gameDatas = sortByStartFinish(gameDatas,eventTypeStart,eventTypeFinish);
+        gameDatas = sortByStartFinish(gameDatas, eventTypeStart, eventTypeFinish);
         console.log('gamedatas', gameDatas);
         return promiseFor(promise, gameDatas);
       }).then((items) => {

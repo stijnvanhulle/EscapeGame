@@ -1,6 +1,6 @@
 {
   "name": "EscapeGame",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "scripts": {
     "start": "npm run server",
     "development": "nodemon -L . & NODE_ENV=development webpack --watch",

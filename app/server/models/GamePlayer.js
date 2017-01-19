@@ -19,13 +19,17 @@ class GameMember {
   reset() {
     this.date = null;
     this.model = Model;
-    this.player=null;
-    this.game=null;
+    this.player = null;
+    this.game = null;
     this.events = new Emitter();
   }
 
-  load({gameId, playerId, date}) {
+  load(obj) {
     try {
+      if (!obj)
+        return;
+      let {gameId, playerId, date} = obj;
+
       this.gameId = gameId;
       this.playerId = playerId;
       this.date = date;
@@ -61,7 +65,6 @@ class GameMember {
       var copy = Object.assign({}, obj);
       copy.events = null;
       copy.model = null;
-
 
       if (stringify) {
         json = JSON.stringify(copy);

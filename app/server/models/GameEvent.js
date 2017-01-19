@@ -55,8 +55,9 @@ class GameEvent {
 
   load(data) {
     try {
-      console.log(data);
-      const {
+      if (!obj)
+        return;
+      let {
         gameId,
         gameDataId,
         date,

@@ -24,8 +24,13 @@ class EventType {
     this.events = new Emitter();
   }
 
-  load({id, name}) {
+  load(obj) {
     try {
+      if (!obj)
+        return;
+
+      let {id, name} = obj;
+
       this.id = id
         ? id
         : this.id;

@@ -25,6 +25,9 @@ import piController from 'lib/piController';
 import timer from 'lib/timer';
 import url from 'lib/const/url';
 
+const Chance = require('chance');
+const c = new Chance();
+
 import * as gameActions from 'actions/gameActions';
 
 //same as React.creataClass(){};
@@ -102,6 +105,7 @@ class App extends Component {
     this.socket.on(socketNames.RECALCULATE_DONE, this.handleWSRecalculateDone);
     this.socket.on(socketNames.BEACONS, this.handleWSBeacons);
 
+
     piController.loadSocket(this.socket);
 
     window.$ = $;
@@ -110,6 +114,8 @@ class App extends Component {
     window.moment = moment;
     window.game = game;
     window.vm = vm;
+    window.c=c;
+    
 
   };
 
@@ -166,7 +172,7 @@ class App extends Component {
       const type = gameData.data.type.toLowerCase();
       const currentData = gameData.data.data;
 
-      if (currentData && (type == 'anthem' || type=='beacon')) {
+      if (currentData && (type == 'anthem' || type == 'beacon')) {
         if (game.currentGameEvent) {
           let input = false;
           let beaconToFind;
@@ -174,8 +180,8 @@ class App extends Component {
             beaconToFind = game.answerData.beaconId;
           }
 
-          if(type=='beacon'){
-            beaconToFind=gameData.data.beaconId;
+          if (type == 'beacon') {
+            beaconToFind = gameData.data.beaconId;
           }
 
           if (nearestBeacon.beaconId == beaconToFind) {
@@ -209,6 +215,8 @@ class App extends Component {
     const currentData = gameData.data.data;
     const type = gameData.data.type.toLowerCase();
 
+    game.currentGameEvent = Object.assign({}, game.currentGameEvent);
+    game.currentGameEvent.isCorrect = correct;
     if (type == "bom") {
       if (!correct) {
         piController.sendText('BOEM');
@@ -217,44 +225,49 @@ class App extends Component {
           repeat: false
         });
 
-
+      } else {
+        game.events.emit('audio', {
+          src: 'correct.mp3',
+          repeat: false
+        });
       }
       game.events.emit('bomStop', correct);
-    }
-
-    if (correct) {
-      game.events.emit('audio', {
-        src: 'correct.mp3',
-        repeat: false
-      });
-
-      if (data && data.letter) {
-        game.letters.push(data.letter);
-      }
-
-      if (data && data.answerData) {
-        let answerDataArr = Object.keys(data.answerData);
-        for (var i = 0; i < answerDataArr.length; i++) {
-          let answerDataItem = answerDataArr[i];
-          game.answerData[answerDataItem] = data.answerData[answerDataItem];
-        }
-        this.socket.emit(socketNames.ADD_ANSWERDATA, {
-          answerData: game.answerData,
-          gameId: this.props.game.id
-        });
-      }
-
-    }else{
-      game.events.emit('audio', {
-        src: 'incorrect.mp3',
-        repeat: false
-      });
-      setTimeout(()=>{
+    } else {
+      if (correct) {
         game.events.emit('audio', {
-          src: currentData.file,
-          repeat: true
+          src: 'correct.mp3',
+          repeat: false
         });
-      },2000);
+
+        if (data && data.letter) {
+          game.letters.push(data.letter);
+        }
+
+        if (data && data.answerData) {
+          let answerDataArr = Object.keys(data.answerData);
+          for (var i = 0; i < answerDataArr.length; i++) {
+            let answerDataItem = answerDataArr[i];
+            game.answerData[answerDataItem] = data.answerData[answerDataItem];
+          }
+          this.socket.emit(socketNames.ADD_ANSWERDATA, {
+            answerData: game.answerData,
+            gameId: this.props.game.id
+          });
+        }
+
+      } else {
+        game.events.emit('audio', {
+          src: 'incorrect.mp3',
+          repeat: false
+        });
+        setTimeout(() => {
+          game.events.emit('audio', {
+            src: currentData.file,
+            repeat: true
+          });
+        }, 2000);
+
+      }
     }
 
     if (!triesOver || triesOver > 0) {
@@ -342,13 +355,13 @@ class App extends Component {
   handleWSEventEnd = obj => {
     console.log('End event:', obj, moment().format());
     let {gameEvent, gameData, activeEvents} = obj;
-    let correct= game.currentGameEvent.isCorrect;
+    let correct = game.currentGameEvent.isCorrect;
     game.currentGameData = gameData;
     game.currentGameEvent = gameEvent;
 
     this.props.actions.updateGameEvent(gameEvent).then(() => {
-      console.log('UPDATED gameEvent');
-      game.events.emit('stopCountdown',correct); //this or isdonecouting
+      console.log('UPDATED gameEvent', correct);
+      game.events.emit('stopCountdown', correct); //this or isdonecouting
 
       vm.hideMessage();
       game.events.emit('audio', null);

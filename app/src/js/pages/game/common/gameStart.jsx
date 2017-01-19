@@ -145,6 +145,7 @@ class GameStart extends Component {
   isDoneCountingPrison() {
     const type = game.currentGameData.data.type.toLowerCase();
     const currentData = game.currentGameData.data.data;
+    console.log('DONE');
     if (type == 'bom') {
       game.events.emit('audio', {
         src: currentData.file,
@@ -166,7 +167,7 @@ class GameStart extends Component {
               ? 'center big'
               : 'hide'}>
 
-              <h1>
+              <h1 className={this.state.showDescription?'':'hide'}>
                 <TypeWriter ref='typeWriter' minDelay={50} typing={this.state.showDescription
                   ? 1
                   : 0}>{game.currentGameData.data.data.description}</TypeWriter>

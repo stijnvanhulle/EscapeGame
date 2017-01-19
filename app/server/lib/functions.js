@@ -91,7 +91,7 @@ functions.randomLetterFrom = (name, letters = []) => {
     name = name.toString().replace(' ', '');
 
     const newRandom = () => {
-      return Math.floor((Math.random() * name.length) + 1);
+      return Math.floor((Math.random() * name.length-1) + 1);
 
     };
     const enoughLettersOver = (letter, letters) => {
