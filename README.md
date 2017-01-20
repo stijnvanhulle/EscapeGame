@@ -2,7 +2,7 @@
 
 <img src="https://github.com/stijnvanhulle/EscapeGame/raw/master/making/logo.png" alt="alt text" width="400">
 
-Escape Game is a project where you have to escape a room, you can do this by solving the questions you will get by each mission. When you solved it you will get a letter. With all the letters you can form a name and with this name you will escape the room. You can update private/gameData.json
+Escape Game is a project where you have to escape a room, you can do this by solving the questions you will get in each mission. When you solved it you will get a letter. With all the letters you can form a name and with this name you will escape the room. You can update private/gameData.json to make a new game with different questions.
 
 <img src="https://github.com/stijnvanhulle/EscapeGame/raw/master/making/example.png" alt="alt text" width="600">
 
