@@ -175,7 +175,7 @@ class GameStart extends Component {
 
               <Audio ref="audio" className="audio hide"/>
               <Image ref="image" className="image" src={this.state.imageSrc}/>
-              <div className='input'>
+              <div className='input hide'>
                 <TextInput name="input" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
                 <Button onClick={this.sendInput}>Send Input</Button>
               </div>

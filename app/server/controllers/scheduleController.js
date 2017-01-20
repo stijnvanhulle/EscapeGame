@@ -395,7 +395,7 @@ const isAnswerCorrect = (inputData, gameData, gameEvent) => {
         let letters = inputData.letters;
         let alienName;
         value = value.toString().toLowerCase();
-        //TODO: CHECK OF WORKING BECAUSE END==FINISHDATE
+
         let checkBool = (d, v) => {
           if (isBool(d) && isBool(d)) {
             return convertToBool(d) == convertToBool(v);

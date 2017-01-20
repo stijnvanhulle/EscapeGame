@@ -29,7 +29,6 @@ const publicPath = '/';
 // - srcset images (not loaded through html-loader )
 // - json files (through fetch)
 // - fonts via WebFontLoader
-//TODO: TESTEN
 const removePublic = new CleanWebpackPlugin(['public'], {
   root: __dirname,
   verbose: true,
@@ -152,18 +151,18 @@ if (process.env.NODE_ENV === 'production') {
 
   config.module.rules[0] = {
     test: /\.css$/,
-    loader: ExtractTextWebpackPlugin.extract({fallbackLoader: "style?minimize", loader: "css?minimize"})
+    loader: ExtractTextWebpackPlugin.extract({fallbackLoader: "style-loader?minimize", loader: "css-loader?minimize"})
 
   };
   config.module.rules[1] = {
     test: /\.scss$/,
-    loader: ExtractTextWebpackPlugin.extract({fallbackLoader: 'style?minimize', loader: 'css?minimize!sass?minimize'})
+    loader: ExtractTextWebpackPlugin.extract({fallbackLoader: 'style-loader?minimize', loader: 'css-loader?minimize!sass-loader?minimize'})
   };
 
   config.plugins = [
     ...config.plugins,
     new ExtractTextWebpackPlugin({filename: 'css/[name].css', disable: false, allChunks: true}),
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: "'production'"

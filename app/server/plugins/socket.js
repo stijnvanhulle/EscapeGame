@@ -115,7 +115,7 @@ const onMessageSocket = (io, socket, client) => {
           let obj;
           if (isDocker) {
             obj = {
-              //check of file is in fixes or not in fidex //TODO:
+              //TODO: check of file is in fixes or not in fixed
               image1: path.normalize(paths.VOLUME_PYTHON + '/fixed/' + image1),
               image2: path.normalize(paths.VOLUME_PYTHON + '/' + image2),
               read: true

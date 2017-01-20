@@ -34,8 +34,6 @@ const mongodb = {
   },
   uri: 'mongodb://' + mongo + ':' + mongo_port + '/app'
 };
-//TODO: check of is working
-//TODO:
 paths.DEFAULT = path.resolve(__dirname, './');
 paths.DEFAULT = path.resolve(__dirname, './app.js');
 paths.FIXED = path.resolve(__dirname, './public/uploads/fixed');

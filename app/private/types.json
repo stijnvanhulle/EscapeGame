@@ -20,7 +20,7 @@
     "amount": 0
   },
   "scan": {
-    "canAdd": true,
+    "canAdd": false,
     "amount": 1
   },
   "beacon": {

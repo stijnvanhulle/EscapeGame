@@ -195,7 +195,7 @@ const addRule = (m, dataRule, f) => {
       //job.emit('run', true);
       const {scheduleController} = require('../controllers');
       scheduleController.finishGameEventFromHash(data).then((obj) => {
-        //TODO: check wy not working
+
         if(obj){
           let {runned}=obj;
           if (runned) {

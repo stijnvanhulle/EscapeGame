@@ -154,7 +154,6 @@ class App extends Component {
 
   }
   handleWSBeacons = obj => {
-    //TODO testing with simon, beacons are correct
     game.beacons = obj;
 
     let nearestBeacon;
@@ -271,7 +270,7 @@ class App extends Component {
           src: 'incorrect.mp3',
           repeat: false
         });
-        //TODO: check
+
         setTimeout(() => {
           game.events.emit('audio', {
             src: currentData.file,
@@ -320,9 +319,8 @@ class App extends Component {
     game.currentGameData = gameData;
     game.currentGameEvent = gameEvent;
 
-    //TODO: change for aut calc to pyton script
+    //TODO: change for auth calc to pyton script
     //this.socket.emit(socketNames.RECALCULATE_START, game.id);
-    //
     $('.logo').addClass('hide');
 
     this.props.actions.updateGameEvent(gameEvent).then(() => {

@@ -23,7 +23,7 @@ let app = {
   beacons: []
 };
 
-//TODO: examen stuff test
+
 app.testImage = (image1 = 'schilderij_1.jpg', image2 = 'schilderij_1_small.jpg') => {
   try {
     let screen = app.users.find(item => {
@@ -85,7 +85,6 @@ app.testData = (data = [
           file: path.normalize(paths.VOLUME_PYTHON + '/' + file)
         }
       } else {
-        //TODO; chage
         obj = {
           data,
           file: path.resolve(paths.FIXED, file)

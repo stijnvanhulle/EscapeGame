@@ -1,12 +1,15 @@
 {
   "name": "EscapeGame",
-  "version": "0.3.3",
+  "version": "0.4.0",
+  "description": "EscapeGame project",
+  "license": "MIT",
+  "author": "Stijn Van Hulle <me@stijnvanhulle.be>",
   "scripts": {
     "start": "npm run server",
     "development": "nodemon -L . & NODE_ENV=development webpack --watch",
     "debug": "nodemon --inspect & NODE_ENV=development webpack --watch",
     "docker": "docker-compose rm -f && docker-compose up",
-    "production": "npm run clean && NODE_ENV=production webpack -p",
+    "production": "npm run clean && npm run start & NODE_ENV=production webpack -p",
     "upgrade": "npm version patch --sign-git-tag=true",
     "build": "webpack",
     "server": "forever .",
@@ -21,12 +24,11 @@
   "main": "server/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stijnvanhulle/EscapePlan"
+    "url": "https://github.com/stijnvanhulle/EscapeGame"
   },
   "engines": {
     "node": "7.0.0"
   },
-  "license": "UNLICENSED",
   "dependencies": {
     "base64-img": "^1.0.3",
     "chance": "^1.0.4",

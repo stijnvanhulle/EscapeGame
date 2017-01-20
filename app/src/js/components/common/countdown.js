@@ -45,14 +45,6 @@ class Countdown extends Component {
           let timeFormat = calculateTimeFormat(newTime);
           piController.tickBom(timeFormat);
 
-          //TODO: change for bom, delay
-          /*if (this.state.isBom) {
-            isOn = isOn == false
-              ? true
-              : false;
-
-            piController.sendDigitalValueTo(piController.PORTS.lights, !isOn);
-          }*/
 
         }
 
