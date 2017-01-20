@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T13:55:09+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-12T09:15:27+01:00
+* @Last modified time: 2017-01-08T20:20:22+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -13,7 +13,7 @@ import App from './app';
 import Home from './pages/home';
 import NotFound from './pages/notFound';
 import GamePage from './pages/game/gamePage';
-import MembersPage from './pages/members/MembersPage';
+import MembersPage from './pages/members/membersPage';
 
 export default(
   <Route path='/' component={App}>

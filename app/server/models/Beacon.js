@@ -47,7 +47,7 @@ class Beacon {
       try {
         const item = this.json(false);
         const obj = new Model(item);
-        console.log('Will save: ', obj);
+        //console.log('Will save: ', obj);
 
         obj.save(function(err, item) {
           if (err) {

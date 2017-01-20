@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T16:04:53+01:00
+* @Last modified time: 2017-01-06T20:50:41+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
@@ -15,11 +15,10 @@ const eventTypes = require("../../private/eventType.json");
 
 const {promiseFor} = require('../lib/functions');
 
-const getEventType = (name) => {
+const getEventType = (find) => {
   return new Promise((resolve, reject) => {
-    if (name) {
-      name = name.toLowerCase();
-      EventTypeModel.findOne({name: name}).exec(function(err, eventType) {
+    if (find) {
+      EventTypeModel.findOne(find).exec(function(err, eventType) {
         if (err) {
           reject(err);
         } else {
@@ -40,16 +39,16 @@ const promise_gameData = (item, i) => {
       if (!type)
         reject('No type of gameData');
 
-      getEventType(type).then((eventType) => {
+      getEventType({name: type}).then((eventType) => {
         if (eventType) {
           let newGameData = new GameData(gameName = 'alien', item, eventType.id);
           calculateId(GameDataModel).then(id => {
             newGameData.id = id + i;
-            newGameData.save().then(doc => {
-              resolve(doc);
-            }).catch(err => {
-              reject(err);
-            });
+            return newGameData.save();
+          }).then(doc => {
+            resolve(doc);
+          }).catch(err => {
+            reject(err);
           });
         } else {
           reject('No eventType');
@@ -71,13 +70,12 @@ const promise_eventType = (item, i) => {
       let newEventType = new EventType(item.name);
       calculateId(EventTypeModel).then(id => {
         newEventType.id = id + i;
-        newEventType.save().then(doc => {
-          resolve(doc);
-        }).catch(err => {
-          reject(err);
-        });
+        return newEventType.save();
+      }).then(doc => {
+        resolve(doc);
+      }).catch(err => {
+        reject(err);
       });
-
     } else {
       reject('No item');
     }
@@ -85,7 +83,6 @@ const promise_eventType = (item, i) => {
 };
 
 const loadDefaults = () => {
-
   removeDataFromModel(MemberModel, GameDataModel, EventTypeModel).then((data) => {
     return promiseFor(promise_eventType, eventTypes);
   }).then((item) => {
@@ -96,7 +93,6 @@ const loadDefaults = () => {
   }).catch(err => {
     console.log(err);
   });
-
   let newMember = new MemberModel({email: 'stijn.vanhulle@outlook.com', password: 'stijn', firstName: 'Stijn', lastName: 'Van Hulle'});
   newMember.save(function(err, item) {
     if (err)
@@ -108,6 +104,7 @@ const loadDefaults = () => {
 
 module.exports.register = (server, options, next) => {
   var db = mongoose.connection;
+  mongoose.Promise = global.Promise;
   db.on('error', (err) => {
     console.log(err);
     next(err);

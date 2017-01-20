@@ -16,7 +16,7 @@ const fs = require('fs');
 const Chance = require('chance');
 const c = new Chance();
 
-const {client} = require('../../lib/global');
+const {client} = require('../../lib/app');
 
 module.exports = [
   {

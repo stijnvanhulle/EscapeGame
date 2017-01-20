@@ -16,53 +16,14 @@ import sys
 import json
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
-from concurrent.futures import ProcessPoolExecutor
-
-import faceDetection
-
-# CONNECTORS
-
-#moisure=0
-
-display_status=""
-
-# PINMODES
-#INPUT
+import lib.faceDetection as faceDetection
+import lib.levelCalculation as levelCalculation
 
 
-#OUTPUT
-#grovepi.pinMode(relay,"OUTPUT")
-
-#variables
-ports=[0,1,2,3,4,5,6,7,8]
-isReading=False
 MQTT_BROKER="localhost"
 client = mqtt.Client()
 
 #classes
-class Input:
-
-	temp = 0
-	hum = 0
-	range = 0
-	pressed=False
-
-def getStatusBool(ok):
-	if ok==True :
-		return 1
-	else:
-		return 0
-def isFloat(str):
-	try:
-		float(str)
-		return True
-	except ValueError:
-		return False
-def in_between(now, start, end):
-	if start <= end:
-		return start <= now < end
-	else: # over midnight e.g., 23:30-04:15
-		return start <= now or now < end
 
 def on_connect(client, userdata, rc):
 	print("Connected to MQTT-broker on " + MQTT_BROKER )
@@ -71,11 +32,16 @@ def on_connect(client, userdata, rc):
 	client.subscribe("detection_find")
 	client.subscribe("detection_found")
 
+	client.subscribe("recalculate_start")
+	client.subscribe("recalculate_done")
+
 def on_message(client, userdata, msg):
 	try:
-		if msg.topic=="detection_find":
+		parsed_json=json.loads(convertJson(msg.payload))
 
-			parsed_json=json.loads(convertJson(msg.payload))
+
+		if msg.topic=="detection_find":	
+			print(parsed_json)
 			_image1 =parsed_json['image1']
 			_image2 =parsed_json['image2']
 			_read=parsed_json['read']
@@ -83,7 +49,16 @@ def on_message(client, userdata, msg):
 				if _image1 is not None  and _image2 is not None:
 					percent=faceDetection.getDifference(_image1,_image2)
 					print('Detection:' + str(percent))
-					client.publish("detection_found", makeJsonObject_detection(percent,_image1,_image2,_read))		
+					client.publish("detection_found", makeJsonObject_detection(percent,_image1,_image2,_read))	
+
+		if msg.topic=="recalculate_start":
+			print(parsed_json)
+			_data =parsed_json['data']
+			_file=parsed_json['file']
+			if _data is not None:
+				calcObj=levelCalculation.calculate(_data,_file)
+				print('CalculatedOBJ:' + str(calcObj))
+				client.publish("recalculate_done", makeJsonObject_levelCalculate(calcObj['data'],calcObj['score']))		
 	except Exception as error:
 			print('Error:',error)
 
@@ -97,7 +72,9 @@ def convertJson(data):
 		data = data[1:-1]
 		print(data)
 	return data
-
+def makeJsonOnlineObject(device=''):
+	item=json.dumps({"device":device})
+	return str(item)
 
 def init():
 	client.on_connect = on_connect
@@ -105,7 +82,7 @@ def init():
 	client.connect_async(MQTT_BROKER, 1883, 60)
 	client.loop_start()
 	time.sleep(0.2)
-	client.publish("online", makeJsonObject(True))
+	client.publish("online", makeJsonOnlineObject('FaceDetection'))
 
 def makeJsonObject(value=None,port=None,type=None,read=False):
 	item=json.dumps({"port":port, "type":type,"value":value,"read":read})
@@ -114,10 +91,10 @@ def makeJsonObject(value=None,port=None,type=None,read=False):
 def makeJsonObject_detection(value=None,image1=None,image2=None,read=False):
 	item=json.dumps({"value":value, "image1":image1,"image2":image2, "read":read})
 	return str(item)
-
-def exit():
-	client.publish("online", makeJsonObject(False))
-
+	
+def makeJsonObject_levelCalculate(data=None,score=0):
+	item=json.dumps({"data":data,"score":score})
+	return str(item)
 
 
 def main():

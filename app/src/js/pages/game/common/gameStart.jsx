@@ -3,7 +3,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-05T11:51:44+01:00
+* @Last modified time: 2017-01-07T13:07:41+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -16,29 +16,28 @@ import * as gameActions from 'actions/gameActions';
 import game from 'lib/game';
 import socketNames from 'lib/const/socketNames';
 import TextInput from 'components/common/textInput';
-import Audio from 'components/common/audio';
-import Image from 'components/common/image';
 import Prison from 'components/common/prison';
 import Countdown from 'components/common/countdown';
+import Audio from 'components/common/audio';
+import Image from 'components/common/image';
+import TypeWriter from 'react-typewriter';
 
 class GameStart extends Component {
   state = {}
+  countdown = 5;
   constructor(props, context) {
     super(props, context);
     this.socket = window.socket;
-    let countdown = 2;
 
     this.state = {
-      countdown: countdown,
+      countdown: this.countdown,
       canStart: false,
       message: '',
-      startTime: moment().add(countdown, 'seconds').valueOf(),
+      startTime: moment().add(this.countdown, 'seconds').valueOf(),
       input: '',
       error: '',
-      audioSrc: '',
-      imageSrc: '',
-      audioRepeat: true,
       data: {},
+      imageSrc: '',
       showDescription: true
     };
 
@@ -48,49 +47,52 @@ class GameStart extends Component {
     this.loadEvents();
 
     if (this.props.game.isPlaying) {
-        this.state.countdown= 0;
+      this.state.countdown = 0;
     }
   }
 
   loadEvents = () => {
-    game.events.on('audio', (src) => {
-      this.setState({imageSrc: '', audioSrc: src});
-      if (src) {
-        if (game.currentGameData.data.type.toLowerCase() == 'bom') {
-          this.setState({audioRepeat: false});
-        } else {
-          this.setState({audioRepeat: true});
-        }
-        this.refs.audio.play();
-      }
-
-    });
     game.events.on('eventStart', () => {
+      this.refs.typeWriter.reset();
       this.setState({showDescription: true, input: ''});
     });
     game.events.on('eventEnd', () => {
-      this.setState({showDescription: false, input: ''});
+      this.setState({showDescription: false, input: '', imageSrc: ''});
     });
 
+    game.events.on('audio', (obj) => {
+      if (this.refs.audio) {
+        if (obj) {
+          let {src, repeat} = obj;
+          if (src) {
+            this.refs.audio.play(src, repeat);
+
+          } else {
+            this.refs.audio.pause();
+          }
+        } else {
+          if (this.refs.audio) {
+            this.refs.audio.pause();
+          }
+        }
+      }
+
+    });
     game.events.on('image', (src) => {
-      this.setState({audioSrc: '', imageSrc: src});
-
+      this.setState({imageSrc: src});
     });
+
   }
   startGame = () => {
     //set starttime of null for starttime on server
     //let startTime=this.state.startTime;
     let startTime;
-    let startIn = this.state.countdown;
+    let startIn = this.countdown;
     if (!this.props.game.isPlaying) {
-      let _game=Object.assign({},this.props.game);
-      _game.isPlaying=true;
+      let _game = Object.assign({}, this.props.game);
+      _game.isPlaying = true;
       this.props.actions.updateGame(_game).then(() => {
-        return this.props.actions.createGameEvents({game:_game, startTime, startIn, level:1});
-      }).then(() => {
-        const gameEvents = this.props.gameEvents;
-        console.log('GameEvents v1', gameEvents);
-        return this.props.actions.addGameEvent({data: gameEvents, game:_game});
+        return this.props.actions.createGameEvents({game: _game, startTime, startIn, level: 5, gameDuration: game.GAMEDURATION});
       }).then(() => {
         const gameEvents = this.props.gameEvents;
         console.log('GameEvents v2', gameEvents);
@@ -110,6 +112,8 @@ class GameStart extends Component {
       if (game.currentGameEvent.isActive) {
         this.socket.emit(socketNames.INPUT, {
           input,
+          answerData: null,
+          letters: game.letters,
           jobHash: game.currentGameEvent.jobHashEnd,
           finishDate: moment().valueOf()
         });
@@ -128,7 +132,7 @@ class GameStart extends Component {
     this.setState({message: this.props.game.description, canStart: true});
     setTimeout(() => {
       this.setState({message: null});
-      if (!game.isPlaying) {
+      if (!this.props.game.isPlaying) {
         this.startGame();
       }
 
@@ -138,11 +142,15 @@ class GameStart extends Component {
   isDoneCounting = () => {
     this.setState({countdown: 0});
   }
-  isDoneCountingPrison = () => {
+  isDoneCountingPrison() {
     const type = game.currentGameData.data.type.toLowerCase();
     const currentData = game.currentGameData.data.data;
+    console.log('DONE');
     if (type == 'bom') {
-      game.events.emit('audio', currentData.file);
+      game.events.emit('audio', {
+        src: currentData.file,
+        repeat: false
+      });
     }
   }
 
@@ -158,16 +166,28 @@ class GameStart extends Component {
             <div className={this.state.canStart
               ? 'center big'
               : 'hide'}>
-              <h1>{this.state.showDescription && game.currentGameData.data.data.description}</h1>
-              <TextInput name="input" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
-              <Button onClick={this.sendInput}>Send Input</Button>
-              <Audio ref="audio" className="audio" src={this.state.audioSrc} repeat={this.state.audioRepeat}/>
+
+              <h1 className={this.state.showDescription?'':'hide'}>
+                <TypeWriter ref='typeWriter' minDelay={50} typing={this.state.showDescription
+                  ? 1
+                  : 0}>{game.currentGameData.data.data.description}</TypeWriter>
+              </h1>
+
+              <Audio ref="audio" className="audio hide"/>
               <Image ref="image" className="image" src={this.state.imageSrc}/>
+              <div className='input hide'>
+                <TextInput name="input" value={this.state.input} onChange={this.onChangeInput} error={this.state.error}/>
+                <Button onClick={this.sendInput}>Send Input</Button>
+              </div>
+
+
             </div>
           </div>
         </div>;
       } else if (this.state.countdown == 0) {
-        div = <div></div>;
+        div = <div>
+          <Prison canStart={this.state.canStart} data={this.state.data}/>
+        </div>;
       } else {
         $('body').removeClass('horizon');
         $('.prison svg #background').removeClass('horizon');
@@ -185,7 +205,7 @@ class GameStart extends Component {
               <div className="center">
                 <span>starting in
                 </span>
-                <div>
+                <div className='center'>
                   <Countdown className="countdown" sendToPi={false} howLong={this.state.countdown} isDone={this.isDoneCounting}/>
                 </div>
 
@@ -223,13 +243,13 @@ const mapDispatchToProps = dispatch => {
   return {
     actions: bindActionCreators(gameActions, dispatch)
   }
-}
+};
 
 GameStart.propTypes = {
   players: PropTypes.array,
   game: PropTypes.object,
   gameEvents: PropTypes.array,
   actions: PropTypes.object
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameStart);

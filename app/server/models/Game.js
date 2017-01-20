@@ -3,13 +3,15 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-03T12:38:34+01:00
+* @Last modified time: 2017-01-10T10:00:49+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
 const {Game: Model} = require('./mongo');
+const moment = require('moment');
 const Chance = require('chance');
 const c = new Chance();
+const alienNames = require('../../private/alienNames.json');
 
 class Emitter extends EventEmitter {}
 
@@ -29,27 +31,78 @@ class Game {
     this.date = null;
     this.alienName = null;
     this.isFinished = false;
-    this.isPlaying=false;
+    this.isPlaying = false;
+    this.duration = null;
+    this.answerData = null;
     this.events = new Emitter();
   }
   generateAlienName() {
-    this.alienName = c.name({nationality: "it"});
+    const newRandom = () => {
+      return Math.floor((Math.random() * alienNames.length - 1) + 1);
+    };
+    this.alienName = alienNames[newRandom()];
+  }
+  addAnswerData(answerData) {
+    try {
+      if (typeof(answerData) == 'object') {
+        this.answerData = JSON.stringify(answerData);
+      } else {
+        throw new Error('no object');
+      }
+
+    } catch (e) {
+      console.log('Canno stringify answerdata');
+    } finally {}
   }
   setDescription(description) {
     this.description = description;
   }
-
-  load({
-    players,
-    teamName,
-    date,
-    id,
-    alienName,
-    gameName,
-    isFinished,
-    isPlaying
-  }) {
+  calcDuration(gameEvents = [], isTimeBetween) {
     try {
+      let duration = 0;
+      for (var i = 0; i < gameEvents.length; i++) {
+        let gameEvent = gameEvents[i];
+        gameEvent.calculateTimes();
+        let time = 0;
+        if (isTimeBetween) {
+          time = gameEvent.timeBetween;
+        } else {
+          if (gameEvent.timePlayed) {
+            time = gameEvent.timePlayed;
+          } else {
+            time = gameEvent.timeBetween;
+          }
+
+        }
+
+        duration += time;
+      }
+
+      console.log('DURATION', duration, ' isTimeBetween: ', isTimeBetween);
+      return duration;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+
+  }
+
+  load(obj) {
+    try {
+      if(!obj) return;
+      let {
+        players,
+        teamName,
+        date,
+        id,
+        alienName,
+        gameName,
+        isFinished,
+        isPlaying,
+        duration,
+        answerData
+      } = obj;
+
       this.alienName = alienName
         ? alienName
         : this.alienName;
@@ -71,9 +124,20 @@ class Game {
       this.isFinished = isFinished
         ? isFinished
         : this.isFinished;
-        this.isPlaying = isPlaying
-          ? isPlaying
-          : this.isPlaying;
+      this.isPlaying = isPlaying
+        ? isPlaying
+        : this.isPlaying;
+      this.duration = duration
+        ? parseFloat(duration)
+        : this.duration;
+
+      if (typeof(answerData) != 'object') {
+        this.answerData = answerData
+          ? JSON.parse(answerData)
+          : this.answerData;
+      } else {
+        this.answerData = answerData;
+      }
 
     } catch (e) {
       console.log(e);
@@ -85,15 +149,12 @@ class Game {
     return new Promise((resolve, reject) => {
       try {
         const item = this.json(false);
-        const obj = new Model(item);
-        console.log('Will save: ', obj);
 
-        obj.save(function(err, item) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(item);
-          }
+        const obj = new Model(item);
+        obj.save().then(item => {
+          resolve(item);
+        }).catch(e => {
+          throw new Error(e);
         });
       } catch (e) {
         reject(e);
@@ -102,7 +163,7 @@ class Game {
     });
   }
 
-  json(stringify = true, removeEmpty = false) {
+  json(stringify = true, removeEmpty = false, subDataJson = false) {
     var json;
     try {
       var obj = this;
@@ -114,6 +175,12 @@ class Game {
         json = JSON.stringify(copy);
       } else {
         json = copy;
+      }
+      if (subDataJson) {
+        if (typeof(copy.answerData) == 'object') {
+          copy.answerData = JSON.stringify(copy.answerData);
+        }
+
       }
 
       if (removeEmpty) {

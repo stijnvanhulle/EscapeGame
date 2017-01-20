@@ -17,7 +17,9 @@
 }, {
   "name": "book"
 }, {
-  "name": "finish"
+  "name": "beacon"
 }, {
   "name": "other"
+}, {
+  "name": "finish"
 }]

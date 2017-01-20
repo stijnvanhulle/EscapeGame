@@ -3,17 +3,20 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-02T20:48:09+01:00
+* @Last modified time: 2017-01-10T10:00:28+01:00
  * @License: stijnvanhulle.be
  */
 
 const url = require('./lib/url');
-const {io, client} = require('../../lib/global');
+const {io, client} = require('../../lib/app');
 const {mqttNames, socketNames} = require('../../lib/const');
 const moment = require('moment');
 const scheduleJob = require('../../lib/scheduleJob');
 const {Game, GameEvent} = require('../../models');
-const {promiseFor} = require('../../lib/functions');
+const {promiseFor, convertToCsv} = require('../../lib/functions');
+
+const Chance = require('chance');
+const c = new Chance();
 
 module.exports = [
   {
@@ -23,19 +26,19 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-      const {gameController} = require('../../controllers');
+      const {gameController, playerController, scheduleController} = require('../../controllers');
       try {
-        let {players, teamName} = request.payload;
+        let {players, teamName, duration} = request.payload;
         //players = JSON.parse(players);
-        const game = new Game(teamName, players);
+        const game = new Game(teamName, players, duration);
 
         gameController.addGame(game).then((doc) => {
-          return gameController.addPlayers(game);
+          return playerController.addPlayers(game);
         }).then(players => {
           game.players = players;
           reply(game.json(stringify = false, removeEmpty = true));
         }).catch(err => {
-          throw new Error(err);
+          reply(err);
         });
       } catch (e) {
         console.log(e);
@@ -51,18 +54,22 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-      const {gameController} = require('../../controllers');
+      const {gameController, playerController, scheduleController} = require('../../controllers');
       try {
         let gameId = request.params.id;
+        gameId = parseFloat(gameId);
+
         let data = request.payload;
         const game = new Game();
         game.load(data);
 
-        gameController.updateGame(game).then((doc) => {
+        gameController.updateGame({
+          id: game.id
+        }, game).then((doc) => {
           reply(doc);
         }).catch(e => {
           console.log(e);
-          throw new Error(e);
+          reply(e);
         });
       } catch (e) {
         console.log(e);
@@ -75,24 +82,25 @@ module.exports = [
     method: `GET`,
     path: url.GAME_GET,
     config: {
-      auth: false
+      auth: 'token'
     },
     handler: function(request, reply) {
-      const {gameController} = require('../../controllers');
+      const {gameController, playerController, scheduleController} = require('../../controllers');
       try {
         let gameId = request.params.id;
-        const game = new Game();
+        gameId = parseFloat(gameId);
+        let game;
         let eventType;
 
-        gameController.getGameById(gameId).then((doc) => {
-          game.load(doc);
-          return gameController.getEventType('description');
+        gameController.getGame({id: gameId}).then((item) => {
+          game = item;
+          return gameController.getEventType({name: 'description'});
         }).then(item => {
           eventType = item;
-          return gameController.getPlayers(game.id);
+          return playerController.getPlayers(game.id);
         }).then(players => {
           game.players = players;
-          return gameController.getGameDataByGameName(game.gameName);
+          return gameController.getGameDatas({gameName: game.gameName});
         }).then(gameDatas => {
           const description = gameDatas.filter(item => {
             if (item.typeId == eventType.id) {
@@ -103,8 +111,86 @@ module.exports = [
           reply(game);
         }).catch(e => {
           console.log(e);
-          throw new Error(e);
+          reply(e);
         });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
+    method: `GET`,
+    path: url.GAME_EVENTS,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      try {
+        const {gameController, playerController, scheduleController} = require('../../controllers');
+
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
+        let find = {
+          isActive: false
+        };
+        if (gameId) {
+          find = {
+            gameId,
+            isActive: false
+          };
+        }
+
+        gameController.getGameEvents(find).then(gameEvents => {
+          reply(gameEvents);
+        }).catch(err => {
+          reply(err);
+        });
+
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
+    method: `POST`,
+    path: url.GAME_EVENTS_CSV,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {gameController, playerController, scheduleController} = require('../../controllers');
+      try {
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
+
+        let find = {
+          isActive: false
+        };
+        if (gameId) {
+          find = {
+            gameId,
+            isActive: false
+          };
+        }
+
+        gameController.getGameEvents(find, canSort = true).then(gameEvents => {
+          if (gameEvents && gameEvents.length > 0) {
+            return fileController.save(c.hash({length: 15}) + '.csv', convertToCsv(gameEvents, fields = null));
+          } else {
+            return null;
+          }
+
+        }).then(fileName => {
+          reply({fileName: fileName});
+        }).catch(err => {
+          console.log(err);
+          reply(err);
+        });
+
       } catch (e) {
         console.log(e);
         reply(e);
@@ -119,15 +205,25 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-      const {gameController} = require('../../controllers');
+      const {gameController, playerController, scheduleController} = require('../../controllers');
+
       try {
-        let {gameName, level, startTime, startIn} = request.payload;
+        let {gameName, level, startTime, startIn, gameDuration} = request.payload;
         let gameId = request.params.id;
 
-        gameController.createGameEvents({gameId, gameName, startTime, startIn, level}).then(gameEvents => {
+        gameId = parseFloat(gameId);
+
+        scheduleController.createGameEvents({
+          gameId,
+          gameName,
+          startTime,
+          startIn,
+          level,
+          gameDuration
+        }).then(gameEvents => {
           reply(gameEvents);
         }).catch(err => {
-          throw new Error(err);
+          reply(err);
         });
 
       } catch (e) {
@@ -136,7 +232,6 @@ module.exports = [
       }
 
     }
-
   }, {
     method: `PUT`,
     path: url.GAME_EVENTS_UPDATE,
@@ -144,7 +239,7 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-      const {gameController} = require('../../controllers');
+      const {gameController, playerController, scheduleController} = require('../../controllers');
       try {
 
         reply({implemented: false});
@@ -163,18 +258,27 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-      const {gameController} = require('../../controllers');
+
       try {
+        const {gameController, playerController, scheduleController} = require('../../controllers');
         let {data} = request.payload;
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
+
+        if (!gameId) {
+          reply('No gamid filled in');
+          return;
+        }
         //data = JSON.parse(data);
 
         const promise = (item, i) => {
           return new Promise((resolve, reject) => {
             if (item) {
-              const gameEvent = new GameEvent({gameId: request.params.id});
-              gameController.getGameDataById(item.gameDataId, i).then(gameData => {
+              const gameEvent = new GameEvent({gameId});
+              gameEvent.load(item);
+              gameController.getGameData({id: item.gameDataId}).then(gameData => {
                 gameEvent.setData({gameDataId: gameData.id, isActive: item.isActive, activateDate: item.activateDate, endDate: item.endDate, level: item.level});
-                return gameController.addEvent(gameEvent, i);
+                return scheduleController.addGameEvent(gameEvent, i);
               }).then(doc => {
                 gameEvent.load(doc);
                 resolve(gameEvent.json(stringify = false, removeEmpty = true));
@@ -190,7 +294,7 @@ module.exports = [
           reply(item);
         }).catch(err => {
           console.log(err);
-          throw new Error(err);
+          reply(err);
         });
 
       } catch (e) {
@@ -207,41 +311,21 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-      const {gameController} = require('../../controllers');
       try {
+        const {gameController, playerController, scheduleController} = require('../../controllers');
+
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
+
         let {gameDataId, isActive, activateDate, endDate} = request.payload;
-        const gameEvent = new GameEvent({gameId: request.params.id});
-        gameController.getGameDataById(gameDataId).then(gameData => {
-          gameEvent.setGameData({gameDataId: gameData.id, isActive, activateDate, endDate});
-          return gameController.addEvent(gameEvent);
+        const gameEvent = new GameEvent({gameId});
+        gameController.getGameData({id: gameDataId}).then(gameData => {
+          gameEvent.setData({gameDataId: gameData.id, isActive, activateDate, endDate});
+          return scheduleController.addGameEvent(gameEvent);
         }).then(doc => {
           reply(doc);
         }).catch(err => {
-          throw new Error(err);
-        });
-      } catch (e) {
-        console.log(e);
-        reply(e);
-      }
-
-    }
-
-  }, {
-    method: `GET`,
-    path: url.GAME_EVENTS,
-    config: {
-      auth: false
-    },
-    handler: function(request, reply) {
-      const {gameController} = require('../../controllers');
-      try {
-
-        const gameId = request.params.id;
-
-        getGameEvents(gameId).then(gameEvents => {
-          reply(gameEvents);
-        }).catch(err => {
-          throw new Error(err);
+          reply(err);
         });
       } catch (e) {
         console.log(e);
@@ -257,16 +341,46 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
-      const {gameController} = require('../../controllers');
       try {
+        const {gameController, playerController, scheduleController} = require('../../controllers');
 
-        const gameId = request.params.id;
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
 
-        getGameEvents(gameId).then(gameEvents => {
-          io.emit(socketNames.RECALCULATE_START, gameEvents);
+        gameController.getGameEvents({
+          gameId
+        }, canSort = true).then(gameEvents => {
+          io.sockets.emit(socketNames.RECALCULATE_START, gameEvents);
           reply(gameEvents);
         }).catch(err => {
-          throw new Error(err);
+          reply(err);
+        });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  },
+  {
+    method: `GET`,
+    path: url.GAME_STATS,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      try {
+        const {gameController} = require('../../controllers');
+
+        let gameId = request.params.id;
+        gameId = parseFloat(gameId);
+
+        gameController.getStats(gameId).then(stats => {
+
+          reply(stats);
+        }).catch(err => {
+          reply(err);
         });
       } catch (e) {
         console.log(e);

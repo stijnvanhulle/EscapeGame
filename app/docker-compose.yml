@@ -1,0 +1,48 @@
+# @Author: Stijn Van Hulle <stijnvanhulle>
+# @Date:   2017-01-08T21:23:27+01:00
+# @Email:  me@stijnvanhulle.be
+# @Last modified by:   stijnvanhulle
+# @Last modified time: 2017-01-09T21:26:40+01:00
+# @License: stijnvanhulle.be
+
+
+
+version: '2'
+services:
+
+  node:
+    build:
+      context: .
+      dockerfile: .docker/development.dockfile
+    container_name: escapePlan_server
+    volumes: ["./:/var/www"]
+    working_dir: "/var/www"
+    ports: ["3000:3000","9229:9229"]
+    networks: ["nodeApp"]
+    links: ["mongo","mqtt"]
+  mongo:
+    image: mongo
+    container_name: escapePlan_mongo
+    networks: ["nodeApp"]
+    ports: ["3001:27017"]
+  mqtt:
+    image: ncarlier/mqtt
+    container_name: escapePlan_mqtt
+    networks: ["nodeApp"]
+    ports: ["1883:1883"]
+  machine_learning:
+    build:
+      context: .
+      dockerfile: .docker/machine_learning.dockfile
+    container_name: escapePlan_machine_learning
+    volumes: ["../python:/var/python","./server/public/uploads:/var/uploads"]
+    working_dir: "/var/python"
+    tty: true
+    restart: always
+    networks: ["nodeApp"]
+    links: ["mqtt"]
+
+
+networks:
+  nodeApp:
+    driver: bridge

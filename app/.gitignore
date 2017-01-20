@@ -1,0 +1,5 @@
+node_modules/
+BACKUP/
+server/public/
+server/mongodb
+npm-debug.log

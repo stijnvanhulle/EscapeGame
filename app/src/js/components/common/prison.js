@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-05T01:35:12+01:00
+* @Last modified time: 2017-01-07T13:07:39+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -14,6 +14,7 @@ import Isvg from 'react-inlinesvg';
 import $ from 'jquery';
 import game from 'lib/game';
 import Bomb from 'lib/bomb';
+import vm from 'lib/vm';
 
 class Prison extends Component {
   state = {
@@ -37,6 +38,7 @@ class Prison extends Component {
   componentDidMount = () => {
     $('body').removeClass('horizon');
     $('.prison svg #background').removeClass('horizon');
+
     this.loadEvents();
   }
   componentWillUnmount() {
@@ -44,28 +46,41 @@ class Prison extends Component {
   }
 
   loadEvents = () => {
-    game.events.on('startCountdown', timeBetween => {
+    game.events.on('startCountdown', ({timeBetween, isBom}) => {
       console.log('countdown', timeBetween);
       if (timeBetween) {
         this.state.countdown = timeBetween;
-        this.refs.countdown.start(timeBetween);
-      } else {
-        this.refs.countdown.start();
       }
-
+      this.refs.countdown.start(timeBetween, isBom);
+    
       this.forceUpdate();
     });
     game.events.on('pauseCountdown', (correct) => {
+
       this.refs.countdown.pause();
       this.forceUpdate();
     });
-    game.events.on('stopCountdown', () => {
+    game.events.on('stopCountdown', (correct) => {
+      console.log('Stop coutndown correct', correct);
+      if (!correct) {
+        this.isDoneCounting();
+      }
+
       this.state.countdown = 0;
       this.refs.countdown.stop();
+
       this.forceUpdate();
     });
+
     game.events.on('hint', (hint) => {
-      this.state.hint = hint;
+      //this.state.hint = hint;
+      //  this.forceUpdate();
+      vm.hideMessage();
+      vm.showMessage('hint', hint, 10000);
+
+    });
+    game.events.on('letters', (letters) => {
+      this.state.letters = letters;
       this.forceUpdate();
     });
     game.events.on('bomStart', (howLong) => {
@@ -107,8 +122,6 @@ class Prison extends Component {
     const {canStart} = this.props;
     const {daytime, rooms, maxRooms} = this.state;
 
-
-
     let snapPrison;
     let prison = $('.prison svg');
     if (!prison) {
@@ -123,8 +136,6 @@ class Prison extends Component {
     $('body').css('animation-duration', daytime + 's');
 
     sun.css('animation-duration', daytime + 's');
-
-
 
     background.addClass('horizon');
     background.css('animation-duration', daytime + 's');
@@ -190,6 +201,13 @@ class Prison extends Component {
     this.props.isDoneCounting();
 
   }
+  lettersTransform = (letters) => {
+    let val = '';
+    for (var i = 0; i < letters.length; i++) {
+      val += letters[i] + ' - ';
+    }
+    return val;
+  }
   render() {
     return (
       <div className="prison">
@@ -197,16 +215,19 @@ class Prison extends Component {
         <Countdown className={!this.props.canStart
           ? 'hide'
           : ''} ref='countdown' sendToPi={true} className="countdown" howLong={this.state.countdown} isDone={this.isDoneCounting}/>
+        <div className="letters">{this.lettersTransform(this.state.letters)}
+        </div>
         <div className="hint">{this.state.hint}</div>
+
         <Isvg src="/assets/images/plan.svg" uniquifyIDs={false} onLoad={this.onLoad}/>
       </div>
     );
-
   }
-
 }
+
 Prison.propTypes = {
   canStart: PropTypes.bool,
   isDoneCounting: PropTypes.func
-}
+};
+
 export default Prison;

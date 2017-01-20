@@ -1,0 +1,30 @@
+# latest official node image
+FROM node:latest
+
+MAINTAINER Stijn Van Hulle
+
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV MONGO=mongo
+ENV MQTT=mqtt
+ENV MONGO_PORT=27017
+ENV ISDOCKER=true
+
+COPY . /var/www
+WORKDIR /var/www
+
+RUN npm install
+
+# use nodemon for development
+RUN npm install -g nodemon
+RUN npm install -g yarn
+RUN npm install -g webpack
+RUN npm install -g rimraf
+RUN npm install -g eslint
+RUN npm install -g modclean
+
+RUN npm rebuild node-sass
+
+EXPOSE $PORT
+ENTRYPOINT ["npm","run","production"]

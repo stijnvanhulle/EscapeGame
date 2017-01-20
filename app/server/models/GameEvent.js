@@ -3,20 +3,25 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-04T20:50:38+01:00
+* @Last modified time: 2017-01-10T10:32:09+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
 const moment = require('moment');
-const {setToMoment} = require('../lib/functions');
+const {setToMoment, round} = require('../lib/functions');
 const {GameEvent: Model} = require('./mongo');
 
 class Emitter extends EventEmitter {}
 
 class GameEvent {
-  constructor({gameId}) {
+  constructor(obj) {
     try {
-      this.gameId = parseFloat(gameId) || null;
+      if(obj){
+        this.gameId = parseFloat(obj.gameId);
+      }else{
+        this.gameId=null
+      }
+
     } catch (e) {
       console.log(e);
     }
@@ -48,9 +53,11 @@ class GameEvent {
     this.events = new Emitter();
   }
 
-  load(data) {
+  load(obj) {
     try {
-      const {
+      if (!obj)
+        return;
+      let {
         gameId,
         gameDataId,
         date,
@@ -65,7 +72,7 @@ class GameEvent {
         isCorrect,
         letter,
         tries
-      } = data;
+      } = obj;
       this.gameId = gameId
         ? parseFloat(gameId)
         : this.gameId;
@@ -76,13 +83,13 @@ class GameEvent {
         ? parseFloat(gameDataId)
         : this.gameDataId;
       this.date = date
-        ? parseFloat(date)
+        ? date
         : this.date;
       this.isActive = isActive
         ? Boolean(isActive)
         : this.isActive;
       this.isCorrect = isCorrect
-        ? Boolean(isCorrect)
+        ? isCorrect
         : this.isCorrect;
       this.activateDate = activateDate
         ? parseFloat(activateDate)
@@ -124,8 +131,12 @@ class GameEvent {
       const timePlayed = Math.abs(moment(this.activateDate).diff(moment(this.finishDate), 'seconds'));
       this.timePlayed = parseFloat(timePlayed);
 
-      this.percentSpeed = parseFloat(timePlayed / timeBetween);
+      this.percentSpeed = parseFloat((timePlayed / timeBetween).toFixed(2));
     }
+
+    this.activateDateFormat = moment(this.activateDate).format();
+    this.endDateFormat = moment(this.endDate).format();
+    this.finishDateFormat = moment(this.finishDate).format();
 
   }
   sort(...onKeys) {
@@ -155,78 +166,6 @@ class GameEvent {
       }
     }
     return newObj;
-
-  }
-
-  createData(gameDataId = null, level = 1, startTime = moment().valueOf(), startIn = 10, maxTime = null, timeBetween = null) {
-    try {
-      let now = moment();
-      if (parseInt(level) > 3) {
-        throw new Error('Level is to big');
-      }
-      if (!startTime)
-        throw new Error('Time to start not filled in');
-      if (!gameDataId)
-        throw new Error('GameDataId not filled in');
-
-      startTime = setToMoment(startTime);
-      if (!startTime)
-        throw new Error('Time to start not a utc timestamp');
-
-      //delay of 5 seconds for push data
-      if (!startTime.isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', 5).isSameOrAfter(now, 'second') || !setToMoment(startTime.valueOf()).add('seconds', startIn).isSameOrAfter(now, 'second')) {
-        throw new Error('Time is not in the future ' + startTime.format().toString() + ' now: ' + now.format().toString());
-      }
-
-      if (!level) {
-        level = 1;
-      }
-
-      if (!timeBetween) {
-        var seconds = 0;
-        var minutes = 0;
-        if (level == 1) {
-          minutes = 0; //TODO: set to 10
-          seconds = 20;
-          timeBetween = seconds + (minutes * 60);
-        } else if (level == 2) {
-          minutes = 5;
-          seconds = 0;
-          timeBetween = seconds + (minutes * 60);
-        } else if (level == 3) {
-          minutes = 2;
-          seconds = 0;
-          timeBetween = seconds + (minutes * 60);
-        }
-      } else if (maxTime && timeBetween) {
-        if (maxTime < timeBetween) {
-          timeBetween = maxTime;
-        }
-      }
-
-      let activateDate = setToMoment(startTime).add('seconds', parseInt(startIn));
-      let activateDate_temp = setToMoment(activateDate.valueOf());
-
-      let endDate = activateDate_temp.add('seconds', parseInt(timeBetween));
-
-      if (!setToMoment(endDate).isAfter(setToMoment(activateDate))) {
-        throw new Error('endDate not after activatedate');
-        return;
-      }
-
-      this.load({
-        activateDate: parseFloat(activateDate.valueOf()),
-        endDate: parseFloat(endDate.valueOf()),
-        isActive: true,
-        finishDate: null,
-        gameDataId,
-        level
-      });
-
-    } catch (e) {
-      console.log(e);
-      throw e;
-    }
 
   }
 
@@ -272,21 +211,33 @@ class GameEvent {
 
   }
   setJobHashStart(jobHash) {
-      this.jobHashStart = jobHash;
+    this.jobHashStart = jobHash;
 
   }
   setJobHashEnd(jobHash) {
-      this.jobHashEnd = jobHash;
+    this.jobHashEnd = jobHash;
 
   }
   clearJobHash() {
-      this.jobHashStart = null;
-        this.jobHashEnd = null;
+    this.jobHashStart = null;
+    this.jobHashEnd = null;
   }
   setFinish(finish) {
-    if (finish) {
-      finish = setToMoment(finish);
-      this.finishDate = parseFloat(finish.valueOf());
+    try {
+      if (finish) {
+
+        finish = setToMoment(finish);
+
+        if (setToMoment(this.activateDate).isAfter(finish)) {
+          console.log(moment(this.activateDate).format(), finish.format());
+          console.log(moment().format(), 'now');
+          throw new Error('finishdate not after activatendate', this);
+          return;
+        }
+        this.finishDate = parseFloat(finish.valueOf());
+      }
+    } catch (e) {
+      console.log(e);
     }
 
   }
@@ -295,15 +246,12 @@ class GameEvent {
     return new Promise((resolve, reject) => {
       try {
         const item = this.json(false);
-        const obj = new Model(item);
-        console.log('Will save: ', obj);
 
-        obj.save(function(err, item) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(item);
-          }
+        const obj = new Model(item);
+        obj.save().then(item => {
+          resolve(item);
+        }).catch(e => {
+          throw new Error(e);
         });
       } catch (e) {
         reject(e);
@@ -325,9 +273,7 @@ class GameEvent {
       var copy = Object.assign({}, obj);
       copy.events = null;
       copy.model = null;
-      if (subDataJson) {
-
-      }
+      if (subDataJson) {}
 
       if (stringify) {
         json = JSON.stringify(copy);

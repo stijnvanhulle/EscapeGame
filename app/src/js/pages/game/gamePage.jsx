@@ -12,10 +12,12 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Button} from 'semantic-ui-react';
 
-import TextInput from '../../components/common/textInput';
+import TextInput from 'components/common/textInput';
 
 import GameNew from './common/gameNew';
 import GameStart from './common/gameStart';
+import Audio from 'components/common/audio';
+import GameStats from 'components/game/gameStats';
 
 import * as gameActions from '../../actions/gameActions';
 import game from '../../lib/game';
@@ -24,7 +26,8 @@ class GamePage extends Component {
   state = {
     teamName: '',
     error: '',
-    data: {}
+    data: {},
+    stats: null
   }
   constructor(props, context) {
     super(props, context);
@@ -32,17 +35,47 @@ class GamePage extends Component {
 
   componentDidMount = () => {
     this.loadEvents();
+    this.playSound({src: 'alien.mp3', repeat: true});
 
+  }
+  playSound = (audio) => {
+    setTimeout(() => {
+      if (this.refs.audio) {
+        if (audio) {
+          let {src, repeat} = audio;
+          if (src) {
+            this.refs.audio.play(src, repeat);
+
+          } else {
+            this.refs.audio.pause();
+          }
+        } else {
+          if (this.refs.audio) {
+            this.refs.audio.pause();
+          }
+        }
+      }
+    }, 2000);
   }
 
   loadEvents = () => {
-    game.events.on('eventFinish', () => {
+    game.events.on('backgroundAudio', (obj) => {
+      this.playSound(obj);
+
+    });
+
+    game.events.on('eventFinish', (data) => {
+      let {audio} = data;
       $('body').removeClass('horizon');
       $('.prison svg #background').removeClass('horizon');
+    
 
       let _game = Object.assign({}, this.props.game);
       this.props.actions.stopGame(_game).then(() => {
         console.log('Game finished', this.props.game);
+
+        this.refs.gameStats.loadStats();
+        this.playSound(audio);
 
       }).catch(err => {
         console.log(err);
@@ -50,6 +83,7 @@ class GamePage extends Component {
 
     });
   }
+
   startGame = (e) => {
     const data = this.state.data;
     if (data.teamName) {
@@ -89,14 +123,16 @@ class GamePage extends Component {
       if (this.props.game.isFinished) {
         return (
           <div className="box">
+            <Audio ref="audio" className="audio hide"/>
             <h1>FINISHED</h1>
+            <GameStats className='stats' ref="gameStats" game={this.props.game}/>
             <Button size='medium' primary onClick={this.onNewGame}>New Game</Button>
           </div>
 
         )
       } else {
         return (
-          <div className=''><GameStart/></div>
+          <div className=''><Audio ref="audio" className="audio hide"/><GameStart/></div>
         );
       }
 

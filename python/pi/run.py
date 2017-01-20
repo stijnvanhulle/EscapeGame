@@ -169,9 +169,8 @@ def on_connect(client, userdata, rc):
 
 def on_message(client, userdata, msg):
 
-
-	if msg.topic=="online":
-		parsed_json=json.loads(convertJson(msg.payload))
+	parsed_json=json.loads(convertJson(msg.payload))
+	print(parsed_json)
 
 	if msg.topic=="reset":
 		print("reset")
@@ -179,7 +178,6 @@ def on_message(client, userdata, msg):
 
 
 	if msg.topic=="message":
-		parsed_json=json.loads(convertJson(msg.payload))
 		_type =parsed_json['type'] if 'type' in parsed_json else None
 		_port=parsed_json['port'] if 'port' in parsed_json else None
 		_read=parsed_json['read'] if 'read' in parsed_json else None
@@ -291,7 +289,6 @@ def makeJsonObject_detection(value=None,image1=None,image2=None,read=False):
 	return str(item)
 
 def exit():
-	client.publish("online", makeJsonObject(False))
 	reset()
 
 

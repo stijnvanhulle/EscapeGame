@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-05T16:17:39+01:00
+* @Last modified time: 2017-01-06T20:39:16+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -12,22 +12,22 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 const base64Img = require('base64-img');
 
-const uploads = path.resolve(__dirname, '../public/uploads/');
+const paths = require('../lib/paths');
 
-module.exports.save = (fileName, data) => {
+const save = (fileName, data) => {
   return new Promise((resolve, reject) => {
     try {
-      mkdirp(uploads, function(err) {
+      mkdirp(paths.UPLOADS, function(err) {
         if (err) {
           reject(err);
         } else {
-          let pathFile = path.resolve(uploads, fileName);
+          let pathFile = path.resolve(paths.UPLOADS, fileName);
           fs.writeFile(pathFile, data, function(err) {
             if (err) {
               reject(err);
             } else {
               console.log("File ", fileName, " was saved!");
-              resolve(pathFile);
+              resolve(fileName);
             }
 
           });
@@ -41,20 +41,20 @@ module.exports.save = (fileName, data) => {
 
   });
 };
-module.exports.saveBase64 = (fileName, data) => {
+const saveBase64 = (fileName, data) => {
   return new Promise((resolve, reject) => {
     try {
-      mkdirp(uploads, function(err) {
+      mkdirp(paths.UPLOADS, function(err) {
         if (err) {
           reject(err);
         } else {
-          let pathFile = path.resolve(uploads);
+          let pathFile = path.resolve(paths.UPLOADS);
           base64Img.img('data:image/png;base64,' + data, pathFile, fileName, function(err, filepath) {
             if (err) {
               reject(err);
             } else {
               console.log("File ", fileName + '.png', " was saved!");
-              resolve(path.resolve(pathFile, fileName + '.png'));
+              resolve(fileName + '.png');
             }
           });
 
@@ -69,7 +69,7 @@ module.exports.saveBase64 = (fileName, data) => {
   });
 };
 
-module.exports.saveStream = (fileName, data) => {
+const saveStream = (fileName, data) => {
   return new Promise((resolve, reject) => {
     try {
       mkdirp(uploads, function(err) {
@@ -88,7 +88,7 @@ module.exports.saveStream = (fileName, data) => {
 
             data.file.on('end', function(err) {
               console.log("File ", fileName, " was saved!");
-              resolve(pathFile);
+              resolve(fileName);
             })
           }
         }
@@ -100,4 +100,10 @@ module.exports.saveStream = (fileName, data) => {
     }
 
   });
+};
+
+module.exports = {
+  save,
+  saveStream,
+  saveBase64
 };

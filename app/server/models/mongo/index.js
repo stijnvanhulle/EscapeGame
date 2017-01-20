@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-11-29T14:52:11+01:00
+* @Last modified time: 2017-01-06T20:50:19+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -20,7 +20,8 @@ const readPlugins = (load = false) => {
     if (load) {
       item.load();
     }
-    var name = file.replace('.js', '');
+    var name = item.name();
+
     items[name] = item.getModel();
   });
   models = items;
@@ -29,5 +30,4 @@ const readPlugins = (load = false) => {
 };
 
 readPlugins(load = true);
-
 module.exports = models;

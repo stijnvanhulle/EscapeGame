@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T14:04:11+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-04T21:32:17+01:00
+* @Last modified time: 2017-01-07T13:25:07+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -43,7 +43,13 @@ game.reset = () => {
   game.currentGameData = null;
   game.currentGameEvent = null;
   game.events = new Emitter();
-  game.startTimeout=3000;
+  game.startTimeout = 10000;
+  game.letters = [];
+  game.token = null;
+  game.beacons = [];
+  game.answerData = {};
+  game.device = 'screen';
+  game.GAMEDURATION = 30 * 60;
 
   //game.events.setMaxListeners(2);
 };

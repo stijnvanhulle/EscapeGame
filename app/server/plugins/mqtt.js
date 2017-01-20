@@ -9,7 +9,7 @@
 
 const mqtt = require('mqtt');
 const Message = require('../models/Message');
-const global = require('../lib/global');
+const app = require('../lib/app');
 const {mqttNames, socketNames} = require('../lib/const');
 const {filter} = require('../lib/functions');
 
@@ -22,8 +22,13 @@ const subscribe = client => {
 
 const onMessage = (client, events, io) => {
   client.on('message', function(topic, message) {
-    var obj = JSON.parse(message.toString());
-    console.log(topic, obj);
+    let obj=message.toString();
+    try {
+      obj = JSON.parse(obj);
+    } catch (e) {
+      console.log(obj, e);
+    }
+    //console.log(topic, obj);
     //read: { "port": 5, "type": "INPUT", "read":true,"realtime":false,timeout: null }
     //write { "port": 4, "type": "OUTPUT", "read":false, value:true,"realtime":false,timeout: null }
     //display: { "port": "I2C-1", "type": "OUTPUT", "read":false, "value":"hallo dag stijn","realtime":false,timeout: null }
@@ -36,7 +41,7 @@ const onMessage = (client, events, io) => {
       case mqttNames.ONLINE:
         if (obj.device)
           obj.device = obj.device.toLowerCase();
-        io.emit(socketNames.ONLINE, obj);
+        io.sockets.emit(socketNames.ONLINE, obj);
 
         lcd.writeDisplay("WELKOM");
         /*soundSensor.reading(realtime = false, timeout = 10);
@@ -57,10 +62,10 @@ const onMessage = (client, events, io) => {
         soundSensor.checkData(obj);
         break;
       case mqttNames.DETECTION_FOUND:
-        io.emit(socketNames.DETECTION_FOUND, obj);
+        io.sockets.emit(socketNames.DETECTION_FOUND, obj);
         break;
       case mqttNames.RECALCULATE_DONE:
-        io.emit(socketNames.RECALCULATE_DONE, obj);
+        io.sockets.emit(socketNames.RECALCULATE_DONE, obj);
         break;
       default:
 
@@ -72,7 +77,7 @@ const onMessage = (client, events, io) => {
 module.exports.register = (server, options, next) => {
   const client = mqtt.connect('mqtt://' + (process.env.MQTT || "localhost"));
   server.expose('client', client);
-  global.mqtt = client;
+  app.client = client;
 
   let events = [];
   let io,

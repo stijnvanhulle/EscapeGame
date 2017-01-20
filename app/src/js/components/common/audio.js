@@ -11,7 +11,9 @@ import React, {Component, PropTypes} from 'react';
 import Chance from 'chance';
 class Audio extends Component {
   state = {
-    id: ''
+    id: '',
+    source: '',
+    repeat: false
   }
   constructor(props, context) {
     super(props, context);
@@ -19,7 +21,10 @@ class Audio extends Component {
     let id = c.hash({length: 4});
     this.state.id = id;
   }
-  play() {
+  play(source, repeat) {
+    this.pause();
+    this.setState({source, repeat});
+
     var obj = document.getElementById(this.state.id);
     if (obj) {
       obj.currentTime = 0;
@@ -30,16 +35,28 @@ class Audio extends Component {
       }, 150);
     }
   }
+  pause() {
+
+    var obj = document.getElementById(this.state.id);
+    if (obj) {
+      obj.currentTime = 0;
+      obj.pause();
+    }
+    this.setState({source: '', repeat: false});
+  }
 
   componentDidMount() {
     console.log('audio loaded');
   }
   render() {
-    if (this.props.src) {
-      let source = '/assets/audio/' + this.props.src.replace('/', '');
+    if (this.state.source) {
+      let src = this.state.source.indexOf('/') == 0
+        ? this.state.source.substring(1)
+        : this.state.source;
+      let source = '/assets/audio/' + src;
       return (
-        <div className={this.props.className || 'audio'}>
-          <video id={this.state.id} autoPlay={this.props.repeat || false} loop={this.props.repeat || false}>
+        <div className={this.props.className || 'audio hide'}>
+          <video id={this.state.id} loop={this.state.repeat}>
             <source src={source} type="audio/mpeg"/>
 
           </video>
@@ -47,7 +64,7 @@ class Audio extends Component {
       );
     } else {
       return (
-        <div className={this.props.className || 'audio'}></div>
+        <div className={this.props.className || 'audio hide'}></div>
       );
     }
   }
@@ -55,9 +72,7 @@ class Audio extends Component {
 }
 
 Audio.propTypes = {
-  src: PropTypes.string,
-  className: PropTypes.string,
-  repeat: PropTypes.bool
+  className: PropTypes.string
 }
 
 export default Audio;

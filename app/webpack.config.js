@@ -3,7 +3,7 @@
 * @Date:   2016-10-12T15:57:56+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-01T16:30:05+01:00
+* @Last modified time: 2017-01-07T13:00:55+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -18,6 +18,7 @@ const {UglifyJsPlugin} = webpack.optimize;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 const {entry, plugins} = require(`webpack-config-htmls`)();
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const extractCSS = new ExtractTextWebpackPlugin(`css/style.css`);
 
@@ -28,11 +29,23 @@ const publicPath = '/';
 // - srcset images (not loaded through html-loader )
 // - json files (through fetch)
 // - fonts via WebFontLoader
-
+const removePublic = new CleanWebpackPlugin(['public'], {
+  root: __dirname,
+  verbose: true,
+  dry: false,
+  exclude: ['uploads']
+});
 const copy = new CopyWebpackPlugin([
   {
     from: './src/assets',
     to: 'assets'
+  }
+], {ignore: ['.DS_Store']});
+
+const copyFixedImages = new CopyWebpackPlugin([
+  {
+    from: './private/images',
+    to: 'uploads/fixed'
   }
 ], {ignore: ['.DS_Store']});
 
@@ -70,19 +83,18 @@ const config = {
   },
 
   devtool: 'source-map', // or "inline-source-map"
-  watch:true,
+  watch: true,
   module: {
-    noParse: [],
     rules: [
       {
         test: /\.css$/,
-        loader: extractCSS.extract({fallbackLoader: "style?sourceMap", loader: "css?sourceMap"})
+        loader: extractCSS.extract({fallbackLoader: "style-loader?sourceMap", loader: "css-loader?sourceMap"})
       }, {
         test: /\.scss$/,
-        loader: extractCSS.extract({fallbackLoader: 'style?sourceMap', loader: 'css?sourceMap!sass?sourceMap'})
+        loader: extractCSS.extract({fallbackLoader: 'style-loader?sourceMap', loader: 'css-loader?sourceMap!sass-loader?sourceMap'})
       }, {
         test: /\.html$/,
-        loader: 'html',
+        loader: 'html-loader',
         options: {
           attrs: ['audio:src', 'img:src', 'video:src', 'source:srcset'] // read src from video, img & audio tag
         }
@@ -94,9 +106,9 @@ const config = {
         ],
         use: [
           {
-            loader: 'babel'
+            loader: 'babel-loader'
           }, {
-            loader: 'eslint',
+            loader: 'eslint-loader',
             options: {
               fix: true,
               cacheDirectory: true
@@ -118,19 +130,13 @@ const config = {
           context: './src',
           name: '[path][name].[ext]'
         }
-      },
-      {
-        test: require.resolve('snapsvg'),
-        loader: 'imports-loader?this=>window,fix=>module.exports=0'
       }
     ]
 
   },
 
   plugins: [
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    copy,
+    new webpack.optimize.OccurrenceOrderPlugin(), new webpack.HotModuleReplacementPlugin(), copy, copyFixedImages,
     //new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"})
   ]
 
@@ -145,18 +151,18 @@ if (process.env.NODE_ENV === 'production') {
 
   config.module.rules[0] = {
     test: /\.css$/,
-    loader: ExtractTextWebpackPlugin.extract({fallbackLoader: "style?minimize", loader: "css?minimize"})
+    loader: ExtractTextWebpackPlugin.extract({fallbackLoader: "style-loader?minimize", loader: "css-loader?minimize"})
 
   };
   config.module.rules[1] = {
     test: /\.scss$/,
-    loader: ExtractTextWebpackPlugin.extract({fallbackLoader: 'style?minimize', loader: 'css?minimize!sass?minimize'})
+    loader: ExtractTextWebpackPlugin.extract({fallbackLoader: 'style-loader?minimize', loader: 'css-loader?minimize!sass-loader?minimize'})
   };
 
   config.plugins = [
     ...config.plugins,
     new ExtractTextWebpackPlugin({filename: 'css/[name].css', disable: false, allChunks: true}),
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: "'production'"

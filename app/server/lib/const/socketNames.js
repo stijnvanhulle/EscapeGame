@@ -9,13 +9,14 @@
 
 module.exports = {
   DISCONNECT: 'disconnect',
-  CONNECT: 'connection',
+  CONNECT_SERVER: 'connection',
+  CONNECT_CLIENT: 'connect',
   ONLINE: 'online',
   PI: 'sendToPi',
   PI_RESET: 'piReset',
   GAME_CANCEL: 'game_cancel',
   BEACON: 'beacon',
-  INPUT: 'sendInput',
+  INPUT: 'input',
   EVENT_START: 'event_start',
   EVENT_END: 'event_end',
   EVENT_DATA: 'event_data',
@@ -24,5 +25,7 @@ module.exports = {
   DETECTION_FOUND: 'detection_found',
   RECALCULATE_START: 'recalculate_start',
   RECALCULATE_DONE: 'recalculate_done',
-  IMAGE:'image'
+  IMAGE: 'image',
+  BEACONS: 'beacons',
+  ADD_ANSWERDATA:'add_answerData'
 };
