@@ -13,20 +13,11 @@ from time import sleep, time
 import datetime
 import math
 import sys
-import trollius
 import json
-from trollius import From
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 from grovepi import *
 import grove_rgb_lcd as lcd
-from concurrent.futures import ProcessPoolExecutor
-from threading import Timer
-from apscheduler.schedulers.background import BackgroundScheduler
-import led as led
-
-scheduler = BackgroundScheduler()
-scheduler.start()
 
 # CONNECTORS
 

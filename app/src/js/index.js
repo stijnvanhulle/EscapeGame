@@ -27,7 +27,7 @@ const init = () => {
       <Router history={browserHistory} routes={routes}/>
     </SocketProvider>
 
-  </Provider>, document.querySelector(`.container`));
+  </Provider>, document.querySelector(`#app`));
 
 };
 
