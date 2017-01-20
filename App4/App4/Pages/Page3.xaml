@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App4.Page3">
+  <!--<Label Text="Lijst van alle aliens" FontSize="36" VerticalTextAlignment="Center"/>-->
+  <ContentPage.Content>
+    
+    <ListView x:Name="lstView"/>
+  </ContentPage.Content>
+</ContentPage>

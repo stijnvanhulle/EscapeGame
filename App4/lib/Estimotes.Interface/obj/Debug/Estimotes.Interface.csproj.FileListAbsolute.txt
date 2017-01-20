@@ -1,0 +1,17 @@
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\Estimotes.Interface.dll
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\Estimotes.Interface.pdb
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\Acr.Settings.dll
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\Acr.Settings.Interface.dll
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\System.Reactive.Core.dll
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\System.Reactive.Interfaces.dll
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\System.Reactive.Linq.dll
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\System.Reactive.PlatformServices.dll
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\System.Reactive.Core.xml
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\System.Reactive.Interfaces.xml
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\System.Reactive.Linq.xml
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\bin\Debug\System.Reactive.PlatformServices.xml
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\obj\Debug\Estimotes.Interface.csprojResolveAssemblyReference.cache
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\obj\Debug\Estimotes.Interface.dll
+C:\Users\Simon Desmet\Downloads\estimotes-xplat-1.5\Estimotes.Interface\obj\Debug\Estimotes.Interface.pdb

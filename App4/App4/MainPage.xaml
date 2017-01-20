@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:App4"
+             x:Class="App4.MainPage"
+             Title="Schilderij">
+
+  <ScrollView>
+    <StackLayout Orientation="Vertical"
+                 Padding="10">
+      <Button x:Name="btnSchilderij"
+              Text="Trek een foto"              
+              BackgroundColor="Teal"
+              TextColor="White"
+              FontSize="22"
+              Clicked="btnTakePhoto_Onclicked"/>
+      <Image x:Name="madeImage"/>
+      <Label x:Name="pathLabel"
+                 FontSize="15"
+                 TextColor="Black"
+                 />
+      
+    </StackLayout>
+  </ScrollView>
+
+</ContentPage>

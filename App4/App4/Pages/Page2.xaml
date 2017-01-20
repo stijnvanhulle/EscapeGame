@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App4.Page2"
+             Title="Data input">
+  <ScrollView>
+    <StackLayout Orientation="Vertical"
+                 Padding="10">
+      
+      <Entry x:Name="test" Keyboard="Default"/>
+      <Button Text="Zend data door"              
+              BackgroundColor="Teal"
+              TextColor="White"
+              FontSize="22"
+              Clicked="btnData_Onclicked"/>
+      <Button Text="Ontmantel bom!"
+              BackgroundColor="Teal"
+              TextColor="White"
+              FontSize="22"
+              Clicked="btnBom_Onclicked"/>
+    </StackLayout>
+  </ScrollView>
+</ContentPage>

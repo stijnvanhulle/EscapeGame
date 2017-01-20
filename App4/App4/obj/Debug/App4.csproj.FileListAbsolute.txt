@@ -1,0 +1,127 @@
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\App4.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\App4.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Core.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Platform.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Xaml.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Core.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Core.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Platform.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Xaml.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Xaml.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.MainPage.xaml.g.cs
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.App.xaml.g.cs
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.Page1.xaml.g.cs
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.Abstractions.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.Abstractions.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.Abstractions.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.Page2.xaml.g.cs
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Mono.Android.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Mono.Android.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\obj\Debug\App4.csprojResolveAssemblyReference.cache
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\obj\Debug\App4.MainPage.xaml.g.cs
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\obj\Debug\App4.App.xaml.g.cs
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\obj\Debug\App4.Page1.xaml.g.cs
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\obj\Debug\App4.Page2.xaml.g.cs
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\obj\Debug\App4.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\obj\Debug\App4.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\App4.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\App4.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Mono.Android.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Plugin.Media.Abstractions.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Plugin.Media.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Xamarin.Forms.Core.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Xamarin.Forms.Platform.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Xamarin.Forms.Xaml.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Mono.Android.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Plugin.Media.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Plugin.Media.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Plugin.Media.Abstractions.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Plugin.Media.Abstractions.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Xamarin.Forms.Core.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Xamarin.Forms.Core.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Xamarin.Forms.Platform.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Xamarin.Forms.Xaml.pdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\Xamarin.Forms.Xaml.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\obj\Debug\App4.dll.mdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4 - Copy\App4\App4\bin\Debug\App4.dll.mdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.Page3.xaml.g.cs
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.Settings.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.Settings.Interface.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Estimotes.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Estimotes.Interface.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Core.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Interfaces.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Linq.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.PlatformServices.dll
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Core.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Interfaces.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Linq.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.PlatformServices.xml
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.Page4.xaml.g.cs
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.csprojResolveAssemblyReference.cache
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.dll.mdb
+C:\Users\Simon Desmet\Documents\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\App4.dll.mdb
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\App4.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\App4.pdb
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.Settings.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.Settings.Interface.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Estimotes.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Estimotes.Interface.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Mono.Android.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.Abstractions.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Core.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Interfaces.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Linq.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.PlatformServices.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Core.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Platform.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Xaml.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Mono.Android.xml
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.pdb
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.xml
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.Abstractions.pdb
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Plugin.Media.Abstractions.xml
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Core.xml
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Interfaces.xml
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.Linq.xml
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\System.Reactive.PlatformServices.xml
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Core.pdb
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Core.xml
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Platform.pdb
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Xaml.pdb
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Xamarin.Forms.Xaml.xml
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.csprojResolveAssemblyReference.cache
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.MainPage.xaml.g.cs
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.App.xaml.g.cs
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.Pages.Page1.xaml.g.cs
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.Pages.Page2.xaml.g.cs
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.Pages.Page3.xaml.g.cs
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.Pages.Page4.xaml.g.cs
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.pdb
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.Mvvm.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.UserDialogs.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.UserDialogs.Interface.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.XamForms.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Splat.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.UserDialogs.Interface.pdb
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\SQLite-net.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\SQLitePCLRaw.batteries_green.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\SQLitePCLRaw.batteries_v2.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\SQLitePCLRaw.core.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\SQLite-net.xml
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.Ble.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.Ble.Interfaces.dll
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\Acr.Ble.Interfaces.pdb
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\obj\Debug\App4.dll.mdb
+C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4\bin\Debug\App4.dll.mdb

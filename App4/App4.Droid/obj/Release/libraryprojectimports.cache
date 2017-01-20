@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Paths>
+  <Jars></Jars>
+  <ResolvedResourceDirectories>
+    <ResolvedResourceDirectory>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Acr.Settings\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\EngineIoClientDotNet\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Estimotes\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Plugin.CurrentActivity\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Plugin.Media\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Plugin.Permissions\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\SocketIoClientDotNet\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\WebSocket4Net\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Xamarin.Estimote.Android\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Xamarin.Forms.Platform.Android\library_project_imports\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Xamarin.Forms.Platform\library_project_imports\res</ResolvedResourceDirectory>
+  </ResolvedResourceDirectories>
+  <ResolvedAssetDirectories>
+    <ResolvedAssetDirectory>obj\Release\__library_projects__\Acr.Settings\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>obj\Release\__library_projects__\EngineIoClientDotNet\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>obj\Release\__library_projects__\Estimotes\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>obj\Release\__library_projects__\Plugin.CurrentActivity\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>obj\Release\__library_projects__\Plugin.Media\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>obj\Release\__library_projects__\Plugin.Permissions\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>obj\Release\__library_projects__\SocketIoClientDotNet\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>obj\Release\__library_projects__\WebSocket4Net\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>obj\Release\__library_projects__\Xamarin.Estimote.Android\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>obj\Release\__library_projects__\Xamarin.Forms.Platform.Android\library_project_imports\assets</ResolvedAssetDirectory>
+    <ResolvedAssetDirectory>obj\Release\__library_projects__\Xamarin.Forms.Platform\library_project_imports\assets</ResolvedAssetDirectory>
+  </ResolvedAssetDirectories>
+  <ResolvedEnvironmentFiles />
+  <ResolvedResourceDirectoryStamps>
+    <ResolvedResourceDirectoryStamp>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Acr.Settings.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\EngineIoClientDotNet.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Estimotes.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Plugin.CurrentActivity.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Plugin.Media.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Plugin.Permissions.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\SocketIoClientDotNet.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\WebSocket4Net.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Xamarin.Estimote.Android.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Xamarin.Forms.Platform.Android.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\Simon Desmet\Dropbox\NMCT\lessen\Semester 7\project\GrootProject\test\App4\App4\App4.Droid\obj\Release\__library_projects__\Xamarin.Forms.Platform.stamp</ResolvedResourceDirectoryStamp>
+  </ResolvedResourceDirectoryStamps>
+</Paths>
