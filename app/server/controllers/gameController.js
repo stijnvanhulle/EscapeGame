@@ -22,7 +22,7 @@ const {
   GamePlayer,
   Player
 } = require('../models');
-const {promiseFor, setToMoment, avg} = require('../lib/functions');
+const {promiseFor, setToMoment, avg, convertToBool} = require('../lib/functions');
 const {
   Game: GameModel,
   GamePlayer: GamePlayerModel,
@@ -333,7 +333,6 @@ const getGameDataFromGameName = (gameName, types) => {
 
                   return gameData;
                 });
-
                 typeIds.filter((item) => {
                   for (var i = 0; i < goodTypes.length; i++) {
                     if (item.name == goodTypes[i]) {

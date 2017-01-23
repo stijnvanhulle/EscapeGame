@@ -5,26 +5,26 @@
   },
   "find": {
     "canAdd": false,
-    "amount": 0
+    "amount": 1
   },
   "book": {
-    "canAdd": true,
+    "canAdd": false,
     "amount": 1
   },
   "bom": {
-    "canAdd": true,
+    "canAdd": false,
     "amount": 3
   },
   "light": {
     "canAdd": false,
-    "amount": 0
+    "amount": 1
   },
   "scan": {
     "canAdd": false,
     "amount": 1
   },
   "beacon": {
-    "canAdd": true,
+    "canAdd": false,
     "amount": 1
   },
   "sound": {

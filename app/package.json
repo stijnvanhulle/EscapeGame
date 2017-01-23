@@ -9,10 +9,10 @@
     "development": "nodemon -L . & NODE_ENV=development webpack --watch",
     "debug": "nodemon --inspect & NODE_ENV=development webpack --watch",
     "docker": "docker-compose rm -f && docker-compose up",
-    "production": "npm run clean && npm run start & NODE_ENV=production webpack -p",
+    "production": "npm run clean && forever . & NODE_ENV=production webpack -p",
     "upgrade": "npm version patch --sign-git-tag=true",
     "build": "webpack",
-    "server": "forever .",
+    "server": "node .",
     "test": "npm clean",
     "mqtt": "bash ../mqtt/bin/run.sh",
     "mongo": "mkdir server/mongodb && npm run mongodb",
@@ -68,7 +68,8 @@
     "socket.io": "^1.5.1",
     "socket.io-client": "^1.7.0",
     "socket.io-react": "^1.1.2",
-    "svgjs": "^2.3.6"
+    "svgjs": "^2.3.6",
+    "webpack": "beta"
   },
   "devDependencies": {
     "axios": "^0.15.2",

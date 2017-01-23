@@ -618,7 +618,6 @@ const createGameEvents = ({
         eventTypeStart = item;
         return gameController.getGameDataFromGameName(gameName, types);
       }).then(gameDatas => {
-
         gameDatas = sortByStartFinish(gameDatas, eventTypeStart, eventTypeFinish);
         console.log('gamedatas', gameDatas);
         return promiseFor(promise, gameDatas);
