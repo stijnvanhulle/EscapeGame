@@ -26,6 +26,23 @@ module.exports = [
       auth: false
     },
     handler: function(request, reply) {
+      /**
+       * @api {get} /api/game/ GET game
+       * @apiVersion 0.0.1
+       * @apiName All
+       * @apiGroup Friends
+       * @apiDescription Get all friends form current user
+       *
+       * @apiSuccess {Integer} ID Table: Countries
+       * @apiSuccess {String} Name Table: Countries
+       *
+       * @apiErrorExample Error-Response:
+       *     HTTP/1.1 404 Not Found
+       *     {
+       *       success: false
+       *     }
+       */
+
       const {gameController, playerController, scheduleController} = require('../../controllers');
       try {
         let {players, teamName, duration} = request.payload;
@@ -362,8 +379,7 @@ module.exports = [
 
     }
 
-  },
-  {
+  }, {
     method: `GET`,
     path: url.GAME_STATS,
     config: {

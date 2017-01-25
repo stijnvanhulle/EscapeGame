@@ -1,5 +1,6 @@
 app/node_modules
 app/server/mongodb
 app/server/public
+app/.env
 python/.ipynb_checkpoints
 python/lib/__pycache__

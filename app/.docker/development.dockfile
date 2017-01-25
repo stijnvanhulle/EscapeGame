@@ -24,8 +24,11 @@ RUN npm install -g webpack
 RUN npm install -g rimraf
 RUN npm install -g eslint
 RUN npm install -g modclean
+RUN npm install -g mocha
+RUN npm install -g apidoc
+#RUN npm install -g yo
 
 
 
 EXPOSE $PORT
-ENTRYPOINT ["npm","run","debug"]
+ENTRYPOINT ["npm","run","development"]

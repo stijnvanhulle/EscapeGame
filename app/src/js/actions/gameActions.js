@@ -52,8 +52,8 @@ export function createPlayer(player) {
         var data = response.data;
         dispatch(createPlayer_SUCCESS(data));
       }).catch((err) => {
-        throw checkError(err)
-      })
+        throw checkError(err);
+      });
 
     } catch (e) {
       throw e;
@@ -71,8 +71,8 @@ export function createGame(players, teamName, duration) {
         var data = response.data;
         dispatch(createGame_SUCCESS(data));
       }).catch((err) => {
-        throw checkError(err)
-      })
+        throw checkError(err);
+      });
 
     } catch (e) {
       throw e;
@@ -97,8 +97,8 @@ export function createGameEvents({game, startTime, startIn, level, gameDuration}
         var data = response.data;
         dispatch(createGameEvents_SUCCESS(data));
       }).catch((err) => {
-        throw checkError(err)
-      })
+        throw checkError(err);
+      });
 
     } catch (e) {
       throw e;
@@ -120,8 +120,8 @@ export function updateGame(game) {
         var data = response.data;
         dispatch(updateGame_SUCCESS(data));
       }).catch((err) => {
-        throw checkError(err)
-      })
+        throw checkError(err);
+      });
 
     } catch (e) {
       throw e;
@@ -145,8 +145,8 @@ export function stopGame(game) {
         var data = response.data;
         dispatch(stopGame_SUCCESS(data));
       }).catch((err) => {
-        throw checkError(err)
-      })
+        throw checkError(err);
+      });
 
     } catch (e) {
       throw e;
@@ -165,8 +165,8 @@ export function addGameEvent({game, data}) {
         var data = response.data;
         dispatch(addGameEvent_SUCCESS(data));
       }).catch((err) => {
-        throw checkError(err)
-      })
+        throw checkError(err);
+      });
 
     } catch (e) {
       throw e;
@@ -186,7 +186,7 @@ export function updateGameEvent(gameEvent, serverSide = false) {
           var data = response.data;
           dispatch(updateGameEvent_SUCCESS(data));
         }).catch((err) => {
-          throw checkError(err)
+          throw checkError(err);
         });
       } else {
         return new Promise((resolve, reject) => {
@@ -211,8 +211,8 @@ export function getGame(gameId) {
         var data = response.data;
         dispatch(getGame_SUCCESS(data));
       }).catch((err) => {
-        throw checkError(err)
-      })
+        throw checkError(err);
+      });
 
     } catch (e) {
       throw e;
@@ -227,7 +227,7 @@ export function loadPlayers() {
         var data = response.data;
         dispatch(loadPlayers_SUCCESS(data));
       }).catch((err) => {
-        throw checkError(err)
+        throw checkError(err);
       });
     } catch (e) {
       throw e;

@@ -2,10 +2,8 @@ const fs = require(`fs`);
 const path = require(`path`);
 
 module.exports.register = (server, options, next) => {
-
   fs.readdirSync(__dirname).forEach(file => {
-
-    if (file === `index.js` || !file.endsWith(`.js`) || file.startsWith(`_`)) return;
+    if (file === `index.js` || !file.endsWith(`.js`) || file.endsWith(`.test.js`)  || file.startsWith(`_`)) return;
 
     const mod = {};
     mod[path.basename(file, `.js`)] = require(path.join(__dirname, file));

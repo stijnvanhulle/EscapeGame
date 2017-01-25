@@ -1,7 +1,7 @@
 {
   "restartable": "rs",
   "events": {
-    "restart": "osascript -e 'display notification \"App restarted due to:\n'$FILENAME'\" with title \"nodemon\"'"
+    "restart": "npm test && osascript -e 'display notification \"App restarted due to:\n'$FILENAME'\" with title \"nodemon\"'"
   },
   "watch": [
     "/server/*"
@@ -9,6 +9,7 @@
 
   "ignore": [
     ".git",
+    "/server/**/**/*.test.js",
     "/node_modules/**/node_modules",
     "/server/public/*"
   ]

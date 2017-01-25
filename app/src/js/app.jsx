@@ -107,6 +107,10 @@ class App extends Component {
 
     piController.loadSocket(this.socket);
 
+    game.events.on('input', (obj) => {
+      this.socket.emit(socketNames.INPUT, obj);
+    });
+
     window.$ = $;
     window.jquery = $;
     window.socket = this.socket;
@@ -140,8 +144,7 @@ class App extends Component {
           this.socket.emit(socketNames.INPUT, {
             input: true,
             letters: game.letters,
-            jobHash: game.currentGameEvent.jobHashEnd,
-            finishDate: moment().valueOf()
+            jobHash: game.currentGameEvent.jobHashEnd
           });
         } else {
           console.log('no gamevent');
@@ -196,8 +199,7 @@ class App extends Component {
             this.socket.emit(socketNames.INPUT, {
               input,
               letters: game.letters,
-              jobHash: game.currentGameEvent.jobHashEnd,
-              finishDate: moment().valueOf()
+              jobHash: game.currentGameEvent.jobHashEnd
             });
           }
 
@@ -277,7 +279,6 @@ class App extends Component {
             repeat: true
           });
         }, 1500);
-
 
       }
     }

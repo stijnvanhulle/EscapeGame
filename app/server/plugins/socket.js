@@ -181,12 +181,32 @@ const onMessageSocket = (io, socket, client) => {
   });
 
   let count = 0;
-  socket.on(socketNames.BEACON, (obj) => {
+  socket.on(socketNames.BEACONS, obj => {
+    //ios
+    app.beacons = obj;
+    if (count == 10) {
+      console.log('BEACONS:', JSON.stringify(app.beacons));
+      io.sockets.emit(socketNames.BEACONS, obj);
+      count = 0;
+    }
+    count++;
+
+  });
+
+  socket.on(socketNames.BEACON, (beacon) => {
+    //android
     try {
-      let beacon = JSON.parse(obj);
-      let {beaconId, range} = obj;
+      try {
+        beacon = JSON.parse(beacon);
+        console.log(beacon);
+      } catch (e) {
+        console.log(beacon, e);
+      }
+
+      let {beaconId, range} = beacon;
       beacon.beaconId = beacon.beaconId.toLowerCase();
       beacon.range = parseInt(beacon.range);
+      beacon.distance = beacon.distance;
 
       const contains = app.beacons.find(item => {
         if (item) {

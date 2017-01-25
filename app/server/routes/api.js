@@ -12,12 +12,14 @@ const path = require('path');
 const url = require('./api/lib/url');
 const index = {
   method: `GET`,
-  path: url.DEFAULT,
+  path: url.DEFAULT + '{param*}',
   config: {
     auth: false
   },
-  handler: function(request, reply) {
-    reply({});
+  handler: {
+    directory: {
+      path: `./api`
+    }
   }
 };
 
@@ -25,9 +27,12 @@ let api = [];
 const readPlugins = () => {
   var items = [];
   fs.readdirSync(__dirname + '/api').forEach(file => {
-    if (file === `index.js` || !file.endsWith(`.js`) || file.startsWith(`_`))
+    if (file === `index.js` || !file.endsWith(`.js`) || file.endsWith(`.test.js`) || file.startsWith(`_`)) {
       return;
-    items.push(...require(`./api/${file}`));
+    } else {
+      items.push(...require(`./api/${file}`));
+    }
+
   });
   return items;
 

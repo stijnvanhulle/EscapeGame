@@ -9,8 +9,10 @@
 
 require(`dotenv`).load();
 require('pretty-error').start();
-const pluginHandler = require(`./lib/pluginHandler`);
-const scheduleJob = require('./lib/scheduleJob');
+require('app-module-path').addPath(__dirname);
+
+const pluginHandler = require(`lib/pluginHandler`);
+const scheduleJob = require('lib/scheduleJob');
 const path = require(`path`);
 const mongoose = require("mongoose");
 const Server = require('hapi').Server;

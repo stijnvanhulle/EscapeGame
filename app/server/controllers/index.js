@@ -7,22 +7,5 @@
  * @License: stijnvanhulle.be
  */
 
-const fs = require(`fs`);
-const path = require('path');
-
-let models = {};
-const readPlugins = () => {
-  var items = {};
-  fs.readdirSync(__dirname).forEach(file => {
-    if (file === `index.js` || !file.endsWith(`.js`) || file.startsWith(`_`))
-      return;
-    var item = require(`./${file}`);
-    var name=file.replace('.js', '');
-    items[name] = item;
-  });
-  return items;
-
-};
-models=readPlugins();
-
-module.exports = models;
+const blacklist = /test\.js$/;
+module.exports = require('require-directory')(module, {exclude: blacklist});

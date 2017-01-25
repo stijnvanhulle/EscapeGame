@@ -7,8 +7,6 @@
 * @License: stijnvanhulle.be
 */
 
-
-
 module.exports = [
 
   {
@@ -20,9 +18,7 @@ module.exports = [
     handler: {
       file: `index.html`
     }
-  },
-
-  {
+  }, {
     method: `GET`,
     path: `/css/{param*}`,
     config: {
@@ -33,9 +29,7 @@ module.exports = [
         path: `./css`
       }
     }
-  },
-
-  {
+  }, {
     method: `GET`,
     path: `/js/{param*}`,
     config: {
@@ -46,9 +40,7 @@ module.exports = [
         path: `./js`
       }
     }
-  },
-
-  {
+  }, {
     method: `GET`,
     path: `/assets/{param*}`,
     config: {
@@ -59,8 +51,7 @@ module.exports = [
         path: `./assets`
       }
     }
-  },
-  {
+  }, {
     method: `GET`,
     path: `/audio/{param*}`,
     config: {
@@ -71,8 +62,7 @@ module.exports = [
         path: `./audio`
       }
     }
-  },
-  {
+  }, {
     method: `GET`,
     path: `/uploads/{param*}`,
     config: {

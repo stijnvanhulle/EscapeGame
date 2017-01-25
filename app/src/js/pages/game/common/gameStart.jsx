@@ -109,14 +109,13 @@ class GameStart extends Component {
   sendInput = () => {
     const input = this.state.input;
     if (input) {
-      if (game.currentGameEvent.isActive) {
-        this.socket.emit(socketNames.INPUT, {
-          input,
-          answerData: null,
-          letters: game.letters,
-          jobHash: game.currentGameEvent.jobHashEnd,
-          finishDate: moment().valueOf()
-        });
+      if (game.currentGameEvent && game.currentGameEvent.isActive) {
+        game.events.emit('input',{
+    			input: this.state.answer,
+    			letters: game.letters,
+    			jobHash: game.currentGameEvent.jobHashEnd
+    		});
+
       }
 
     }
