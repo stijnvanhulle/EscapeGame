@@ -3,7 +3,7 @@
 * @Date:   2017-01-24T13:47:49+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-28T22:36:49+01:00
+* @Last modified time: 2017-01-28T23:56:42+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -45,6 +45,9 @@ class HomePage extends Component {
 		game.events.on('eventStart', (obj) => {
 			this.setState({input: ''});
 		});
+		game.events.on('eventEnd', (obj) => {
+			this.setState({input: 'Loading ...'});
+		});
 		this.state.pressAction.addListener((v) => {
 			this._value = v.value;
 		});
@@ -85,11 +88,13 @@ class HomePage extends Component {
 
 	}
 	handlePressIn = () => {
-		Animated.timing(this.state.pressAction, {
-			duration: ACTION_TIMER,
-			toValue: 1
-		}).start(this.animationActionComplete);
-		this.setState({defuseText: 'Defusing bomb'});
+		if (!this.state.isLoading) {
+			Animated.timing(this.state.pressAction, {
+				duration: ACTION_TIMER,
+				toValue: 1
+			}).start(this.animationActionComplete);
+			this.setState({defuseText: 'Defusing bomb'});
+		}
 	}
 	handlePressOut = () => {
 		Animated.timing(this.state.pressAction, {
@@ -136,16 +141,16 @@ class HomePage extends Component {
 				Keyboard.dismiss();
 			}}>
 
-
 				<View style={{
 					flex: 1,
 					marginHorizontal: 20
 				}}>
-				<StatusBar animated={true} hidden={false} showHideTransition={'slide'} barStyle="dark-content"/>
+					<StatusBar animated={true} hidden={false} showHideTransition={'slide'} barStyle="dark-content"/>
 					<Text style={{
 						marginTop: 20,
 						marginBottom: 5,
-						textAlign: 'center'
+						textAlign: 'center',
+						fontSize: 15
 					}}>
 						{game.currentGameData && game.currentGameData.data.data.description}
 					</Text>

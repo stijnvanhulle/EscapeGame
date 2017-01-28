@@ -3,7 +3,7 @@
 * @Date:   2015-04-28T21:37:36+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-28T22:29:30+01:00
+* @Last modified time: 2017-01-28T23:49:43+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -143,7 +143,7 @@ class App extends Component {
 		let {gameEvent, gameData, activeEvents} = obj;
 		game.currentGameData = gameData;
 		game.currentGameEvent = gameEvent;
-		  game.events.emit('eventStart');
+		game.events.emit('eventStart');
 
 	}
 	handleWSEventEnd = obj => {
@@ -152,7 +152,7 @@ class App extends Component {
 		let correct = game.currentGameEvent.isCorrect;
 		game.currentGameData = gameData;
 		game.currentGameEvent = gameEvent;
-
+		game.events.emit('eventEnd');
 	}
 
 	renderRow(rowData) {

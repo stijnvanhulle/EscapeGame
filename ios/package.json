@@ -1,30 +1,30 @@
 {
-  "name": "ios",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
-  },
-  "dependencies": {
-    "events": "^1.1.1",
-    "moment": "^2.15.2",
-    "react": "~15.4.0-rc.4",
-    "react-native": "0.40.0",
-    "react-native-asset-library-to-base64": "^1.0.1",
-    "react-native-bluetooth-state": "^2.0.0",
-    "react-native-camera": "^0.5.1",
-    "react-native-ibeacon": "^0.6.0",
-    "socket.io-client": "^1.7.2"
-  },
-  "devDependencies": {
-    "babel-jest": "18.0.0",
-    "babel-preset-react-native": "1.9.1",
-    "eslint-plugin-react": "^6.9.0",
-    "jest": "18.1.0",
-    "react-test-renderer": "~15.4.0-rc.4"
-  },
-  "jest": {
-    "preset": "react-native"
-  }
+	"name": "EscapeGame",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"start": "node node_modules/react-native/local-cli/cli.js start",
+		"test": "jest"
+	},
+	"dependencies": {
+		"events": "^1.1.1",
+		"moment": "^2.15.2",
+		"react": "~15.4.0-rc.4",
+		"react-native": "0.40.0",
+		"react-native-asset-library-to-base64": "^1.0.1",
+		"react-native-bluetooth-state": "^2.0.0",
+		"react-native-camera": "^0.5.1",
+		"react-native-ibeacon": "^0.6.0",
+		"socket.io-client": "^1.7.2"
+	},
+	"devDependencies": {
+		"babel-jest": "18.0.0",
+		"babel-preset-react-native": "1.9.1",
+		"eslint-plugin-react": "^6.9.0",
+		"jest": "18.1.0",
+		"react-test-renderer": "~15.4.0-rc.4"
+	},
+	"jest": {
+		"preset": "react-native"
+	}
 }

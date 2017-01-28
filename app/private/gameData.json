@@ -154,7 +154,7 @@
     "data": {
       "name": "",
       "description": "Zoek het juiste schilderij",
-      "file": "schilderij_1.jpg",
+      "file": "fixed/schilderij_1.jpg",
       "maxTries": 2,
       "maxTime": 300,
       "hints": [

@@ -3,7 +3,7 @@
 * @Date:   2016-10-16T14:39:10+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-05T16:26:33+01:00
+* @Last modified time: 2017-01-28T23:55:19+01:00
 * @License: stijnvanhulle.be
 */
 const app = require('../lib/app');
@@ -114,6 +114,7 @@ const onMessageSocket = (io, socket, client) => {
         if (image2) {
           let obj;
           if (isDocker) {
+            image1 = image1.replace('fixed/', '');
             obj = {
               //TODO: check of file is in fixes or not in fixed
               image1: path.normalize(paths.VOLUME_PYTHON + '/fixed/' + image1),
