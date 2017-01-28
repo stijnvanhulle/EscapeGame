@@ -94,6 +94,7 @@
     "eslint": "^3.13.0",
     "eslint-config-devine": "^1.0.2",
     "eslint-loader": "^1.6.1",
+    "eslint-plugin-react": "^6.9.0",
     "extract-text-webpack-plugin": "beta",
     "file-loader": "^0.9.0",
     "hapi-auth-jwt2": "^7.1.3",

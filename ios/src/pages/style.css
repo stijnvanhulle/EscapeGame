@@ -1,0 +1,45 @@
+/**
+* @Author: Stijn Van Hulle <stijnvanhulle>
+* @Date:   2017-01-25T20:22:05+01:00
+* @Email:  me@stijnvanhulle.be
+* @Last modified by:   stijnvanhulle
+* @Last modified time: 2017-01-28T22:20:45+01:00
+* @License: stijnvanhulle.be
+*/
+
+
+
+button {
+	color: white;
+	background-color: #3b3e4b;
+	font-weight: 400;
+  text-align: center;
+	border-radius: 3px;
+
+  padding:10px;
+}
+
+buttonDisabled{
+	color: white;
+	background-color: #3b3e4b;
+	font-weight: 400;
+  text-align: center;
+	border-radius: 3px;
+
+  padding:10px;
+	opacity:0.8;
+}
+row {
+	padding: 8px;
+	padding-bottom: 16px;
+}
+smallText{
+	font-size: 11px;
+}
+
+bgFill{
+	background-color: black;
+	 position: absolute;
+	 top: 0;
+	 left: 0;
+ }

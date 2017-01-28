@@ -1,3 +1,12 @@
+/**
+* @Author: Stijn Van Hulle <stijnvanhulle>
+* @Date:   2015-04-28T21:37:36+02:00
+* @Email:  me@stijnvanhulle.be
+* @Last modified by:   stijnvanhulle
+* @Last modified time: 2017-01-28T22:29:30+01:00
+* @License: stijnvanhulle.be
+*/
+
 import React, {Component} from 'react';
 import {
 	Text,
@@ -18,6 +27,7 @@ import {checkMajor, makeBeaconArray} from './lib/functions';
 
 import HomePage from './pages/home/homePage';
 import CameraPage from './pages/camera/cameraPage';
+import AlienNamesPage from './pages/alienNames/alienNamesPage';
 import moment from 'moment';
 
 class App extends Component {
@@ -43,7 +53,7 @@ class App extends Component {
 	}
 
 	componentWillMount() {
-		Beacons.requestAlwaysAuthorization();
+		Beacons.requestWhenInUseAuthorization();
 		const region = {
 			identifier: this.state.identifier,
 			uuid: this.state.uuid
@@ -63,6 +73,8 @@ class App extends Component {
 		});
 
 		BluetoothState.subscribe(bluetoothState => {
+			console.log(bluetoothState);
+			if (bluetoothState == 'on') {}
 			this.setState({bluetoothState: bluetoothState});
 		});
 		BluetoothState.initialize();
@@ -107,12 +119,14 @@ class App extends Component {
 		console.log('Event data:', obj, moment().format());
 		const {correct, triesOver, data} = obj;
 		const gameData = game.currentGameData;
-		const currentData = gameData.data.data;
-		const type = gameData.data.type.toLowerCase();
+		if (gameData) {
+			const currentData = gameData.data.data;
+			const type = gameData.data.type.toLowerCase();
 
-		if (correct) {
-			if (data && data.letter) {
-				game.letters.push(data.letter);
+			if (correct) {
+				if (data && data.letter) {
+					game.letters.push(data.letter);
+				}
 			}
 		}
 
@@ -129,6 +143,7 @@ class App extends Component {
 		let {gameEvent, gameData, activeEvents} = obj;
 		game.currentGameData = gameData;
 		game.currentGameEvent = gameEvent;
+		  game.events.emit('eventStart');
 
 	}
 	handleWSEventEnd = obj => {
@@ -201,6 +216,10 @@ class App extends Component {
 				<TabBarIOS.Item title="Camera" selected={this.state.selectedTab == 'camera'} onPress={() => this.setState({selectedTab: 'camera'})}>
 					<CameraPage/>
 				</TabBarIOS.Item>
+				<TabBarIOS.Item title="AlienNames" selected={this.state.selectedTab == 'alienNamesPage'} onPress={() => this.setState({selectedTab: 'alienNamesPage'})}>
+					<AlienNamesPage/>
+				</TabBarIOS.Item>
+
 			</TabBarIOS>
 		);
 	}

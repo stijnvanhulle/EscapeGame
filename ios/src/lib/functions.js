@@ -1,3 +1,12 @@
+/**
+* @Author: Stijn Van Hulle <stijnvanhulle>
+* @Date:   2017-01-25T13:45:01+01:00
+* @Email:  me@stijnvanhulle.be
+* @Last modified by:   stijnvanhulle
+* @Last modified time: 2017-01-26T17:44:45+01:00
+* @License: stijnvanhulle.be
+*/
+
 const functions = {};
 const beacons = {
 	green: 32408,
@@ -16,7 +25,7 @@ functions.checkMajor = major => {
 	return null;
 };
 functions.makeBeaconArray = (arr) => {
-	return arr.map(item => {
+	let newArr = arr.map(item => {
 		let newItem = {};
 		if (item.proximity) {
 			switch (item.proximity) {
@@ -43,6 +52,21 @@ functions.makeBeaconArray = (arr) => {
 		return newItem;
 
 	});
+
+	newArr = newArr.sort((a, b) => {
+		if (a.distance > b.distance) {
+			return 1;
+		} else if (a.distance < b.distance) {
+			return -1;
+		} else {
+			return 0;
+		}
+	});
+	//fix for range
+	if (newArr[0].range > 1) {
+		newArr[0].range = 1;
+	}
+	return newArr;
 };
 
 module.exports = functions;
