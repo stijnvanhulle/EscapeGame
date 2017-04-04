@@ -74,7 +74,7 @@
     "socket.io-client": "^1.7.0",
     "socket.io-react": "^1.1.2",
     "svgjs": "^2.3.6",
-    "webpack": "beta"
+    "webpack": "2.2.0"
   },
   "devDependencies": {
     "app-module-path": "^2.2.0",
@@ -91,6 +91,7 @@
     "clean-webpack-plugin": "^0.1.15",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.26.1",
+    "dotenv": "^4.0.0",
     "eslint": "^3.13.0",
     "eslint-config-devine": "^1.0.2",
     "eslint-loader": "^1.6.1",
@@ -116,7 +117,7 @@
     "stylelint": "^7.5.0",
     "stylelint-config-devine": "^1.0.0",
     "url-loader": "^0.5.7",
-    "webpack": "beta",
+    "webpack": "2.2.0",
     "webpack-config-htmls": "^1.0.1",
     "webpack-dev-server": "^1.16.2"
   }

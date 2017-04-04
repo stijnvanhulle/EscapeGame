@@ -3,7 +3,7 @@
 * @Date:   2016-10-15T13:52:52+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2017-01-08T23:41:14+01:00
+* @Last modified time: 2017-03-02T17:29:35+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -11,19 +11,18 @@ require(`dotenv`).load();
 require('pretty-error').start();
 require('app-module-path').addPath(__dirname);
 
+const port = process.env.PORT || 3000;
+const mongo = process.env.MONGO || 'localhost';
+const mongo_port = process.env.MONGO_PORT || 3000;
+const {version} = require('../package.json');
+const paths = require('./lib/paths');
+
 const pluginHandler = require(`lib/pluginHandler`);
 const scheduleJob = require('lib/scheduleJob');
 const path = require(`path`);
 const mongoose = require("mongoose");
 const Server = require('hapi').Server;
 
-//convert from string to dateType
-
-const port = process.env.PORT || 3000;
-const mongo = process.env.MONGO || 'localhost';
-const mongo_port = process.env.MONGO_PORT || 3000;
-const {version} = require('../package.json');
-const paths = require('./lib/paths');
 
 const mongodb = {
   options: {
